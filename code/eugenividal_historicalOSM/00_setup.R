@@ -22,6 +22,8 @@ options(sf_use_s2 = FALSE) # planar operations
 # CITY SETTINGS: edit this block to run the workflow for a different city
 # ----------------------------------------------------------------------
 
+# one each time, and then run the 02, 03, and 04
+
 city_name           <- "Lisboa"
 city_tag            <- "lisbon"
 city_boundary_place <- "Lisboa, Portugal"
@@ -58,5 +60,5 @@ crs_work <- 2154
 # Settings (edit)
 # -----------------------------
 
-FORCE_BUILD <- FALSE              # TRUE = re-download/rebuild even if files exist
+FORCE_BUILD <- TRUE              # TRUE = re-download/rebuild even if files exist
 VERSIONS <- c("160101","210101", "260101") # snapshots to ensure exist (edit as needed)
