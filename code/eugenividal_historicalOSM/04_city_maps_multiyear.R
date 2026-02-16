@@ -598,7 +598,10 @@ map_cycling_switcher <- function(method = c("osmextract_custom", "osmactive"),
 
 
 # map_cycling_leaf_two_years("osmactive", "210101", "260101")
-map_cycling_leaf_multi_year("osmextract", city_tag = "lisbon", versions = VERSIONS)
+# map_cycling_leaf_multi_year("osmextract", city_tag = "lisbon", versions = VERSIONS)
 map_cycling_switcher("osmextract", city_tag = "lisbon", versions = VERSIONS)
 
 map_cycling_switcher("osmextract", city_tag = "sydney", versions = VERSIONS)
+
+map_cycling_switcher("osmextract", city_tag = "paris", versions = VERSIONS)
+

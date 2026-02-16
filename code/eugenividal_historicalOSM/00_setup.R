@@ -60,5 +60,5 @@ crs_work <- 2154
 # Settings (edit)
 # -----------------------------
 
-FORCE_BUILD <- TRUE              # TRUE = re-download/rebuild even if files exist
+FORCE_BUILD <- FALSE              # TRUE = re-download/rebuild even if files exist
 VERSIONS <- c("160101","210101", "260101") # snapshots to ensure exist (edit as needed)
