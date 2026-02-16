@@ -314,6 +314,10 @@ For the **impacts estimation**
 
 -   Sydney (city - Local Government Area or larger!)
 
+Use a 10km radius from city center, for comparision purposes
+
+Also, because some places do not have a good definition of "city" or "metropolitan area" as an administrative area (polygon).
+
 ## Data
 
 -   OSM networks, namely for cycling network
@@ -321,6 +325,17 @@ For the **impacts estimation**
 -   Historical perspective to access the connectivity gains (?)
 
     -   [Getting historical OSM cycling infrastructure data](https://eugenividal.github.io/slides/getting-historical-visible-cycling-infra-from-osm-main/README.html) (Eugene Vidal)
+
+## ODs
+
+We can use @costa2021 method for a Random Sample of 100k OD pairs isotropic (randomly distributed), which was also used by @levinson2012 (before matching travel distances with travel survey), or use directly a Mobility Survey Sample.
+
+> While **RS** assumes an isotropic territory and thus selecting points from the entire city evenly, **MSS** assumes an anisotropic territory and captures locations that generate or attract people and trips.
+> Such results emphasize the hypothesis that both sampling techniques should be used for different purposes: **RS should be used for an isotropic analysis of the entire territory** (e.g., as a proxy of the full territory’s potential mobility), and MSS ought to be used for analyzing citizen’s mobility needs and, therefore, their trips.
+
+For this paper, it would make more sense to use a randomly distributed sample of OD pairs (can be 100k anyway), due to lack of mobility survey data?
+
+## Ground true data
 
 -   Counting points and evolution of cyclists
 
