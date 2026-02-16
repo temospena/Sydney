@@ -41,3 +41,10 @@ r5_sydney26 |> street_network_to_sf() |> purrr::pluck("edges") |> st_write("netw
 r5_paris16 |> street_network_to_sf() |> purrr::pluck("edges") |> st_write("networks/lts/paris16_lts.gpkg")
 r5_paris21 |> street_network_to_sf() |> purrr::pluck("edges") |> st_write("networks/lts/paris21_lts.gpkg")
 r5_paris26 |> street_network_to_sf() |> purrr::pluck("edges") |> st_write("networks/lts/paris26_lts.gpkg")
+
+
+
+# stop --------------------------------------------------------------------
+
+stop_r5() # by default, all will be stopped
+rJava::.jgc(R.gc = TRUE)
