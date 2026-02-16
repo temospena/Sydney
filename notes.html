@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-01-30">
+
+<title>Cycling networks’ performance indicators</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="notes_files/libs/clipboard/clipboard.min.js"></script>
+<script src="notes_files/libs/quarto-html/quarto.js"></script>
+<script src="notes_files/libs/quarto-html/popper.min.js"></script>
+<script src="notes_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="notes_files/libs/quarto-html/anchor.min.js"></script>
+<link href="notes_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="notes_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="notes_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="notes_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="notes_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+</head><body class="fullcontent">\usepackage[figurename=Fig.,labelfont=bf,labelsep=period]{caption}
+\usepackage{apacite}
+
+
+
+
+
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Cycling networks’ performance indicators</h1>
+<p class="subtitle lead">notes</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 30, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+<div>
+  <div class="abstract">
+    <div class="block-title">Abstract</div>
+    <p>Despite growing investments in cycling infrastructure, many networks remain fragmented, limiting their effectiveness. Current planning approaches lack systematic methods to identify and prioritize missing links based on empirical evidence. This research addresses this gap by integrating geospatial analysis, network science, and accessibility modeling to develop a replicable methodology for evaluating and improving cycling networks. While studies have assessed cycling network performance, few have quantified its impact on ridership or provided structured prioritization methods. This research aims to develop a systematic methodology to identify and prioritize missing links in urban cycling networks, quantify the impact of network characteristics on cycling adoption. The cities of Lisbon and Sydney serve as case study due to their fragmented network, high-quality cycling data, and policy commitments to expand infrastructure and make it more consistent. Findings…</p>
+  </div>
+</div>
+
+
+</header>
+
+
+<section id="background" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Background</h1>
+<p>Sustainable and low-carbon cities are key for addressing climate change, air pollution, and urban congestion.&nbsp;</p>
+<p>Previous research found safe, high-quality and efficient cycling networks play a crucial role in uptake cycling levels <span class="citation" data-cites="cambra2019 christ2023 félix2020 félix2022 félix2019 schoner2014">(<a href="#ref-cambra2019" role="doc-biblioref">P. Cambra and Moura 2020</a>; <a href="#ref-christ2023" role="doc-biblioref">Christ et al. 2023</a>; <a href="#ref-félix2020" role="doc-biblioref">Félix, Cambra, and Moura 2020</a>; <a href="#ref-félix2022" role="doc-biblioref">Félix, Lovelace, and Moura 2022</a>; <a href="#ref-félix2019" role="doc-biblioref">Félix, Moura, and Clifton 2019</a>; <a href="#ref-schoner2014" role="doc-biblioref">Schoner and Levinson 2014</a>)</span>. In recent decades, several urban centers invested in cycling infrastructure <span class="citation" data-cites="félix2020">(<a href="#ref-félix2020" role="doc-biblioref">Félix, Cambra, and Moura 2020</a>)</span>. During COVID-19, cities introduced pop-up bike lanes, but their planning was often not evidence-based. Consequently, the outcome is a highly fragmented cycling network due to a lack of cohesive strategies or ad-hoc, stretch-specific planning approaches <span class="citation" data-cites="moura2017">(<a href="#ref-moura2017" role="doc-biblioref">Moura, Magalhães, and Santos 2017</a>)</span>, lacking efficiency.</p>
+<p>These approaches often overlook the broader network, resulting in missing links that hinder seamless and safe cycling connectivity. <strong>These missing links act as huge barriers for potential cyclists</strong> <span class="citation" data-cites="félix2019">(<a href="#ref-félix2019" role="doc-biblioref">Félix, Moura, and Clifton 2019</a>)</span>, while minor infrastructure additions, when solved, could significantly strengthen networks <span class="citation" data-cites="fernandes2020">(<a href="#ref-fernandes2020" role="doc-biblioref">Fernandes et al. 2020</a>)</span>, providing great potential for cycling leverage <span class="citation" data-cites="félix2025">(<a href="#ref-félix2025" role="doc-biblioref">Félix, Moura, and Clifton 2025</a>)</span>, and allowing cyclists to safely bicycle between more origins and destinations. Many authorities lack experience in cycling network planning <span class="citation" data-cites="lovelace2017">(<a href="#ref-lovelace2017" role="doc-biblioref">Lovelace et al. 2017</a>)</span>, reinforcing the need for decision-making support tools regarding investments in cycling infrastructure, that account for practical implementation barriers such as urban planning constraints and funding limitations.</p>
+<p>European cities are committed to meeting sustainable transport targets, and increasing active travel. The Portuguese National Cycling Strategy targets a 10% shift from car to bicycle trips by 2030, with others aiming to double or triple existing cycling levels for Carbon Neutrality by 2050. The Lisbon Metropolitan Area (LMA) Sustainable Urban Mobility Plan (SUMP) sets a strategy aiming to “reduce the missing links in the mobility and transport system, within the overall vision of metropolitan cohesion”, based on the assumption that “bridging these identified discontinuities will make it possible to have continuous networks that will solve the system’s accessibility and attractiveness problems” (<em>TML, 2024</em>).</p>
+<p>How, then, to identify the investment priorities to meet these targets? Planning the infrastructure needed to change mobility patterns requires high-quality evidence and adequate methods.</p>
+<p>Recent research on cycling network performance and accessibility focuses on developing comprehensive indicators and methodologies. Studies assessed bike accessibility to activities and opportunities under different network quality criteria, and developed indicators to track cycling infrastructure improvements over time <span class="citation" data-cites="humberto2023 schoner2014 schon2024 vandermeer2024 weikl2023 macedo2017">(<a href="#ref-humberto2023" role="doc-biblioref">Humberto, Félix, and Moura 2023</a>; <a href="#ref-schoner2014" role="doc-biblioref">Schoner and Levinson 2014</a>; <a href="#ref-schon2024" role="doc-biblioref">Schön, Heinen, and Manum 2024</a>; <a href="#ref-vandermeer2024" role="doc-biblioref">Van Der Meer, Werner, and Loidl 2024</a>; <a href="#ref-weikl2023" role="doc-biblioref">Weikl and Mayer 2023</a>; <a href="#ref-macedo2017" role="doc-biblioref">Macedo, Rodrigues, and Tavares 2017</a>)</span>, and ensure equitable network performance across different areas <span class="citation" data-cites="humberto2023 pereira2021">(<a href="#ref-humberto2023" role="doc-biblioref">Humberto, Félix, and Moura 2023</a>; <a href="#ref-pereira2021" role="doc-biblioref">Pereira et al. 2021</a>)</span>.</p>
+<p>Additionally, data-driven quality assessment methodologies have been proposed, incorporating multiple criteria such as coherence, fragmentation, directness, centrality, circuity, comfort, and attractiveness <span class="citation" data-cites="cambra2019a costa2021 giacomin2015 schon2024 vandermeer2024 weikl2023 werner2024 matos2021">(<a href="#ref-cambra2019a" role="doc-biblioref">P. J. Cambra, Gonçalves, and Moura 2019</a>; <a href="#ref-costa2021" role="doc-biblioref">Costa, Marques, and Moura 2021</a>; <a href="#ref-giacomin2015" role="doc-biblioref">Giacomin and Levinson 2015</a>; <a href="#ref-schon2024" role="doc-biblioref">Schön, Heinen, and Manum 2024</a>; <a href="#ref-vandermeer2024" role="doc-biblioref">Van Der Meer, Werner, and Loidl 2024</a>; <a href="#ref-weikl2023" role="doc-biblioref">Weikl and Mayer 2023</a>; <a href="#ref-werner2024" role="doc-biblioref">Werner et al. 2024</a>; <a href="#ref-matos2021" role="doc-biblioref">Matos et al. 2021</a>)</span>, yet <strong>the definition of “consistent” / “cohesive” networks remains poorly defined</strong>. Network connectivity over spatial metrics is particularly relevant, yet <strong>more empirical evidence is needed to validate their effects on cycling behavior</strong> <span class="citation" data-cites="schoner2014 schon2024">(<a href="#ref-schoner2014" role="doc-biblioref">Schoner and Levinson 2014</a>; <a href="#ref-schon2024" role="doc-biblioref">Schön, Heinen, and Manum 2024</a>)</span>. Nevertheless, few studies assessed its real impacts on cycling levels, which remains a gap in current research.</p>
+<p>Recent advances in machine learning expand possibilities for network analysis. Graph Neural Networks can model transport systems where links and nodes interact dynamically. In particular, Temporal Graph Attention Networks (TGATs) combine spatial graph attention with temporal learning components <span class="citation" data-cites="jia2024">(<a href="#ref-jia2024" role="doc-biblioref">Jia et al. 2024</a>)</span> to capture how network characteristics and spatio-temporal patterns evolve. TGATs integrate information from neighbouring links (spatial context) while accounting for changes across years or policy shifts (temporal context), making them well suited to analyze historical cycling levels and infrastructure data. Although applied in build environment, communications, and energy consumption studies <span class="citation" data-cites="jia2023 rahman2018 jia2024">(<a href="#ref-jia2023" role="doc-biblioref">Jia et al. 2023</a>, <a href="#ref-jia2024" role="doc-biblioref">2024</a>; <a href="#ref-rahman2018" role="doc-biblioref">Rahman, Srikumar, and Smith 2018</a>)</span>, these models remain largely unexplored in active mobility research.</p>
+<p>Models and tools exist for cycling network prioritization <span class="citation" data-cites="félix2022 lovelace2017 lovelace2024">(<a href="#ref-félix2022" role="doc-biblioref">Félix, Lovelace, and Moura 2022</a>; <a href="#ref-lovelace2017" role="doc-biblioref">Lovelace et al. 2017</a>; <a href="#ref-lovelace2024" role="doc-biblioref">Lovelace et al. 2024</a>)</span>, <strong>but ignore network performance</strong>, despite using widely available data in a city and open-source algorithms for reproducibility. While computational limitations are less of an issue, transport modeling, GIS, and graph science can be applied to <strong>systematically identify missing links on given cycling networks with the potential to improve network performance, accessibility, and cycling uptake</strong>. These approaches aim to provide planners with decision-making support tools to evaluate existing networks, identify gaps and areas for improvement, and prioritize infrastructure interventions.</p>
+<p>Additional, having a <strong>cycling network hierarchy</strong> helps to better define priorities for the missing connections, and makes more relevant that all the levels are complemented, being the primary one the most “cohesive”.</p>
+<p>This research addresses the following questions: [<em>focus on one]</em></p>
+<ul>
+<li><p>Which cycling network performance indicators most impact cycling levels, and are they equally relevant across urban contexts?</p></li>
+<li><p>How can “consistent” cycling networks be defined?</p></li>
+<li><p>How can a consistent network affect overall cycling adoption and ridership?</p></li>
+</ul>
+<p>The motivation for this research stems from the need to systematically address these gaps, offering cities a replicable methodology and digital tool to identify and prioritize key network improvements. The challenge lies in integrating emerging graph-based programming techniques to model, simulate, and prioritize impactfull cycling connections. Bridging these gaps, cities enable safer, more accessible networks that attract potential cyclists.</p>
+<p>This research has the following <strong>objectives</strong>:</p>
+<ol type="1">
+<li><p><strong>Identify key cycling network performance indicators and define consistent networks, advancing the state-of-the-art</strong></p></li>
+<li><p><em>Develop a modeling framework to evaluate network consistency, simulate new connections, and assess impacts on accessibility and cycling adoption</em></p></li>
+<li><p><em>Create a decision support tool to prioritize interventions that strengthen network consistency and leverage cycling, ensuring replicability across different cities.</em></p></li>
+</ol>
+</section>
+<section id="literature-review" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Literature review</h1>
+<p>We started with <span class="citation" data-cites="schoner2014">Schoner and Levinson (<a href="#ref-schoner2014" role="doc-biblioref">2014</a>)</span>: connectivity and directness (network structure measures) as predictors for bicycle commuting levels.</p>
+<p><strong>Coherent</strong>: “forming continuous networks linking origins and destinations.” <span class="citation" data-cites="wang2026">(<a href="#ref-wang2026" role="doc-biblioref">Wang et al. 2026</a>)</span>.</p>
+<p>The work from <span class="citation" data-cites="niaki2025">Niaki et al. (<a href="#ref-niaki2025" role="doc-biblioref">2025</a>)</span> was promising, once they assess “Cycling <strong>Discontinuities</strong>” as indicators for performance evaluation. They apply the method to 4 cities: Montreal, Vancouver, Portland, and Washington D.C. Very recent article, presented in WCTR 2023.</p>
+<blockquote class="blockquote">
+<p>“Reviewing existing evaluation methods, it further appears that connectivity or discontinuity indicators <strong>have not been systematically identified</strong> and are missing from many evaluation methods.”</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>“proposes a set of indicators to measure cycling network connectivity and the <strong>methodology to calculate them</strong>, including automated methods for geospatial data with the <a href="https://github.com/nsaunier/cycling-discontinuities">code available</a> under an open-source licence” (Uses SpatialLite, 8yrs old)</p>
+</blockquote>
+<p>They compile a nice review of the variables used in the main cycling network performance evaluation methods:</p>
+<p><img src="images/clipboard-1014942791.png" class="img-fluid"></p>
+<p>But, in the end, the consideration of discontinues has a different meaning from what we are looking for. They consider them as a <strong>change of cycling infrastructure type</strong> and network endpoints. The results:</p>
+<p><img src="images/clipboard-2772248387.png" class="img-fluid"></p>
+<p>From <span class="citation" data-cites="schon2024">Schön, Heinen, and Manum (<a href="#ref-schon2024" role="doc-biblioref">2024</a>)</span>, they provide a literature review on cycling network connectivity and its effects on cycling. They categorize papers using network graph theories (betweenness, centrality, etc); circuity; accessibility; angular segment analysis; LOS/LTS; network growth algorithms and network design problems (NGA/NDP), optimising cycling network coverage under cost constraints.</p>
+<blockquote class="blockquote">
+<p>there is a trend towards more comprehensive and complex measures focusing on l<strong>ink prioritisation, cost-efficient gap closures</strong>, travel demand or several connectivity aspects simultaneously. Such measures allow more comprehensive studies of networks, but we emphasise the importance of <strong>open-source data, codes and software</strong> to make these recent and future measures and methodologies accessible to practitioners and researchers.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>“no review has been dedicated to the measures, methods and models applied to assess network connectivity or the <strong>impact of increased network connectivity</strong> on cycling behaviour”</p>
+<p>“The findings suggest an increase in the number of publications on network connectivity up to 2019, followed by a plateau in the number of studies but with <strong>more complex methods</strong>.”</p>
+<p>“empirical verifications regarding the <strong>effects of network connectivity on travel behaviour</strong> remain a research gap, even in high-cycling countries, with evidence further limited by <strong>limited link-level travel data</strong>”</p>
+</blockquote>
+<p>Network-based measures apply network analysis <span class="citation" data-cites="cooper2015">(<a href="#ref-cooper2015" role="doc-biblioref">Cooper 2015</a>)</span> which considers the entire network available to cyclists, evaluating its ability to connect specific origins and destinations or to connect links/nodes to all other links/nodes in a network.</p>
+<p>Network analysis can grasp the effects of missing links or links with poor cycling infrastructure, which is particularly important for inexperienced and young cyclists, as they tend to value the presence of continuous cycling infrastructure more than experienced cyclists <span class="citation" data-cites="bernhoft2008 heinen2010">(<a href="#ref-bernhoft2008" role="doc-biblioref">Bernhoft and Carstensen 2008</a>; <a href="#ref-heinen2010" role="doc-biblioref">Heinen, Wee, and Maat 2010</a>)</span>. Assessing the connectivity of an entire network can be complex and computationally demanding, and requires detailed and topologically correct network models <span class="citation" data-cites="boeing2017">(<a href="#ref-boeing2017" role="doc-biblioref">Boeing 2017</a>)</span>.</p>
+<p><span class="citation" data-cites="vale2016">Vale and Pereira (<a href="#ref-vale2016" role="doc-biblioref">2016</a>)</span> review of operational measures of walking and cycling accessibility concluded that cycling accessibility had received little attention and was a major field for future research.</p>
+<p>The Cycling Routing Algorithm for Network Connectivity (CRANC) tool <span class="citation" data-cites="gehrke2020">(<a href="#ref-gehrke2020" role="doc-biblioref">Gehrke et al. 2020</a>)</span> evaluates the benefits of new bicycle facilities for the <strong>accessibility</strong> of various populations and neighbourhoods. It integrates cyclist type/profile and LTS in route choice. This tool is not open, and we cannot use it.</p>
+<p><span class="citation" data-cites="reggiani2022">Reggiani et al. (<a href="#ref-reggiani2022" role="doc-biblioref">2022</a>)</span> explores the detour acceptance and “<strong>discomfort</strong>”. Bikeability curve with pareto frontier routes.</p>
+<blockquote class="blockquote">
+<p>The relative distance, also referred to as <strong>circuity</strong> in the remainder of the article, is the route distance (sum of all path links) divided by the Euclidean distance. This measure, used also in <span class="citation" data-cites="schoner2014">Schoner and Levinson (<a href="#ref-schoner2014" role="doc-biblioref">2014</a>)</span>, allows identifying if there are OD pairs connected by meandering routes, <strong>which may suggest the need for new road infrastructure</strong>. The purpose of this measure is to “identify recreationally oriented routes that meander or circle back on themselves, versus routes that provide an efficient utilitarian connection for commuting” as pointed out in <span class="citation" data-cites="schoner2014">Schoner and Levinson (<a href="#ref-schoner2014" role="doc-biblioref">2014</a>)</span>.</p>
+<p>The <strong>relative discomfort</strong> is defined as the total discomfort of the route (sum of discomfort on all links of the route) divided by the Euclidean distance (in meters) of the shortest route. The resulting relative discomfort represents the discomfort per meter.<br>
+It is related with the number of different facility types travelled, and the distance traveled in a mix traffic environment.</p>
+<p>There are many ways to combine the <strong>Pareto fronts of all different OD-pairs</strong> into one single so-called network-wide bikeability curve. An approach that transforms the set of Pareto fronts into <strong>one single network-wide bikeability curve</strong>. This curve contains for all possible distance-discomfort trade-off choices, the expected distance, and discomfort of the optimal route for an OD-pair that is sampled from an OD-demand distribution.</p>
+</blockquote>
+<p>(explore more the methods of this paper!)</p>
+<p><span class="citation" data-cites="furth2016">Furth, Mekuria, and Nixon (<a href="#ref-furth2016" role="doc-biblioref">2016</a>)</span> define “lack of connectivity” measured by the fraction of OD pairs which are connected with the use of high LTS, excessive detours, weighted by travel demand.</p>
+<blockquote class="blockquote">
+<p>When streets with high traffic stress - on which the mainstream population is unwilling to ride a bike - are removed, the remaining network of streets and paths can be fragmented and poorly connected.</p>
+</blockquote>
+<p><span class="citation" data-cites="schon2026">Schön, Heinen, and Manum (<a href="#ref-schon2026" role="doc-biblioref">2026</a>)</span> assesses the impact of a new cycling infrastructure segment (a bridge in Norway) in terms of betweenness and route link density improvements, and estimate the increase in cycling probabilities.</p>
+<p><img src="images/clipboard-3285979495.png" class="img-fluid"></p>
+<p>A very recent paper from <span class="citation" data-cites="wang2026">Wang et al. (<a href="#ref-wang2026" role="doc-biblioref">2026</a>)</span> provides a framework for generating and prioritizing “core” cycling network designs.</p>
+<p>It tackles fragmented and disjointed networks. They balance cohesion coverage and directness metrics, aimed to produce “effective” networks for the cycling potential, meeting the travel patterns. The result are “cohesive” networks suggested, using an <a href="https://github.com/nptscot/corenet">open-source tool</a> developed by the authors. The process takes about 15min to run and generate results (!).</p>
+<blockquote class="blockquote">
+<p>While the method uses graph theory concepts for network analysis, it is fundamentally driven by travel demand data and policy objectives <strong>rather than network structure alone</strong>. It <strong>does not consider</strong> <strong>current cycling volumes</strong>, but <strong>cycling potential estimates</strong>.</p>
+</blockquote>
+<p>It considers the following criteria based on data availability and computational feasibility: <strong>directness</strong> (through arterial weighting and shortest-path algorithms), <strong>connectivity and coherence</strong> (via network growth strategies and systematic removal of disconnected segments), <strong>coverage and accessibility</strong> (through spatial analysis and buffer zone evaluation), and <strong>demand alignment</strong> (by integrating cycling potential data to focus on high-usage corridors).</p>
+<p>Hierarchical road prioritization and arterial weighing:</p>
+<ol type="1">
+<li>Routes with higher cycling potential are prioritised.</li>
+<li>When cycling potential is comparable, “A Road” segments are chosen over “B Road” segments, which in turn are chosen over “Minor Road” segments.</li>
+<li>When cycling potential values are identical, the network favours routes associated with higher-ranked road types.</li>
+<li>If both cycling potential values and road classifications are equivalent, the shortest route is selected.</li>
+</ol>
+<p>It allows control over the n-degree dangle removals (dead ends - degree-one nodes); the threshold for high demand segments (higher -&gt; less dense; lower -&gt; network expansion).</p>
+<p><img src="images/clipboard-2328253955.png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://npw.scot/npw?boundary=LAD_Glasgow+City#11.17/55.8546/-4.2363"><img src="images/clipboard-246980883.png" class="img-fluid figure-img" alt="Printscreen from npw.scot (Coherent network menu)"></a></p>
+<figcaption>Printscreen from npw.scot (Coherent network menu)</figcaption>
+</figure>
+</div>
+<p>Key performance metrics assess Network Cohesion and Connectivity, Demand Alignment, Origin-Destination Accessibility, Directness and Efficiency. (<em>read more about the ones of interest</em>)</p>
+<p><img src="images/clipboard-3252209303.png" class="img-fluid"></p>
+<p><img src="images/clipboard-2027430881.png" class="img-fluid"></p>
+<p>It is well suited for places without cycling network, or to compare the results with places with already implemented networks. They also discuss the problems with raw OSM data (topological, miss-classification, cycling and pedestrian as separated lines from the road network).</p>
+<section id="network-structures-and-topology" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="network-structures-and-topology"><span class="header-section-number">2.1</span> Network structures and topology</h2>
+<p>A lot of work has been developed using <strong>synthetic</strong> networks and synthetic population / demand.</p>
+<p>For the generality of road network structures, the work from <span class="citation" data-cites="xie2007">Xie and Levinson (<a href="#ref-xie2007" role="doc-biblioref">2007</a>)</span> analyze topology and geometric variations on 16 types of (synthetic) networks.</p>
+<blockquote class="blockquote">
+<p>Existing measures of heterogeneity, connectivity, accessibility, and interconnectivity are reviewed and three supplemental measures are proposed, including measures of <strong>entropy, connection patterns, and continuity</strong></p>
+</blockquote>
+<blockquote class="blockquote">
+<p>differentiated structures of road networks can be evaluated by the measure of entropy; predefined connection patterns of arterial roads can be identified and quantified by the measures of <strong>ringness, webness, beltness, circuitness, and treeness</strong>. A measure of continuity evaluates the quality of a network from the perspective of travelers.</p>
+</blockquote>
+<p>It is focused on the travel perspective.</p>
+<p>From <span class="citation" data-cites="xing2025">Xing et al. (<a href="#ref-xing2025" role="doc-biblioref">2025</a>)</span>, a definition of Road Network Connectivity is established, which is binary (connected or unconnected), and does not provide performance levels.</p>
+<blockquote class="blockquote">
+<p>Graph theory was the earliest method used in the study of road network connectivity evaluation [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0022">22</a>] and it is a feasible and effective method to study road network connectivity as a complex topological network [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0023">23</a>]. Most of the definitions of road network connectivity in graph theory are defined in terms of the topological connectivity relationship between nodes, and if two neighboring nodes are linked by an edge, they are said to be connected [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0024">24</a>]. In this context, the road network connectivity is defined from the <strong>graph theory level</strong>, where the road network is treated as a topological network, and the road network connectivity is evaluated based on the topological relationships between nodes and edges.</p>
+<p>However, it is difficult to fully express road network connectivity in an increasingly <strong>complex urban road network</strong> only by defining road network connectivity in a limited space from the perspective of road network topology. This definition of road network connectivity only through a simple topology can only distinguish between connectivity and non-connectivity, and <strong>cannot describe different degrees of connectivity performance</strong>.</p>
+</blockquote>
+<p>The traditional connectivity index was proposed in the 20th century, when the road traffic structure and the urban road network were simpler than today.</p>
+<blockquote class="blockquote">
+<p>The original connectivity evaluation is based on the knowledge of graph theory, constructing the traditional connectivity evaluation index, and evaluating the road network connectivity from the <strong>quantitative relationship between nodes and edges</strong>, <span class="citation" data-cites="garrison1964">Garrison and Marble (<a href="#ref-garrison1964" role="doc-biblioref">1964</a>)</span> proposed four road network connectivity evaluation indexes from the perspective of the number of connected edges in the road network, as well as node accessibility indexes from the perspective of node access to evaluate the connectivity degree of the road network. Due to the early stage of the definition of connectivity, only the topological relationship of the road network is considered to construct the relevant indexes for evaluation, and the nature of road traffic is not considered in the evaluation of the road network. Therefore, Kansky and Danscoine [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0011">11</a>] constructed four connectivity indicators <em>η</em>,  <em>π</em>,  <em>θ</em> and <em>r</em> to evaluate the connectivity of road network by considering the actual elements of road network, such as the <strong>length of road sections</strong>. Traditional connectivity indicators alone do not consider all the factors and cannot completely describe the road network structure. Noda [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0027">27</a>] established a GTP evaluation model that considers the relationship between the number of edges and nodes, while incorporating the <strong>closed-loop circuit</strong> in the road network to evaluate road network connectivity. In addition to constructing the model evaluation, there are scholars who use joint <strong>multiple indicators</strong> to evaluate the road network connectivity, avoiding the limitation of single indicator evaluation. Sreelekha et al.&nbsp;[<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0009">9</a>] and others chose four traditional connectivity evaluation indicators, as well as the GTP connectivity model to comprehensively evaluate the connectivity of the road network. Sharma and Ram [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0028">28</a>] and Daniel et al.&nbsp;[<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0029">29</a>] evaluated the road network connectivity through the combination of connectivity indicators and the <strong>center index Shimbel’s</strong> combination to evaluate road network connectivity by considering the importance of <strong>centrality</strong> nodes.</p>
+</blockquote>
+<p>Summary of existing studies on road network connectivity evaluation:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Describe</th>
+<th>Limitations</th>
+<th>Example of applications</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Alpha index</td>
+<td>𝛂 = (<em>e</em> − <em>v</em> + 1)/(2<em>v</em> − 5)</td>
+<td>Inability to reflect changes in connectivity due to road control on road sections</td>
+<td>Garrison and Marble [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0010">10</a>]</td>
+</tr>
+<tr class="even">
+<td>Beta index</td>
+<td>𝛽 = <em>e</em>/<em>v</em></td>
+<td>Inability to reflect changes in connectivity due to road control conditions and layout structure of road sections</td>
+<td>Garrison and Marble [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0010">10</a>]</td>
+</tr>
+<tr class="odd">
+<td>Gamma index</td>
+<td>𝛾 = <em>e</em>/(3<em>v</em> − 2)</td>
+<td>Inability to reflect changes in connectivity due to road control conditions and layout structure of road sections</td>
+<td>Garrison and Marble [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0010">10</a>]</td>
+</tr>
+<tr class="even">
+<td>Eta index</td>
+<td>𝜂 = <em>R</em>/<em>e</em></td>
+<td>Lack of consideration of the impact of nodes in the road network on connectivity</td>
+<td>Kansky and Danscoine [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0011">11</a>]</td>
+</tr>
+<tr class="odd">
+<td>Pi index</td>
+<td>𝝅 = <em>R</em>/<em>d</em></td>
+<td>Only the influence of the distance of the road section was considered.</td>
+<td>Kansky and Danscoine [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0011">11</a>]</td>
+</tr>
+<tr class="even">
+<td>Theta index</td>
+<td>𝜃 = <em>T</em>/<em>v</em></td>
+<td>Applicable to topological networks with high node traffic or where transport hubs are important nodes</td>
+<td>Kansky and Danscoine [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0011">11</a>]</td>
+</tr>
+<tr class="odd">
+<td>GTP</td>
+<td>[mathematical equation]</td>
+<td>Capable of reflecting the impact of the structural layout of the road network on connectivity, but unable to reflect changes in connectivity due to road control on road sections</td>
+<td><p>Noda [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0027">27</a>]</p>
+<p>Sreelekha et al.&nbsp;[<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0009">9</a>]</p></td>
+</tr>
+<tr class="even">
+<td>LNR model</td>
+<td><em>CI<sub>i</sub></em> = 𝜔<sub>1</sub><em>e</em>/<em>v</em> + 𝜔<sub>2</sub><em>f<sub>i</sub></em></td>
+<td>In the evaluation addressing the connectivity of the pedestrian network, transport facilities were only considered in relation to public transport facilities, and the impact of road access facilities was not considered.</td>
+<td>Li et al.&nbsp;[<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0014">14</a>]</td>
+</tr>
+<tr class="odd">
+<td>Shimbel Index</td>
+<td>Represented by the shortest distance from a node to other nodes, the shorter the distance the better the centrality.</td>
+<td>The main focus is on the shortest path between connected nodes; however, the directness of the path’s connectivity is not considered; the shortest distance of the path is shorter, but its connectivity is also affected by excessive detours.</td>
+<td><p>Sharma and Ram [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0028">28</a>]</p>
+<p>Daniel et al.&nbsp;[<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0029">29</a>]</p></td>
+</tr>
+<tr class="even">
+<td>Four-way intersection count</td>
+<td>Number of four-way intersections in the road network</td>
+<td>Considering four-way intersection connectivity only in terms of road network topology and ignoring disconnections due to access restrictions in a particular direction caused by control conditions</td>
+<td>Soczówka et al.&nbsp;[<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0015">15</a>]</td>
+</tr>
+<tr class="odd">
+<td>Average distance, route directness, and route diversity</td>
+<td>Network connectivity is defined by the distance between nodes and the nature of the routes; a well-connected network will have shorter distances between nodes, more direct routes, and more travelling paths.</td>
+<td>The three indicators are evaluated individually, without integrating the three indicators for a comprehensive evaluation of road network connectivity.</td>
+<td>Scoppa and Anabtawi [<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0012">12</a>]</td>
+</tr>
+<tr class="even">
+<td>Capacity-weighted eigenvector centrality methods</td>
+<td>Links with different attributes have different road capacities and exhibit different connectivity capabilities</td>
+<td>The capacity of a road section is affected by many factors, and the uncertainty of the parameters may affect the stability and authenticity of the evaluation results.</td>
+<td>Ando et al.&nbsp;[<a href="https://onlinelibrary.wiley.com/doi/full/10.1155/atr/3589423#bib-0013">13</a>]</td>
+</tr>
+</tbody>
+</table>
+<p>Then they propose a road network connectivity evaluation method based on node <strong>turning coefficients</strong> to address connectivity challenges under complex traffic control conditions. And run for different neighbourhoods, This is more from a traffic perspective (turning lane turning restrictions).</p>
+<p><span class="citation" data-cites="szell2021">Szell et al. (<a href="#ref-szell2021" role="doc-biblioref">2021</a>)</span> examined topological constraints and strategic planning for cycling network optimisation using <strong>percolation</strong> theory. Their synthetic approach modelled cycling network growth in <strong>62 cities</strong>, testing three growth strategies: random addition, greedy demand-based expansion, and betweenness centrality prioritisation. Their findings reveal challenges in creating <strong>cohesive networks</strong> and demonstrate diminishing returns on cycling infrastructure investment until reaching critical mass, highlighting the need for strategic, persistent investment. Whilst their network expansion models show significant overlaps with well-developed cycling networks in cities, the synthetic approach using theoretical node placement and uniform grid topologies does not directly represent real urban street patterns or empirical demand distributions. (from <span class="citation" data-cites="wang2026">Wang et al. (<a href="#ref-wang2026" role="doc-biblioref">2026</a>)</span> lit review). [<em>explore this further</em>]</p>
+</section>
+<section id="accessibility" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="accessibility"><span class="header-section-number">2.2</span> Accessibility</h2>
+<p>Check the work from <span class="citation" data-cites="murphy2019">Murphy and Owen (<a href="#ref-murphy2019" role="doc-biblioref">2019</a>)</span></p>
+<!--# Continue from here -->
+</section>
+<section id="so" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="so"><span class="header-section-number">2.3</span> So…</h2>
+<p><strong>Consistency/cohesion</strong> (working definition to test):</p>
+<ul>
+<li><p>continuous connections between origins/destinations</p></li>
+<li><p>low-stress continuity along likely routes</p></li>
+<li><p>minimal fragmentation/dangling segments</p></li>
+<li><p>good directness + redundancy at a network level</p></li>
+</ul>
+<p>Summary from the literature so far:</p>
+<ul>
+<li><p>Connectivity/discontinuity indicators: <span class="citation" data-cites="niaki2025">Niaki et al. (<a href="#ref-niaki2025" role="doc-biblioref">2025</a>)</span> (cycling discontinuities): useful methods + code, but their “discontinuity” focuses on facility-type change/endpoints (not fully my target meaning)</p></li>
+<li><p>Reviews: <span class="citation" data-cites="schon2024">Schön, Heinen, and Manum (<a href="#ref-schon2024" role="doc-biblioref">2024</a>)</span> on connectivity measures + limited empirical validation</p></li>
+<li><p>Directness/circuity and discomfort: <span class="citation" data-cites="schoner2014">Schoner and Levinson (<a href="#ref-schoner2014" role="doc-biblioref">2014</a>)</span> (circuity), <span class="citation" data-cites="reggiani2022">Reggiani et al. (<a href="#ref-reggiani2022" role="doc-biblioref">2022</a>)</span> (distance–discomfort Pareto)</p></li>
+<li><p>Network growth / critical mass: <span class="citation" data-cites="szell2021">Szell et al. (<a href="#ref-szell2021" role="doc-biblioref">2021</a>)</span> (percolation - needs further exploring)</p></li>
+<li><p>“Core/cohesive network” generation: <span class="citation" data-cites="wang2026">Wang et al. (<a href="#ref-wang2026" role="doc-biblioref">2026</a>)</span> framework + open tool (but uses cycling potential, not observed volumes)</p></li>
+</ul>
+<ol type="1">
+<li>How can “consistent” cycling networks be defined and operationalised?</li>
+<li>How does increasing network consistency affect -&gt; Accessibility -&gt; cycling adoption/ridership?</li>
+</ol>
+</section>
+</section>
+<section id="methods" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Methods</h1>
+<p><strong>State of the art and selection of network indicators</strong></p>
+<ul>
+<li><p>Literature review on cycling network analysis and performance</p></li>
+<li><p>Systematization of network indicators with impact on cycling levels</p></li>
+</ul>
+<p>A comprehensive set of network performance indicators will be compiled from the literature and case-studies on cycling network assessment regarding consistency, performance and accessibility. These indicators include (not exclusively) connectivity, directness, closeness, betweenness, redundancy, and fragmentation. The integration of open data sources and graph network science will advance the field of cycling network analysis.</p>
+<p><strong>Modelling network factors with impact on cycling adoption</strong></p>
+<p>Collecting and processing data to build a model that explains how improvements in network consistency influence performance. This model is calibrated and validated with the existing high-quality cyclists’ counting dataset in the case studies (2017-2023), coincident with the before/after major cycling infrastructure changes in each city.</p>
+<p>For <strong>data preparation</strong></p>
+<ul>
+<li><p>OSMnx, for creating a valid topological network, with edges and nodes correctly represented. There is a QGIS plugin for that. See <span class="citation" data-cites="boeing2017">Boeing (<a href="#ref-boeing2017" role="doc-biblioref">2017</a>)</span> .</p></li>
+<li></li>
+</ul>
+<p>For <strong>identification of missing links</strong></p>
+<ol type="1">
+<li>Network performance assessment (baseline)</li>
+<li>Simulate changes in the cycling network (scenarios)</li>
+<li>Assess performance of potential improvements and estimate impacts on cycling</li>
+<li>Identify network segments and prioritize high-impact interventions</li>
+<li>Develop an automated algorithm to systematically identify priority network links</li>
+</ol>
+<ul>
+<li><p><code>sfnetworks</code> R package</p></li>
+<li><p>sDNA, from <span class="citation" data-cites="cooper2020">Cooper and Chiaradia (<a href="#ref-cooper2020" role="doc-biblioref">2020</a>)</span>, although it is not easy to setup (only windows a couple of years ago), and very useful for 3D networks (as Hong Kong PedNet)</p></li>
+</ul>
+<p>For the <strong>impacts estimation</strong></p>
+<ul>
+<li><p>Modelling with panel data? considering the temporal effects (existing network at each year), and location and global effects</p></li>
+<li><p>Temporal Graph attention networks?</p>
+<p>Temporal Graph Attention Networks (TGATs) combine spatial graph attention with temporal learning components to capture how network characteristics and spatio-temporal patterns evolve. TGATs integrate information from neighbouring links (spatial context) while accounting for changes across years or policy shifts (temporal context), making them well suited to analyze historical cycling levels and infrastructure data.</p></li>
+</ul>
+<section id="case-studies" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="case-studies"><span class="header-section-number">3.1</span> Case Studies</h2>
+<ul>
+<li><p>Lisbon</p></li>
+<li><p>Sydney (city - Local Government Area)</p></li>
+</ul>
+</section>
+<section id="data" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="data"><span class="header-section-number">3.2</span> Data</h2>
+<ul>
+<li><p>OSM networks, namely for cycling network</p></li>
+<li><p>Historical perspective to access the connectivity gains (?)</p>
+<ul>
+<li><a href="https://eugenividal.github.io/slides/getting-historical-visible-cycling-infra-from-osm-main/README.html">Getting historical OSM cycling infrastructure data</a> (Eugene Vidal)</li>
+</ul></li>
+<li><p>Counting points and evolution of cyclists</p>
+<ul>
+<li><p>Sydney <a href="https://data.cityofsydney.nsw.gov.au/datasets/5e3b0001a1a4402486d1fb76bb8b290c_0/explore">1</a> and <a href="https://data.cityofsydney.nsw.gov.au/datasets/cityofsydney::bicycle-count-sites/explore?location=-33.901627%2C151.200321%2C13">2</a> - 109 locations 2010-2025, per hour!</p></li>
+<li><p>Lisbon - 70 locations, 2017-2023, per hour (not all 24h)</p></li>
+</ul></li>
+</ul>
+<p><img src="images/clipboard-1343400768.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="results" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Results</h1>
+</section>
+<section id="discussion" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Discussion</h1>
+</section>
+<section id="conclusions" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Conclusions</h1>
+</section>
+<section id="references" class="level1 unnumbered" data-number="7">
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">7 References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-bernhoft2008" class="csl-entry" role="listitem">
+Bernhoft, Inger Marie, and Gitte Carstensen. 2008. <span>“Preferences and Behaviour of Pedestrians and Cyclists by Age and Gender.”</span> <em>Transportation Research Part F: Traffic Psychology and Behaviour</em> 11 (2): 83–95. <a href="https://doi.org/10.1016/j.trf.2007.08.004">https://doi.org/10.1016/j.trf.2007.08.004</a>.
+</div>
+<div id="ref-boeing2017" class="csl-entry" role="listitem">
+Boeing, Geoff. 2017. <span>“OSMnx: New Methods for Acquiring, Constructing, Analyzing, and Visualizing Complex Street Networks.”</span> <em>Computers, Environment and Urban Systems</em> 65 (September): 126–39. <a href="https://doi.org/10.1016/j.compenvurbsys.2017.05.004">https://doi.org/10.1016/j.compenvurbsys.2017.05.004</a>.
+</div>
+<div id="ref-cambra2019a" class="csl-entry" role="listitem">
+Cambra, Paulo Jorge, Alexandre Gonçalves, and Filipe Moura. 2019. <span>“The Digital Pedestrian Network in Complex Urban Contexts: A Primer Discussion on Typological Specifications.”</span> <em>Finisterra</em>, May, 155–170 Pages. <a href="https://doi.org/10.18055/FINIS16414">https://doi.org/10.18055/FINIS16414</a>.
+</div>
+<div id="ref-cambra2019" class="csl-entry" role="listitem">
+Cambra, Paulo, and Filipe Moura. 2020. <span>“How Does Walkability Change Relate to Walking Behavior Change? Effects of a Street Improvement in Pedestrian Volumes and Walking Experience.”</span> <em>Journal of Transport and Health</em> 16 (November 2019): 100797–97. <a href="https://doi.org/10.1016/j.jth.2019.100797">https://doi.org/10.1016/j.jth.2019.100797</a>.
+</div>
+<div id="ref-christ2023" class="csl-entry" role="listitem">
+Christ, Ana Karina, Miguel Costa, Manuel Marques, Carlos Roque, and Filipe Moura. 2023. <span>“Perceiving Objective Cycling Safety: A Systematic Literature Review.”</span> In, 72:1380–87. <a href="https://doi.org/10.1016/j.trpro.2023.11.601">https://doi.org/10.1016/j.trpro.2023.11.601</a>.
+</div>
+<div id="ref-cooper2015" class="csl-entry" role="listitem">
+Cooper, Crispin H. V. 2015. <span>“Spatial Localization of Closeness and Betweenness Measures: A Self-Contradictory but Useful Form of Network Analysis.”</span> <em>International Journal of Geographical Information Science</em> 29 (8): 1293–1309. <a href="https://doi.org/10.1080/13658816.2015.1018834">https://doi.org/10.1080/13658816.2015.1018834</a>.
+</div>
+<div id="ref-cooper2020" class="csl-entry" role="listitem">
+Cooper, Crispin H. V., and Alain J. F. Chiaradia. 2020. <span>“sDNA: 3-d Spatial Network Analysis for GIS, CAD, Command Line &amp; Python.”</span> <em>SoftwareX</em> 12 (July): 100525. <a href="https://doi.org/10.1016/j.softx.2020.100525">https://doi.org/10.1016/j.softx.2020.100525</a>.
+</div>
+<div id="ref-costa2021" class="csl-entry" role="listitem">
+Costa, Miguel, Manuel Marques, and Filipe Moura. 2021. <span>“A Circuity Temporal Analysis of Urban Street Networks Using Open Data: A Lisbon Case Study.”</span> <em>ISPRS International Journal of Geo-Information</em> 10 (7): 453. <a href="https://doi.org/gmf8c9">https://doi.org/gmf8c9</a>.
+</div>
+<div id="ref-félix2020" class="csl-entry" role="listitem">
+Félix, Rosa, Paulo Cambra, and Filipe Moura. 2020. <span>“Build It and Give <span>‘</span>Em Bikes, and They Will Come: The Effects of Cycling Infrastructure and Bike-Sharing System in Lisbon.”</span> <em>Case Studies on Transport Policy</em> 8 (2): 672–82. <a href="https://doi.org/10.1016/j.cstp.2020.03.002">https://doi.org/10.1016/j.cstp.2020.03.002</a>.
+</div>
+<div id="ref-félix2022" class="csl-entry" role="listitem">
+Félix, Rosa, Robin Lovelace, and Filipe Moura. 2022. <span>“biclaR: Ferramenta de Apoio Ao Planeamento Da Rede Ciclável Na Área Metropolitana de Lisboa.”</span> Lisboa. <a href="https://biclar.tmlmobilidade.pt">https://biclar.tmlmobilidade.pt</a>.
+</div>
+<div id="ref-félix2019" class="csl-entry" role="listitem">
+Félix, Rosa, Filipe Moura, and Kelly J Clifton. 2019. <span>“Maturing Urban Cycling: Comparing Barriers and Motivators to Bicycle of Cyclists and Non-Cyclists in Lisbon, Portugal.”</span> <em>Journal of Transport &amp; Health</em> 15: 100628–28. <a href="https://doi.org/10.1016/j.jth.2019.100628">https://doi.org/10.1016/j.jth.2019.100628</a>.
+</div>
+<div id="ref-félix2025" class="csl-entry" role="listitem">
+Félix, Rosa, Filipe Moura, and Kelly J. Clifton. 2025. <span>“The Hierarchy of Cycling Needs: Modeling the Self-Assessed Propensity to Bicycle.”</span> <em>Journal of Urban Mobility</em> 7 (June): 100130. <a href="https://doi.org/10.1016/j.urbmob.2025.100130">https://doi.org/10.1016/j.urbmob.2025.100130</a>.
+</div>
+<div id="ref-fernandes2020" class="csl-entry" role="listitem">
+Fernandes, P., C. Sousa, J. Macedo, and M. C. Coelho. 2020. <span>“How to Evaluate the Extent of Mobility Strategies in a University Campus: An Integrated Analysis of Impacts.”</span> <em>International Journal of Sustainable Transportation</em> 14 (2): 120–36. <a href="https://doi.org/10.1080/15568318.2018.1531183">https://doi.org/10.1080/15568318.2018.1531183</a>.
+</div>
+<div id="ref-furth2016" class="csl-entry" role="listitem">
+Furth, Peter G., Maaza C. Mekuria, and Hilary Nixon. 2016. <span>“Network Connectivity for Low-Stress Bicycling.”</span> <em>Transportation Research Record: Journal of the Transportation Research Board</em> 2587 (1): 41–49. <a href="https://doi.org/10.3141/2587-06">https://doi.org/10.3141/2587-06</a>.
+</div>
+<div id="ref-garrison1964" class="csl-entry" role="listitem">
+Garrison, William L., and Duane F. Marble. 1964. <span>“Factor-Analytic Study of the Connectivity of a Transportation Network.”</span> <em>Papers of the Regional Science Association</em> 12 (1): 231–38. <a href="https://doi.org/10.1007/BF01941256">https://doi.org/10.1007/BF01941256</a>.
+</div>
+<div id="ref-gehrke2020" class="csl-entry" role="listitem">
+Gehrke, Steven R., Armin Akhavan, Peter G. Furth, Qi Wang, and Timothy G. Reardon. 2020. <span>“A Cycling-Focused Accessibility Tool to Support Regional Bike Network Connectivity.”</span> <em>Transportation Research Part D: Transport and Environment</em> 85 (August): 102388. <a href="https://doi.org/10.1016/j.trd.2020.102388">https://doi.org/10.1016/j.trd.2020.102388</a>.
+</div>
+<div id="ref-giacomin2015" class="csl-entry" role="listitem">
+Giacomin, David J, and David M Levinson. 2015. <span>“Road Network Circuity in Metropolitan Areas.”</span> <em>Environment and Planning B: Planning and Design</em> 42 (6): 1040–53. <a href="https://doi.org/10.1068/b130131p">https://doi.org/10.1068/b130131p</a>.
+</div>
+<div id="ref-heinen2010" class="csl-entry" role="listitem">
+Heinen, Eva, Bert van Wee, and Kees Maat. 2010. <span>“Commuting by Bicycle: An Overview of the Literature.”</span> <em>Transport Reviews</em> 30 (1): 59–96. <a href="https://doi.org/10.1080/01441640903187001">https://doi.org/10.1080/01441640903187001</a>.
+</div>
+<div id="ref-humberto2023" class="csl-entry" role="listitem">
+Humberto, Mateus, Rosa Félix, and Filipe Moura. 2023. <span>“How Equal Is Accessibility to Cycling Infrastructure? A Ranking to Compare Territories in Lisbon, Portugal.”</span> In, 72:2472–78. <a href="https://doi.org/10.1016/j.trpro.2023.11.752">https://doi.org/10.1016/j.trpro.2023.11.752</a>.
+</div>
+<div id="ref-jia2024" class="csl-entry" role="listitem">
+Jia, Yilong, Jun Wang, M. Reza Hosseini, Wenchi Shou, Peng Wu, and Chao Mao. 2024. <span>“Temporal Graph Attention Network for Building Thermal Load Prediction.”</span> <em>Energy and Buildings</em> 321 (October): 113507. <a href="https://doi.org/10.1016/j.enbuild.2023.113507">https://doi.org/10.1016/j.enbuild.2023.113507</a>.
+</div>
+<div id="ref-jia2023" class="csl-entry" role="listitem">
+Jia, Yilong, Jun Wang, Wenchi Shou, M. Reza Hosseini, and Yu Bai. 2023. <span>“Graph Neural Networks for Construction Applications.”</span> <em>Automation in Construction</em> 154 (October): 104984. <a href="https://doi.org/10.1016/j.autcon.2023.104984">https://doi.org/10.1016/j.autcon.2023.104984</a>.
+</div>
+<div id="ref-lovelace2017" class="csl-entry" role="listitem">
+Lovelace, Robin, Anna Goodman, Rachel Aldred, and James Woodcock. 2017. <span>“The Propensity to Cycle Tool: An Open Source Online System for Sustainable Transport Planning Developer.”</span> <em>Journal of Transport and Land Use</em> 10 (1): 505–28. <a href="https://doi.org/10.5198/jtlu.2016.862">https://doi.org/10.5198/jtlu.2016.862</a>.
+</div>
+<div id="ref-lovelace2024" class="csl-entry" role="listitem">
+Lovelace, Robin, Joey Talbot, Eugeni Vidal-Tortosa, Hussein Mahfouz, Elaine Brick, Peter Wright, Gary O’Toole, Dan Brennan, and Suzanne Meade. 2024. <span>“Cycle Route Uptake and Scenario Estimation (CRUSE): An Approach for Developing Strategic Cycle Network Planning Tools.”</span> <em>European Transport Research Review</em> 16 (1): 55. <a href="https://doi.org/10.1186/s12544-024-00668-8">https://doi.org/10.1186/s12544-024-00668-8</a>.
+</div>
+<div id="ref-macedo2017" class="csl-entry" role="listitem">
+Macedo, Joaquim, Fernanda Rodrigues, and Fernando Tavares. 2017. <span>“Urban Sustainability Mobility Assessment: Indicators Proposal.”</span> <em>Energy Procedia</em> 134 (October): 731–40. <a href="https://doi.org/10.1016/j.egypro.2017.09.569">https://doi.org/10.1016/j.egypro.2017.09.569</a>.
+</div>
+<div id="ref-matos2021" class="csl-entry" role="listitem">
+Matos, Francisco Lé De, José Maria Fernandes, Carlos Sampaio, Joaquim Macedo, Margarida C. Coelho, and Jorge Bandeira. 2021. <span>“Development of an Information System for Cycling Navigation.”</span> <em>Transportation Research Procedia</em> 52: 107–14. <a href="https://doi.org/10.1016/j.trpro.2021.01.012">https://doi.org/10.1016/j.trpro.2021.01.012</a>.
+</div>
+<div id="ref-moura2017" class="csl-entry" role="listitem">
+Moura, Filipe, Joana Magalhães, and Luis Picado Santos. 2017. <span>“Growing from Incipient to Potentially Large Cycle Networks: Screening the Road Network of the Consolidated Urban Area of Lisbon.”</span> <em>European Journal of Transport and Infrastructure Research</em> 17 (1): 170–90.
+</div>
+<div id="ref-murphy2019" class="csl-entry" role="listitem">
+Murphy, Brendan, and Andrew Owen. 2019. <span>“Implementing Low-Stress Bicycle Routing in National Accessibility Evaluation.”</span> <em>Transportation Research Record: Journal of the Transportation Research Board</em> 2673 (5): 240–49. <a href="https://doi.org/10.1177/0361198119837179">https://doi.org/10.1177/0361198119837179</a>.
+</div>
+<div id="ref-niaki2025" class="csl-entry" role="listitem">
+Niaki, Matin S. Nabavi, Jean-Simon Bourdeau, Luis Miranda-Moreno, and Nicolas Saunier. 2025. <span>“Cycling Network Discontinuities as Indicators for Performance Evaluation: Case Study in Four Cities.”</span> <em>Transportation Research Procedia</em> 82: 1071–88. <a href="https://doi.org/10.1016/j.trpro.2024.12.114">https://doi.org/10.1016/j.trpro.2024.12.114</a>.
+</div>
+<div id="ref-pereira2021" class="csl-entry" role="listitem">
+Pereira, Rafael H. M., Marcus Saraiva, Daniel Herszenhut, Carlos Kaue Vieira Braga, and Matthew Wigginton Conway. 2021. <span>“R5r: Rapid Realistic Routing on Multimodal Transport Networks with R<span><sup>5</sup></span> in R.”</span> <em>Findings</em>, March, 21262. <a href="https://doi.org/10.32866/001c.21262">https://doi.org/10.32866/001c.21262</a>.
+</div>
+<div id="ref-rahman2018" class="csl-entry" role="listitem">
+Rahman, Aowabin, Vivek Srikumar, and Amanda D. Smith. 2018. <span>“Predicting Electricity Consumption for Commercial and Residential Buildings Using Deep Recurrent Neural Networks.”</span> <em>Applied Energy</em> 212 (February): 372–85. <a href="https://doi.org/10.1016/j.apenergy.2017.12.051">https://doi.org/10.1016/j.apenergy.2017.12.051</a>.
+</div>
+<div id="ref-reggiani2022" class="csl-entry" role="listitem">
+Reggiani, Giulia, Tim Van Oijen, Homayoun Hamedmoghadam, Winnie Daamen, Hai L. Vu, and Serge Hoogendoorn. 2022. <span>“Understanding Bikeability: A Methodology to Assess Urban Networks.”</span> <em>Transportation</em> 49 (3): 897–925. <a href="https://doi.org/10.1007/s11116-021-10198-0">https://doi.org/10.1007/s11116-021-10198-0</a>.
+</div>
+<div id="ref-schon2024" class="csl-entry" role="listitem">
+Schön, Peter, Eva Heinen, and Bendik Manum. 2024. <span>“A Scoping Review on Cycling Network Connectivity and Its Effects on Cycling.”</span> <em>Transport Reviews</em> 44 (4): 912–36. <a href="https://doi.org/10.1080/01441647.2024.2337880">https://doi.org/10.1080/01441647.2024.2337880</a>.
+</div>
+<div id="ref-schon2026" class="csl-entry" role="listitem">
+———. 2026. <span>“Route-Based Network Analysis: <span>“</span>Route Betweenness<span>”</span> and <span>“</span>Route Link Density<span>”</span> Applied to a Study of a Proposed Bridge in Trondheim.”</span> <em>Journal of Transport Geography</em> 130 (January): 104491. <a href="https://doi.org/10.1016/j.jtrangeo.2025.104491">https://doi.org/10.1016/j.jtrangeo.2025.104491</a>.
+</div>
+<div id="ref-schoner2014" class="csl-entry" role="listitem">
+Schoner, Jessica E., and David M. Levinson. 2014. <span>“The Missing Link: Bicycle Infrastructure Networks and Ridership in 74 US Cities.”</span> <em>Transportation</em> 41 (6): 1187–1204. <a href="https://doi.org/10.1007/s11116-014-9538-1">https://doi.org/10.1007/s11116-014-9538-1</a>.
+</div>
+<div id="ref-szell2021" class="csl-entry" role="listitem">
+Szell, Michael, Sayat Mimar, Tyler Perlman, Gourab Ghoshal, and Roberta Sinatra. 2021. <span>“Growing Urban Bicycle Networks.”</span> <em>arXiv:2107.02185 [Physics]</em>, July. <a href="http://arxiv.org/abs/2107.02185">http://arxiv.org/abs/2107.02185</a>.
+</div>
+<div id="ref-vale2016" class="csl-entry" role="listitem">
+Vale, David S, and Mauro Pereira. 2016. <span>“Influence on Pedestrian Commuting Behavior of the Built Environment Surrounding Destinations: A Structural Equations Modeling Approach.”</span> <em>International Journal of Sustainable Transportation</em> 10 (8): 730–41. <a href="https://doi.org/10.1080/15568318.2016.1144836">https://doi.org/10.1080/15568318.2016.1144836</a>.
+</div>
+<div id="ref-vandermeer2024" class="csl-entry" role="listitem">
+Van Der Meer, Lucas, Christian Werner, and Martin Loidl. 2024. <span>“Assessment of Bicycle Accessibility to Mobility Hubs Under Different Criteria for Cycling Network Quality.”</span> <em>AGILE: GIScience Series</em> 5 (May): 1–7. <a href="https://doi.org/10.5194/agile-giss-5-48-2024">https://doi.org/10.5194/agile-giss-5-48-2024</a>.
+</div>
+<div id="ref-wang2026" class="csl-entry" role="listitem">
+Wang, Zhao, Hang Hu, Hussein Mahfouz, Juan Pablo Fonseca-Zamora, Martin Lucas-Smith, Dustin Carlino, Angus Calder, et al. 2026. <span>“Corenet: A Flexible Framework for Generating and Prioritising Core Cycle Network Designs.”</span> <em>Journal of Transport Geography</em> 131 (February): 104549. <a href="https://doi.org/10.1016/j.jtrangeo.2026.104549">https://doi.org/10.1016/j.jtrangeo.2026.104549</a>.
+</div>
+<div id="ref-weikl2023" class="csl-entry" role="listitem">
+Weikl, Simone, and Patricia Mayer. 2023. <span>“Data-Driven Quality Assessment of Cycling Networks.”</span> <em>Frontiers in Future Transportation</em> 4 (March): 1127742. <a href="https://doi.org/10.3389/ffutr.2023.1127742">https://doi.org/10.3389/ffutr.2023.1127742</a>.
+</div>
+<div id="ref-werner2024" class="csl-entry" role="listitem">
+Werner, Christian, Lucas Van Der Meer, Dana Kaziyeva, Petra Stutz, Robin Wendel, and Martin Loidl. 2024. <span>“Bikeability of Road Segments: An Open, Adjustable and Extendible Model.”</span> <em>Journal of Cycling and Micromobility Research</em> 2 (December): 100040. <a href="https://doi.org/10.1016/j.jcmr.2024.100040">https://doi.org/10.1016/j.jcmr.2024.100040</a>.
+</div>
+<div id="ref-xie2007" class="csl-entry" role="listitem">
+Xie, Feng, and David Levinson. 2007. <span>“Measuring the Structure of Road Networks.”</span> <em>Geographical Analysis</em> 39 (3): 336–56. <a href="https://doi.org/10.1111/j.1538-4632.2007.00707.x">https://doi.org/10.1111/j.1538-4632.2007.00707.x</a>.
+</div>
+<div id="ref-xing2025" class="csl-entry" role="listitem">
+Xing, Ruru, ZePeng Yang, Xinghua Zhang, Yiwen Liang, Tao Yang, and Fei Wang. 2025. <span>“Identifying Strong Connectivity in Urban Road Networks Considering Traffic Constraints: An Analysis of Road Networks With Different Patterns.”</span> Edited by Indrajit Ghosh. <em>Journal of Advanced Transportation</em> 2025 (1): 3589423. <a href="https://doi.org/10.1155/atr/3589423">https://doi.org/10.1155/atr/3589423</a>.
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
