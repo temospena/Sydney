@@ -72,8 +72,8 @@ map_cycling_multi_year <- function(versions,
     
     # Load and Prep
     dat <- read_cycling_network(method, year_val, city_tag) |>
-      prep_for_map(method = method) |>
-      add_osmid_to_popup() |>
+      prep_for_map(method = method) |> 
+      add_osmid_to_popup() |> 
       add_gsv_popup_safe(add_gsv = TRUE)
     
     bbox_list[[i]] <- dat
@@ -111,3 +111,4 @@ map_cycling_multi_year <- function(versions,
 }
 
 map_cycling_multi_year(versions = VERSIONS,  city_tag = "lisbon", method = "osmextract_custom")
+map_cycling_multi_year(versions = VERSIONS,  city_tag = "sydney", method = "osmextract_custom")

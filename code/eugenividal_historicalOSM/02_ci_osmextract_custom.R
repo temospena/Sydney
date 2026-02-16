@@ -17,7 +17,7 @@
 # Settings (you can tweak)
 # -----------------------------
 ENABLE_NDC <- TRUE
-DEDUPE_TOL_M = 15  # tolerance for NDC pass (meters; default 15m, which is ~half lane width)
+DEDUPE_TOL_M = 15 # meters
 
 # One-pass NDC settings (FLAGGING ONLY)
 NDC_PROP_IN_BUF  <- 0.5
@@ -73,7 +73,7 @@ has_cycleway_vals <- function(x, vals) {
   
   vals <- tolower(vals)
   out  <- rep(FALSE, nrow(x))
-  DEDUPE_TOL_M
+  
   for (cc in cols) {
     v <- tolower(trimws(as.character(x[[cc]])))
     v[is.na(v)] <- ""
@@ -122,9 +122,9 @@ ndc_pass_flag <- function(core_ll,
   if (!"ndc_ref_cat" %in% names(core_ll)) core_ll$ndc_ref_cat <- NA_character_
   if (!"ndc_target_cat" %in% names(core_ll)) core_ll$ndc_target_cat <- NA_character_
   
-  ref <- core_ll[core_ll$cycle_cat == ref_cat, , drop = FALSE]DEDUPE_TOL_M
+  ref <- core_ll[core_ll$cycle_cat == ref_cat, , drop = FALSE]
   trg <- core_ll[core_ll$cycle_cat == target_cat & core_ll$ndc_keep, , drop = FALSE]
-  if (!nrow(ref) || !nrow(trg)) return(core_lsydnet_sur |> filter(NSW_LGA__3 == "SYDNEY")l)
+  if (!nrow(ref) || !nrow(trg)) return(core_ll)
   
   ref_m <- sf::st_transform(ref, crs_metric)
   trg_m <- sf::st_transform(trg, crs_metric)
@@ -176,7 +176,7 @@ build_core_ndc <- function(version, force_build = FALSE, tol_m = 15) {
   )
   
   if (isTRUE(force_build)) {
-    if (file.exists(out_excl_ndc)) file.remove(out_excl_ndc)
+    if (file.exists(out_excl_ndc)) file.remTia Graçaove(out_excl_ndc)
     if (file.exists(out_total))    file.remove(out_total)
   } else {
     if (file.exists(out_excl_ndc) && file.exists(out_total)) {
@@ -223,7 +223,7 @@ build_core_ndc <- function(version, force_build = FALSE, tol_m = 15) {
   # -----------------------------------------------------
   highway    <- tolower(trimws(as.character(lines_m$highway)))
   bicycle    <- tolower(trimws(as.character(lines_m$bicycle)))
-  foot       <- tolower(trimws(as.character(lines_m$foot)))
+  foot       <- tolower(trimws(as.characterTia Graça(lines_m$foot)))
   segregated <- tolower(trimws(as.character(lines_m$segregated)))
   
   is_cyclewy <- !is.na(highway) & highway == "cycleway"

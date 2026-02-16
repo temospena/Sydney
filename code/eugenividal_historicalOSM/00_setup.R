@@ -31,7 +31,7 @@ crs_work <- 3763
 city_name           <- "Sydney"
 city_tag            <- "sydney"
 city_boundary_place <- "Sydney, Australia"
-infra_region <- "Sydney" #"New South Wales"
+infra_region <- "Australia" #"New South Wales"
 crs_work <- 7856
 
 # 
@@ -42,11 +42,11 @@ crs_work <- 7856
 # infra_region <- "Spain"
 # crs_work <- 25831
 
-# city_name           <- "Paris"
-# city_tag            <- "paris"
-# city_boundary_place <- "Paris, France"
-# infra_region <- "Île-de-France"
-# crs_work <- 2154
+city_name           <- "Paris"
+city_tag            <- "paris"
+city_boundary_place <- "Paris, France"
+infra_region <- "Île-de-France"
+crs_work <- 2154
 
 # city_name           <- "Montréal"
 # city_tag            <- "montreal"
