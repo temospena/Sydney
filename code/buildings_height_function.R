@@ -1,0 +1,122 @@
+# Extract buildings height and estimate floors from the Global Building Atlas LOD1 dataset using DuckDB and sf
+# https://mediatum.ub.tum.de/1782307
+# https://source.coop/tge-labs/globalbuildingatlas-lod1
+# cite: https://doi.org/10.5194/essd-17-6647-2025
+
+library(duckdb)
+library(sf)
+library(dplyr)
+
+
+fetch_building_points <- function(city_name, bbox_list, parket_file_dir) {
+  
+  parquet_s3_path <- paste0("s3://us-west-2.opendata.source.coop/tge-labs/globalbuildingatlas-lod1/", parket_file_dir, ".parquet")
+  
+  
+  # 1. Extract coordinates from list
+  coords <- bbox_list[[city_name]]
+  if(is.null(coords)) stop("City not found in list!")
+  
+  # Map variables for the SQL query
+  # Note: your list format is xmin, ymin, xmax, ymax
+  q_xmin <- coords[1]; q_ymin <- coords[2]; q_xmax <- coords[3]; q_ymax <- coords[4]
+  
+  # 2. Setup DuckDB
+  con <- dbConnect(duckdb())
+  dbExecute(con, "INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs; SET s3_region='us-west-2'; SET preserve_insertion_order=false;")
+  
+  # 3. Query using BBox midpoints (Fastest & most stable)
+  query <- paste0("
+  SELECT * EXCLUDE (geometry), 
+         TRY_CAST(geometry AS GEOMETRY) as geom
+  FROM read_parquet('", parquet_s3_path, "')
+  WHERE bbox.xmin >= ", q_xmin, " AND bbox.xmax <= ", q_xmax, "
+      AND bbox.ymin >= ", q_ymin, " AND bbox.ymax <= ", q_ymax
+  )
+  
+  
+  message(paste("Fetching data for", city_name, "..."))
+  raw_data <- dbGetQuery(con, query) |> 
+    filter(!is.na(geom)) # Remove the NULLs we created
+  dbDisconnect(con) # STOP the connection to free resources
+  
+  if (nrow(raw_data) == 0) {
+    message("No buildings found for this area.")
+    return(NULL)
+  }
+  
+  # 4. Transform to SF points
+  buildings_centroids <- raw_data %>%
+    mutate(
+      lon = (bbox$xmin + bbox$xmax) / 2,
+      lat = (bbox$ymin + bbox$ymax) / 2,
+      est_floors = pmax(1, round(height / 3)) # approximately 3m per floor
+    ) %>%
+    st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
+    select(source, id, height, var, region, est_floors)
+  
+  return(buildings_centroids)
+}
+
+
+# run ---------------------------------------------------------------------
+# See in the 
+datalod1 = st_read("data/lod1.geojson")
+#### SEE HERE: https://source.coop/tge-labs/globalbuildingatlas-lod1
+lisbon_file_dir = "w010_n40_w005_n35" # Lisbon
+sydney_file_dir = "e150_s30_e155_s35" # Sydney
+paris_file_dir = "e000_n50_e005_n45" # Paris
+
+# bboxes <- list(
+#   Lisbon = c(-9.50, 38.40, -8.70, 39.10),
+#   Sydney = c(150.50, -34.15, 151.35, -33.55),
+#   Paris = c(2.21, 48.81, 2.47, 48.91)
+# )
+bboxes = readRDS("data/bboxes.rds")
+
+lisbon_buildings <- fetch_building_points("Lisbon", bboxes, lisbon_file_dir)
+sydney_buildings <- fetch_building_points("Sydney", bboxes, sydney_file_dir)
+paris_buildings <- fetch_building_points("Paris", bboxes, paris_file_dir)
+
+st_write(lisbon_buildings, "data/lisbon/lisbon_metro_buildings_height.geojson", delete_dsn = TRUE)
+st_write(sydney_buildings, "data/sydney/sydney_metro_buildings_height.geojson", delete_dsn = TRUE)
+st_write(paris_buildings, "data/paris/paris_metro_buildings_height.geojson", delete_dsn = TRUE)
+
+summary(lisbon_buildings$est_floor) # median: 1, mean: 1.64
+summary(sydney_buildings$est_floor) # median: 2; mean: 1.95
+summary(paris_buildings$est_floor) # median: 3; mean: 2.92
+
+
+lisbon_buildings_city = lisbon_buildings[lisboa,] # spatial filter
+paris_buildings_city = paris_buildings[paris_lim, ]
+sydney_buildings_city = sydney_buildings[sydney_perim |> st_make_valid(), ]
+
+summary(lisbon_buildings_city$est_floor) # median: 3, mean: 2.94
+summary(paris_buildings_city$est_floor) # median: 4; mean: 3.92
+summary(sydney_buildings_city$est_floor) # median: 3; mean: 3.21
+
+
+# map ---------------------------------------------------------------------
+
+library(mapview)
+library(RColorBrewer)
+
+
+
+mapview(sydney_buildings_city, 
+              zcol = "est_floors", 
+              # cex = "est_floors",       # Size of the dots based on floors
+               cex = 0.6, # fixed size
+              col.regions = colorRampPalette(brewer.pal(9, "YlOrRd")),        # Our custom color palette
+              alpha.regions = 0.7,      # Slight transparency to see overlapping points
+              alpha = 0, # hide limit
+              layer.name = "Est. Floors",
+              map.types = c("CartoDB.DarkMatter", "OpenStreetMap", "Esri.WorldImagery"),
+              legend = TRUE)
+
+
+# upload to github --------------------------------------------------------
+
+piggyback::pb_upload("data/lisbon/lisbon_metro_buildings_height.geojson")
+piggyback::pb_upload("data/sydney/sydney_metro_buildings_height.geojson")
+piggyback::pb_upload("data/paris/paris_metro_buildings_height.geojson")
