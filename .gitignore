@@ -38,3 +38,5 @@ rsconnect/
 networks/osmpbf files/
 networks/lts/
 networks/r5r/
+data/*_buildings_height.geojson
+
