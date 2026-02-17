@@ -335,6 +335,18 @@ We can use @costa2021 method for a Random Sample of 100k OD pairs isotropic (ran
 
 For this paper, it would make more sense to use a randomly distributed sample of OD pairs (can be 100k anyway), due to lack of mobility survey data?
 
+### Other method of OD data
+
+Use OD jittering [@lovelace2022], with subpoints as buildings, weighted by their number of floors, as a proxy for trip attractors.
+Data from buildings' height was retrieved from @zhu2025, and the number of floors was estimated assuming an average of 3 meters per floor.
+(we could also user area de construção!)
+
+![Lisbon buildings's estimated number of floors (mean: 2.94)](images/Screenshot_20260217_172324.png){width="450"}
+
+![Sydney buildings's estimated number of floors (mean: 3.21)](images/Screenshot_20260217_173136.png){width="450"}
+
+![Paris buildings's estimated number of floors (mean: 3.92)](images/Screenshot_20260217_172645.png){width="450"}
+
 ## Ground true data
 
 -   Counting points and evolution of cyclists
