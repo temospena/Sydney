@@ -121,7 +121,7 @@ summary(barcelona_buildings_city$total_floor_area_m2) # median: 1350; mean: 3697
 sf::st_write(lisbon_buildings_city, "data/lisbon/lisbon_city_buildings.geojson")
 sf::st_write(paris_buildings_city, "data/paris/paris_city_buildings.geojson")
 sf::st_write(sydney_buildings_city, "data/sydney/sydney_city_buildings.geojson")
-# sf::st_write(barcelona_buildings_city, "data/barcelona/barcelona_city_buildings.geojson")
+sf::st_write(barcelona_buildings_city, "data/barcelona/barcelona_city_buildings.geojson")
 
 
 # map ---------------------------------------------------------------------
