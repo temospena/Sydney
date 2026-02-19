@@ -176,7 +176,7 @@ build_core_ndc <- function(version, force_build = FALSE, tol_m = 15) {
   )
   
   if (isTRUE(force_build)) {
-    if (file.exists(out_excl_ndc)) file.remTia Graçaove(out_excl_ndc)
+    if (file.exists(out_excl_ndc)) file.remove(out_excl_ndc)
     if (file.exists(out_total))    file.remove(out_total)
   } else {
     if (file.exists(out_excl_ndc) && file.exists(out_total)) {
@@ -223,7 +223,7 @@ build_core_ndc <- function(version, force_build = FALSE, tol_m = 15) {
   # -----------------------------------------------------
   highway    <- tolower(trimws(as.character(lines_m$highway)))
   bicycle    <- tolower(trimws(as.character(lines_m$bicycle)))
-  foot       <- tolower(trimws(as.characterTia Graça(lines_m$foot)))
+  foot       <- tolower(trimws(as.character(lines_m$foot)))
   segregated <- tolower(trimws(as.character(lines_m$segregated)))
   
   is_cyclewy <- !is.na(highway) & highway == "cycleway"
