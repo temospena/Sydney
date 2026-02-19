@@ -1,7 +1,7 @@
 # ODs
 
-# There are many ways of dedinfint the ODs.
-# For rhis research, maybe using a grid h3 as all origins and destinations is enough?
+# There are many ways of define the ODs.
+# For this research, maybe using a grid h3 as all origins and destinations is enough?
 
 # Consider another way of doing this, with jittering? weighted by buildings heights?
 
