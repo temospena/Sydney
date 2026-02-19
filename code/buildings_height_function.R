@@ -75,39 +75,48 @@ fetch_building_points <- function(city_name, bbox_list, parket_file_dir) {
 lisbon_file_dir = "w010_n40_w005_n35" # Lisbon
 sydney_file_dir = "e150_s30_e155_s35" # Sydney
 paris_file_dir = "e000_n50_e005_n45" # Paris
+barcelona_file_dir = "e000_n45_e005_n40" # Barcelona
 
-# bboxes <- list(
-#   Lisbon = c(-9.50, 38.40, -8.70, 39.10),
-#   Sydney = c(150.50, -34.15, 151.35, -33.55),
-#   Paris = c(2.21, 48.81, 2.47, 48.91)
-# )
+bboxes <- list(
+  Lisbon = c(-9.50, 38.40, -8.70, 39.10),
+  Sydney = c(150.50, -34.15, 151.35, -33.55),
+  Paris = c(2.21, 48.81, 2.47, 48.91),
+  Barcelona = c(2.01, 41.30, 2.24, 41.49)
+)
 bboxes = readRDS("data/bboxes.rds")
 
 lisbon_buildings <- fetch_building_points("Lisbon", bboxes, lisbon_file_dir)
 sydney_buildings <- fetch_building_points("Sydney", bboxes, sydney_file_dir)
 paris_buildings <- fetch_building_points("Paris", bboxes, paris_file_dir)
+barcelona_buildings <- fetch_building_points("Barcelona", bboxes, barcelona_file_dir)
 
 st_write(lisbon_buildings, "data/lisbon/lisbon_metro_buildings_height.geojson", delete_dsn = TRUE)
 st_write(sydney_buildings, "data/sydney/sydney_metro_buildings_height.geojson", delete_dsn = TRUE)
 st_write(paris_buildings, "data/paris/paris_metro_buildings_height.geojson", delete_dsn = TRUE)
+st_write(barcelona_buildings, "data/barcelona/barcelona_metro_buildings_height.geojson", delete_dsn = TRUE) # not metro!
 
 summary(lisbon_buildings$est_floor) # median: 1, mean: 1.64
 summary(sydney_buildings$est_floor) # median: 2; mean: 1.95
 summary(paris_buildings$est_floor) # median: 3; mean: 2.92
+summary(barcelona_buildings$est_floor) # median: 4; mean: 3.773 (this is the city bbox, not the region) 
+
 
 
 lisbon_buildings_city = lisbon_buildings[lisboa,] # spatial filter
 paris_buildings_city = paris_buildings[paris_lim, ]
 sydney_buildings_city = sydney_buildings[sydney_city |> st_make_valid(), ]
+barcelona_buildings_city = barcelona_buildings[barcelona_perim, ]
 
 summary(lisbon_buildings_city$est_floor) # median: 3, mean: 2.94
 summary(paris_buildings_city$est_floor) # median: 4; mean: 3.92
 summary(sydney_buildings_city$est_floor) # median: 3; mean: 3.21
+summary(barcelona_buildings_city$est_floor) # median: 4; mean: 4.57
+
 
 summary(lisbon_buildings_city$total_floor_area_m2) # median: 752, mean: 4803
 summary(paris_buildings_city$total_floor_area_m2) # median: 1588; mean: 3452
 summary(sydney_buildings_city$total_floor_area_m2) # median: 804; mean: 3563
-
+summary(barcelona_buildings_city$total_floor_area_m2) # median: 1350; mean: 3697
 
 # map ---------------------------------------------------------------------
 
@@ -132,3 +141,4 @@ mapview(lisbon_buildings_city,
 piggyback::pb_upload("data/lisbon/lisbon_metro_buildings_height.geojson")
 piggyback::pb_upload("data/sydney/sydney_metro_buildings_height.geojson")
 piggyback::pb_upload("data/paris/paris_metro_buildings_height.geojson")
+piggyback::pb_upload("data/barcelona/barcelona_metro_buildings_height.geojson")
