@@ -102,7 +102,7 @@ summary(barcelona_buildings$est_floor) # median: 4; mean: 3.773 (this is the cit
 
 
 
-lisbon_buildings_city = lisbon_buildings[lisboa,] # spatial filter
+lisbon_buildings_city = lisbon_buildings[limit,] # spatial filter
 paris_buildings_city = paris_buildings[paris_lim, ]
 sydney_buildings_city = sydney_buildings[sydney_city |> st_make_valid(), ]
 barcelona_buildings_city = barcelona_buildings[barcelona_perim, ]
@@ -118,10 +118,10 @@ summary(paris_buildings_city$total_floor_area_m2) # median: 1588; mean: 3452
 summary(sydney_buildings_city$total_floor_area_m2) # median: 804; mean: 3563
 summary(barcelona_buildings_city$total_floor_area_m2) # median: 1350; mean: 3697
 
-sf::st_write(lisbon_buildings_city, "data/lisbon/lisbon_city_buildings.geojson")
-sf::st_write(paris_buildings_city, "data/paris/paris_city_buildings.geojson")
-sf::st_write(sydney_buildings_city, "data/sydney/sydney_city_buildings.geojson")
-sf::st_write(barcelona_buildings_city, "data/barcelona/barcelona_city_buildings.geojson")
+sf::st_write(lisbon_buildings_city, "data/lisbon/lisbon_city_buildings.geojson", delete_dsn = TRUE)
+sf::st_write(paris_buildings_city, "data/paris/paris_city_buildings.geojson", delete_dsn = TRUE)
+sf::st_write(sydney_buildings_city, "data/sydney/sydney_city_buildings.geojson", delete_dsn = TRUE)
+sf::st_write(barcelona_buildings_city, "data/barcelona/barcelona_city_buildings.geojson", delete_dsn = TRUE)
 
 
 # map ---------------------------------------------------------------------
