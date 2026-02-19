@@ -13,6 +13,7 @@ trips_lisbon_16 = detailed_itineraries(
   mode = "BICYCLE",
   shortest_path = TRUE,
   max_lts = 3,
+  drop_geometry = TRUE,
   # osm_link_ids = TRUE, # test this later if don't have the lts
   progress = TRUE
 )
@@ -36,6 +37,7 @@ trips_lisbon_21 = detailed_itineraries(
   mode = "BICYCLE",
   shortest_path = TRUE,
   max_lts = 3,
+  drop_geometry = TRUE,
   # osm_link_ids = TRUE, # test this later if don't have the lts
   progress = TRUE
 )
@@ -57,6 +59,7 @@ trips_lisbon_26 = detailed_itineraries(
   mode = "BICYCLE",
   shortest_path = TRUE,
   max_lts = 3,
+  drop_geometry = TRUE,
   # osm_link_ids = TRUE, # test this later if don't have the lts
   progress = TRUE
 )
@@ -79,6 +82,7 @@ trips_lisbon_16 = detailed_itineraries(
   mode = "BICYCLE",
   shortest_path = TRUE,
   max_lts = 2,
+  drop_geometry = TRUE,
   # osm_link_ids = TRUE, # test this later if don't have the lts
   progress = TRUE
 )
@@ -102,6 +106,7 @@ trips_lisbon_21 = detailed_itineraries(
   mode = "BICYCLE",
   shortest_path = TRUE,
   max_lts = 2,
+  drop_geometry = TRUE,
   # osm_link_ids = TRUE, # test this later if don't have the lts
   progress = TRUE
 )
@@ -123,6 +128,7 @@ trips_lisbon_26 = detailed_itineraries(
   mode = "BICYCLE",
   shortest_path = TRUE,
   max_lts = 2,
+  drop_geometry = TRUE,
   # osm_link_ids = TRUE, # test this later if don't have the lts
   progress = TRUE
 )
@@ -137,11 +143,7 @@ summary(trips_lisbon_26$total_duration)
 
 
 
-## Compare with plot
-
-library(dplyr)
-library(ggplot2)
-
+## WARNING - do for each LTS
 # Combine datasets and add a year identifier
 trips_lisbon_combined <- bind_rows(
   trips_lisbon_16 %>% mutate(year = "2016"),
@@ -149,6 +151,18 @@ trips_lisbon_combined <- bind_rows(
   trips_lisbon_26 %>% mutate(year = "2026")
 ) %>%
   mutate(year = as.factor(year))
+
+saveRDS(trips_lisbon_combined, "networks/results_ttm/trips_lisbon_lts3.rds")
+# saveRDS(trips_lisbon_combined, "networks/results_ttm/trips_lisbon_lts2.rds")
+
+
+
+
+## Compare with plot
+
+library(dplyr)
+library(ggplot2)
+
 
 # cumulative travel time
 ggplot(trips_lisbon_combined, aes(x = total_duration, color = year)) +
@@ -162,7 +176,8 @@ ggplot(trips_lisbon_combined, aes(x = total_duration, color = year)) +
     x = "Duration (minutes)",
     y = "Proportion of all trips"
   ) +
-  theme_minimal()
+  theme_minimal()+
+    xlim(0, 125) # Cutting off outliers for better visibility
 
 
 # cumulative travel distance
@@ -177,7 +192,8 @@ ggplot(trips_lisbon_combined, aes(x = distance, color = year)) +
     x = "Distance (meters)",
     y = "Proportion of all trips"
   ) +
-  theme_minimal()
+  theme_minimal()+
+    xlim(0, 20000) # Cutting off outliers for better visibility
 
 # What % of the population can reach their destination in under 30 minutes?" 
 # The steeper the curve, the more accessible the city.
