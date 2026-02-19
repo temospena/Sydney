@@ -6,9 +6,7 @@
 # Consider another way of doing this, with jittering? weighted by buildings heights?
 
 
-
-
-# h3 grid -----------------------------------------------------------------
+# h3 grid ---------------------isothropic -------------------------
 library(h3jsr)
 
 # h3_res = 10 # 150m diameter
@@ -59,3 +57,42 @@ paris_h3_index = paris_grid |> st_drop_geometry() # save h3_address for later
 nrow(paris_grid) # 164
 # ods_all_res8 = 26.896
 mapview(paris_grid)
+
+
+
+# with buildngs as O and D ------------------------------------------------
+
+city = "lisbon" # change here
+
+# piggyback::pb_download(file = "lisbon_city_buildings.geojson", dest = "data/lisbon/")
+buildings = st_read("data/lisbon/lisbon_city_buildings.geojson")
+
+
+set.seed(42)
+buildings_sample20k_DE = buildings |> 
+  slice_sample(
+    n = 20000, 
+    weight_by = total_floor_area_m2, # use this as proxy for jobs or schools destinations (higher volumes) - not sure if it is making a difference
+    replace = TRUE
+  ) |> 
+  select(total_floor_area_m2) |> 
+  rename(volume = total_floor_area_m2)
+destinations_lisbon = buildings_sample20k_DE |> mutate(id = 1:nrow(buildings_sample20k_DE))
+  
+
+buildings_sample20k_OR = buildings |> 
+  slice_sample(
+    n = 20000, # not weighted?
+    replace = TRUE
+  ) |> 
+  select(total_floor_area_m2) |> 
+  rename(volume = total_floor_area_m2)
+origins_lisbon = buildings_sample20k_OR |> mutate(id = 1:nrow(buildings_sample20k_OR))
+
+library(mapview)
+mapview(origins_lisbon, zcol= "id" )
+mapview(destinations_lisbon, zcol= "id" )
+# they are randomly distributed, so I can make OD by id-id
+
+st_write(origins_lisbon, "networks/r5r/origins_lisbon.gpkg", delete_dsn = TRUE)
+st_write(destinations_lisbon, "networks/r5r/destinations_lisbon.gpkg", delete_dsn = TRUE)
