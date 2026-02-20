@@ -168,3 +168,36 @@ saveRDS(trips_lisbon_combined_lts2 |> st_drop_geometry(), "networks/results_ttm/
 
 
 
+# map with overline -------------------------------------------------------
+
+library(tidyverse)
+library(sf)
+library(stplanr)
+library(tmap, lib.loc = "/usr/lib/R/site-lib") # v4
+tmap_mode("view")
+
+trips_overline = trips_lisbon_combined_lts2 |> mutate(trips = 1)
+# trips_overline = trips_lisbon_combined_lts3 |> mutate(trips = 1)
+
+map_data <- trips_overline %>%
+  group_split(year) %>%
+  map_dfr(function(year_data) {
+    overline2(year_data, attrib = "trips") %>%
+      mutate(year = unique(year_data$year))
+  }) |> 
+  filter(trips > 1)
+
+# map
+tm_shape(map_data) +
+  tm_lines(
+    col = "year", 
+    lwd = "trips", 
+    scale = 5, # Adjust this to make lines thicker/thinner
+    palette = "Set1",
+    title.lwd = "Number of Trips",
+    id = "trips"
+  ) +
+  # tm_facets(by = "year", sync = TRUE, free.coords = FALSE) # paper
+  tm_facets(by = "year", as.layers = TRUE) # interactive
+
+saveRDS(map_data, "networks/results_ttm/lisbon_lts2_overline")
