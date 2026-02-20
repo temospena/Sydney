@@ -38,8 +38,9 @@ rsconnect/
 networks/osmpbf files/
 networks/lts/
 networks/r5r/
-data/*_buildings_height.geojson
+networks/results_ttm/
 
+data/*_buildings_height.geojson
 data/lisbon/lisbon_metro_buildings_height.geojson
 data/paris/paris_metro_buildings_height.geojson
 data/sydney/sydney_metro_buildings_height.geojson
@@ -47,3 +48,4 @@ data/lisbon/lisbon_city_buildings.geojson
 data/paris/paris_city_buildings.geojson
 data/sydney/sydney_city_buildings.geojson
 data/sydney/barcelona_city_buildings.geojson
+
