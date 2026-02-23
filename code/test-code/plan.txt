@@ -12,8 +12,8 @@ Estimate 20k random origins and destinations (different o than d) with a fixed s
 crop_osm_pbf_bbox.sh . Estimate the lenght of the higways (excluding pedestrian only), and estimate the percentage of ci/total_roads, and by type too. Exclude unnecessaty files - they can be very large and unnecessary. For the city, sometimes it requires to extract first all the county and then crop, but try to make it in system tmp/ and remove derby.
 4. setup r5r networks for each city, based on the cropped osm.pbf file, for each year. Extract and export the lts levels of each segment using (street_network_to_sf() |> purrr::pluck("edges")). Remove all the unnecessaty files, except the built network.dat and network_settings.json, to have better efficient space use.
 5. run r5r::detailed_iteneraries() based in city origins, destinations, network for each year, shortest_path = TRUE, mode = "BICYCLE", max_lts (run for the 1,2,3 and 4). If necessary, the
-osm_link_ids = TRUE to check after the LTS levels used for each route by the osm_id segments (links).
-6. Check distances, maybe use some of the trip_distances_circuity.R script, and save plots so we can analyse later.
+osm_link_ids = TRUE to check after the LTS levels used for each route by the osm_id segments (links). export the number of found routes from the 20k (not all will be found, and we need to know hom many were).
+6. Check distances, maybe use some of the trip_distances_circuity.R script, and save plots so we can analyse later. snap O and D to the road network before estimate the linear distance, to avoid imprecision (r5 also does it). Discard the od pairs that have at least one missing route.
 7. With stpanar::overline2 (see r5r_run.R) estimate the segments' trip volume so later we can idenfiy the ones with higher route volume, and save a facet plot of the 3 years map with lwd depending on the volume.
 8. Estimate the lenghth and the percentage of the route that uses any ci, and the percentage and leght of each LTS level for each route.
 9. Estimate the circuity of each route (total_distance / linear distance between origin and destination)

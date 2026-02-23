@@ -4,7 +4,7 @@
 library(duckdb)
 library(sf)
 library(dplyr)
-sf_use_s2(TRUE)
+sf_use_s2(FALSE)
 
 data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
 target_cities <- c("Sydney")
@@ -52,9 +52,13 @@ fetch_building_points <- function(city_name, bbox, tile_name) {
             footprint_m2 = round(as.numeric(st_area(st_transform(., 3857)))),
             est_floors = pmax(1, round(height / 3)),
             total_floor_area_m2 = round(footprint_m2 * est_floors),
-            volume_m3 = round(footprint_m2 * height),
-            lon = (bbox$xmin + bbox$xmax) / 2,
-            lat = (bbox$ymin + bbox$ymax) / 2
+            volume_m3 = round(footprint_m2 * height)
+        ) %>%
+        st_make_valid() %>%
+        st_centroid() %>%
+        mutate(
+            lon = st_coordinates(geometry)[, 1],
+            lat = st_coordinates(geometry)[, 2]
         ) %>%
         st_drop_geometry() %>%
         st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%

@@ -42,6 +42,12 @@ for (city in target_cities) {
     for (yr in years) {
         # Expected filename on disk: e.g. geofabrik_portugal-160101.osm.pbf
         raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", geofabrik_region, "-", yr, "0101.osm.pbf"))
+        local_cache_file <- file.path(city_dir, paste0("geofabrik_", geofabrik_region, "-", yr, "0101.osm.pbf"))
+
+        if (!file.exists(raw_file) && file.exists(local_cache_file)) {
+            raw_file <- local_cache_file
+        }
+
         out_file <- file.path(city_dir, paste0(city_lower, "_", yr, ".osm.pbf"))
 
         # If the clipped output already exists, we skip downloading/processing
@@ -66,7 +72,7 @@ for (city in target_cities) {
         }
 
         # Run Osmium to crop using bounding box
-        cmd <- paste("osmium extract -b", bbox_str, "\"", raw_file, "\"", "-o", "\"", out_file, "\"")
+        cmd <- sprintf("osmium extract -b %s \"%s\" -o \"%s\"", bbox_str, raw_file, out_file)
         cat("Running OSMIUM:", cmd, "\n")
 
         sys_res <- system(cmd, intern = FALSE)

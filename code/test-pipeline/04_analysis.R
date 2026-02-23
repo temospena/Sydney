@@ -41,10 +41,31 @@ for (city in target_cities) {
 
         # Combine all
         trips_combined <- bind_rows(trips_list) |> mutate(year = as.factor(year))
+
+        # Calculate snapped linear distance and circuity directly from routing geometries
+        cat("    Calculating linear snapped distances and circuity...\n")
+        trips_combined <- trips_combined |>
+            mutate(
+                snapped_start = lwgeom::st_startpoint(geometry),
+                snapped_end = lwgeom::st_endpoint(geometry),
+                linear_distance = as.numeric(st_distance(snapped_start, snapped_end, by_element = TRUE)),
+                circuity = total_distance / linear_distance
+            ) |>
+            select(-snapped_start, -snapped_end)
+
         trips_df <- trips_combined |> st_drop_geometry()
 
+        # Discard OD pairs missing in at least one year
+        n_years <- length(unique(trips_df$year))
+        valid_ods <- trips_df |>
+            count(from_id, to_id) |>
+            filter(n == n_years)
+
+        trips_df <- trips_df |> inner_join(valid_ods |> select(from_id, to_id), by = c("from_id", "to_id"))
+        cat("    Filtered to", nrow(valid_ods), "OD pairs successfully routed across all years.\n")
+
         # 1. Plot Cumulative Travel Distance
-        p1 <- ggplot(trips_df, aes(x = distance, color = year)) +
+        p1 <- ggplot(trips_df, aes(x = total_distance, color = year)) +
             stat_ecdf(lwd = 1.2) +
             geom_vline(xintercept = 5000, linetype = "dashed", color = "gray40") +
             annotate("text", x = 5400, y = 0.87, label = "5 km threshold", angle = 90) +
@@ -57,6 +78,19 @@ for (city in target_cities) {
             xlim(0, 20000)
 
         ggsave(file.path(results_dir, paste0("cumulative_distance_lts", lts_level, ".png")), p1, width = 8, height = 6)
+
+        # Plot Circuity
+        p_circ <- ggplot(trips_df, aes(x = circuity, color = year)) +
+            geom_density(lwd = 1) +
+            scale_color_viridis_d() +
+            labs(
+                title = paste(city, "- Route Circuity Distribution (LTS", lts_level, ")"),
+                x = "Circuity (Total Distance / Snapped Linear Distance)", y = "Density"
+            ) +
+            theme_minimal() +
+            xlim(1, 3)
+
+        ggsave(file.path(results_dir, paste0("circuity_density_lts", lts_level, ".png")), p_circ, width = 8, height = 6)
 
         # 2. Distance differences (requires from_id, to_id, total_distance)
         trips_wide <- trips_df |>

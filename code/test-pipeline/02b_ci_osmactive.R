@@ -81,6 +81,19 @@ for (city in target_cities) {
         if (exists("cycle_net")) rm(cycle_net)
         if (exists("drive_net")) rm(drive_net)
         gc()
+
+        # Cleanup osmextract cached files
+        # osmextract downloads `<provider>_<region>-<version>.osm.pbf` and builds `.gpkg`
+        cached_pbf <- file.path(city_dir, paste0("geofabrik_", infra_region, "-", v, ".osm.pbf"))
+        cached_gpkg <- file.path(city_dir, paste0("geofabrik_", infra_region, "-", v, ".gpkg"))
+        if (file.exists(cached_pbf)) {
+            file.remove(cached_pbf)
+            cat("Deleted cached PBF:", cached_pbf, "\n")
+        }
+        if (file.exists(cached_gpkg)) {
+            file.remove(cached_gpkg)
+            cat("Deleted cached GPKG:", cached_gpkg, "\n")
+        }
     }
 }
 

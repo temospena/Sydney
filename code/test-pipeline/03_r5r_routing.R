@@ -26,6 +26,18 @@ for (city in target_cities) {
     origins <- st_read(origins_path, quiet = TRUE)
     destinations <- st_read(dests_path, quiet = TRUE)
 
+    # Format for r5r (requires data.frame with id, lon, lat)
+    origins_df <- data.frame(
+        id = as.character(origins$id),
+        lon = st_coordinates(origins)[, 1],
+        lat = st_coordinates(origins)[, 2]
+    )
+    dests_df <- data.frame(
+        id = as.character(destinations$id),
+        lon = st_coordinates(destinations)[, 1],
+        lat = st_coordinates(destinations)[, 2]
+    )
+
     for (yr in years) {
         pbf_file <- file.path(city_dir, paste0(city_lower, "_", yr, ".osm.pbf"))
         r5r_dir <- file.path(city_dir, paste0("r5r_", yr))
@@ -49,7 +61,7 @@ for (city in target_cities) {
         tryCatch(
             {
                 # Build / load network
-                r5_engine <- setup_r5(data_path = r5r_dir, verbose = FALSE)
+                r5_engine <- build_network(data_path = r5r_dir, verbose = FALSE)
 
                 # Extract LTS
                 lts_gpkg <- file.path(r5r_dir, paste0(city_lower, "_", yr, "_lts.gpkg"))
@@ -66,8 +78,8 @@ for (city in target_cities) {
                         cat("  Calculating itineraries for LTS", lts_level, "\n")
                         trips <- detailed_itineraries(
                             r5r_network = r5_engine,
-                            origins = origins,
-                            destinations = destinations,
+                            origins = origins_df,
+                            destinations = dests_df,
                             mode = "BICYCLE",
                             shortest_path = TRUE,
                             max_lts = lts_level,
@@ -83,14 +95,11 @@ for (city in target_cities) {
                 stop_r5()
                 rJava::.jgc(R.gc = TRUE)
 
-                # Cleanup strategy: delete PBF mapped into the network path & the external file if > 5MB
+                # Cleanup strategy: delete PBF unconditionally now that network.dat exists
                 if (file.exists(temp_pbf)) file.remove(temp_pbf)
                 if (file.exists(pbf_file)) {
-                    info <- file.info(pbf_file)
-                    if (!is.na(info$size) && info$size > (5 * 1024 * 1024)) {
-                        file.remove(pbf_file)
-                        cat("  Deleted large intermediate raw PBF:", pbf_file, "\n")
-                    }
+                    file.remove(pbf_file)
+                    cat("  Deleted intermediate raw PBF:", pbf_file, "\n")
                 }
             },
             error = function(cond) {
