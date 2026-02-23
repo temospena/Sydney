@@ -30,13 +30,12 @@ each city enters as a new row.
 # some preferences
 We have space constraints for the downloaded data, so store only data nedded.
 Use a folder per city with the necessary processed data and outputs.
+For now, run for lisbon, sydney, paris, barcelona, but leave it ready to use for the remaining 96 (of 100) selected cities.
 If the data alrewady exists, skip, to avoid intenet and processing issues.
-Memory is not a problem (128GB RAM)
+For the server instance, memory is not a problem (128GB RAM, 500GB disk space)
+I am running locally in my laptop for these 4 cities (16GB RAM, and only 10GB disk space), but the aim is to later run in the server.
 add to gitignore the data that was produced, leaving only the necessary
 use targets R package to atomate the process for any given city? maybe too complex, but a R package can be setup instead later.
-For now, run for lisbon, sydney, paris, barcelona, but leave it ready to use for the remaining 96 (of 100) selected cities.
-
-
 
 
 # final goal - can be done later
