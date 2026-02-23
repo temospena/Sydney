@@ -8,6 +8,9 @@ cat("Starting Master CI Analysis Pipeline\n")
 cat("Target Cities:", paste(target_cities, collapse = ", "), "\n")
 cat("==========================================\n\n")
 
+# Snapshot the cities to process
+all_cities <- target_cities
+
 # List of steps in sequence
 pipeline_steps <- c(
   "code/test-pipeline/01_od_data.R",
@@ -21,7 +24,7 @@ pipeline_steps <- c(
 )
 
 # Run the pipeline for one city at a time
-for (city_name in target_cities) {
+for (city_name in all_cities) {
   cat("\n******************************************\n")
   cat("PROCESSING CITY:", city_name, "\n")
   cat("******************************************\n\n")

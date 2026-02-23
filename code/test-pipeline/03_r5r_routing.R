@@ -104,7 +104,7 @@ for (city in target_cities) {
                         if (file.mtime(check_file) < file.mtime(origins_path)) {
                             cat("  Existing results are older than updated OD matrix. Re-running routing...\n")
                         } else {
-                            cat(paste("  Valid results already exist - SKIPPING", basename(check_file), "\n"))
+                            cat(paste("  Valid results already exist - SKIPPING. Path:", check_file, "\n"))
                             next
                         }
                     }
