@@ -42,7 +42,8 @@ mapview(paris_poly, color = "darkgreen", col.regions = "darkgreen", alpha.region
 
 
 
-# no cli ------------------------------------------------------------------
+# no cli sh - see crop_osm_pbf_bbox.sh ------------------------------------------------------------------
+# replace the bbox coords
 # rosa@rosa-ist: cd /media/rosa/Dados/GIS/Sydney/networks/osmpbf files
 # osmium extract -b -9.50,38.40,-8.70,39.10 geofabrik_portugal-160101.osm.pbf -o lisbon_metro_16.pbf
 # osmium extract -b -9.50,38.40,-8.70,39.10 geofabrik_portugal-210101.osm.pbf -o lisbon_metro_21.pbf
