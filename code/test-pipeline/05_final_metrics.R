@@ -40,6 +40,18 @@ for (city in target_cities) {
       volume = destinations$volume
   )
   
+  # Calculate linear distances for fixed OD pairs once per city
+  # Note: r5r routes head-to-head (Origin i to Destination i)
+  cat("  Pre-calculating linear distances for all sampled OD pairs...\n")
+  od_pairs_lookup <- data.frame(
+    from_id = origins_df$id,
+    to_id = dests_df$id,
+    linear_distance = sqrt(
+      ((dests_df$lon - origins_df$lon)*111320*cos(origins_df$lat * pi/180))^2 + 
+      ((dests_df$lat - origins_df$lat)*111320)^2
+    )
+  )
+  
   for (yr in years) {
     cat("Processing scenario for", city, "Year", yr, "\n")
     r5r_dir <- file.path(city_dir, paste0("r5r_", yr))
@@ -203,34 +215,35 @@ for (city in target_cities) {
       if (!is.null(trips_to_read)) {
         trips <- readRDS(trips_to_read)
         if (nrow(trips) > 0) {
-            cat("    Found", nrow(trips), "trips in", basename(trips_to_read), "\n")
+          cat("    Processing", nrow(trips), "trips (optimized lookup mode)...\n")
           
-          # 6 & 9: Snapped distances and circuity
+          # Drop geometry immediately
+          trips <- trips |> st_drop_geometry()
+          
+          # Join pre-calculated linear distances for speed and consistency
           trips <- trips |>
+            left_join(od_pairs_lookup, by = c("from_id", "to_id")) |>
             mutate(
-              snapped_start = lwgeom::st_startpoint(geometry),
-              snapped_end = lwgeom::st_endpoint(geometry),
-              linear_distance = as.numeric(st_distance(snapped_start, snapped_end, by_element = TRUE)),
-              circuity = total_distance / pmax(linear_distance, 1) # avoid div0
-            ) |> select(-snapped_start, -snapped_end)
+              circuity = total_distance / pmax(linear_distance, 1)
+            )
           
           row_data$avg_distance_m <- round(mean(trips$total_distance, na.rm = TRUE), 2)
           row_data$avg_circuity <- round(mean(trips$circuity, na.rm = TRUE), 2)
           
           # 8: Percentage CI and LTS lengths per route
           if (!is.null(edges)) {
-            trips_df <- trips |> st_drop_geometry() |> mutate(row_idx = row_number())
-            edge_list_clean <- stringr::str_extract_all(trips_df$edge_id_list, "\\d+")
+            # Use faster strsplit and unnesting instead of regex
+            edge_list <- strsplit(as.character(trips$edge_id_list), ",")
             
             route_edges <- data.frame(
-                row_idx = rep(trips_df$row_idx, lengths(edge_list_clean)),
-                edge_index = as.numeric(unlist(edge_list_clean))
+                row_idx = rep(1:nrow(trips), lengths(edge_list)),
+                edge_index = as.numeric(unlist(edge_list))
             )
             
-            # Left join edges
-            route_edges <- route_edges |> left_join(edges, by = "edge_index")
-            
-            route_stats <- route_edges |>
+            # Left join edges (edges is already st_drop_geometry)
+            # Use only necessary columns to keep join light
+            route_stats <- route_edges |> 
+              left_join(edges, by = "edge_index") |>
               group_by(row_idx) |>
               summarise(
                 total_edge_len = sum(length, na.rm = TRUE),
@@ -238,10 +251,13 @@ for (city in target_cities) {
                 lts1_len = sum(length[bicycle_lts == 1], na.rm = TRUE),
                 lts2_len = sum(length[bicycle_lts == 2], na.rm = TRUE),
                 lts3_len = sum(length[bicycle_lts == 3], na.rm = TRUE),
-                lts4_len = sum(length[bicycle_lts == 4], na.rm = TRUE)
+                lts4_len = sum(length[bicycle_lts == 4], na.rm = TRUE),
+                .groups = "drop"
               )
               
-            trips_df <- trips_df |> left_join(route_stats, by = "row_idx") |>
+            final_trips <- trips |> 
+              mutate(row_idx = row_number()) |>
+              left_join(route_stats, by = "row_idx") |>
               mutate(
                 pct_ci = ci_len / pmax(total_edge_len, 1),
                 pct_lts1 = lts1_len / pmax(total_edge_len, 1),
@@ -250,11 +266,11 @@ for (city in target_cities) {
                 pct_lts4 = lts4_len / pmax(total_edge_len, 1)
               )
               
-            row_data$pct_ci_route <- round(mean(trips_df$pct_ci, na.rm = TRUE) * 100, 2)
-            row_data$pct_lts1 <- round(mean(trips_df$pct_lts1, na.rm = TRUE) * 100, 2)
-            row_data$pct_lts2 <- round(mean(trips_df$pct_lts2, na.rm = TRUE) * 100, 2)
-            row_data$pct_lts3 <- round(mean(trips_df$pct_lts3, na.rm = TRUE) * 100, 2)
-            row_data$pct_lts4 <- round(mean(trips_df$pct_lts4, na.rm = TRUE) * 100, 2)
+            row_data$pct_ci_route <- round(mean(final_trips$pct_ci, na.rm = TRUE) * 100, 2)
+            row_data$pct_lts1 <- round(mean(final_trips$pct_lts1, na.rm = TRUE) * 100, 2)
+            row_data$pct_lts2 <- round(mean(final_trips$pct_lts2, na.rm = TRUE) * 100, 2)
+            row_data$pct_lts3 <- round(mean(final_trips$pct_lts3, na.rm = TRUE) * 100, 2)
+            row_data$pct_lts4 <- round(mean(final_trips$pct_lts4, na.rm = TRUE) * 100, 2)
           }
         }
       } else {
