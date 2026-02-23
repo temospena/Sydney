@@ -7,19 +7,9 @@ library(osmextract)
 library(dplyr)
 options(timeout = 3600) # give 1hr limit for large file downloads over wifi
 
-# Config
-target_cities <- c("Sydney")
-years <- c(16, 21, 26)
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
-raw_pbf_dir <- "/media/rosa/Dados/GIS/Sydney/networks/osmpbf files" # Or wherever the user mounts the raw PBFs
-
-# Map full geofabrik region names for our target cities
-region_map <- list(
-    Lisbon = "portugal",
-    Sydney = "australia",
-    Paris = "ile-de-france",
-    Barcelona = "spain"
-)
+# Load global configuration
+source("code/test-pipeline/config.R")
+raw_pbf_dir <- osm_raw_dir
 
 cat("Starting OSMIUM cropping for routing files...\n")
 
@@ -36,13 +26,15 @@ for (city in target_cities) {
 
     bbox_str <- readLines(bbox_path, warn = FALSE)
     geofabrik_region <- region_map[[city]]
-
     downloaded_pbf_path <- NULL
+
+    # Sanitize region for filename
+    safe_region <- gsub("/", "_", geofabrik_region)
 
     for (yr in years) {
         # Expected filename on disk: e.g. geofabrik_portugal-160101.osm.pbf
-        raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", geofabrik_region, "-", yr, "0101.osm.pbf"))
-        local_cache_file <- file.path(city_dir, paste0("geofabrik_", geofabrik_region, "-", yr, "0101.osm.pbf"))
+        raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", safe_region, "-", yr, "0101.osm.pbf"))
+        local_cache_file <- file.path(city_dir, paste0("geofabrik_", safe_region, "-", yr, "0101.osm.pbf"))
 
         if (!file.exists(raw_file) && file.exists(local_cache_file)) {
             raw_file <- local_cache_file

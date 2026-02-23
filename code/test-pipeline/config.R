@@ -2,19 +2,29 @@
 # Centralized configuration for the CI pipeline
 
 # Base directory where all city data is stored
-# Change this when deploying to the server
 data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
+
+# Directory to cache large Geofabrik PBF files (shared across cities)
+osm_raw_dir <- "/home/rosa/GIS/osm_raw_cache"
 
 # List of cities to process
 target_cities <- c("Sydney", "Lisbon", "Paris", "Barcelona")
 
-# Years to process (formatted as in filenames/API versions)
+# Map of cities to the most specific Geofabrik region available
+region_map <- list(
+    Lisbon = "portugal",
+    Sydney = "australia/new-south-wales",
+    Paris = "france/ile-de-france",
+    Barcelona = "spain/cataluna"
+)
+
+# Years to process
 years <- c("16", "21", "26")
 versions <- c("160101", "210101", "260101")
 
 # Global settings
-n_od_pairs <- 20000 # Scaling factor for origins/destinations
-java_mem <- "-Xmx64G" # Adjusted to 16GB for server stability, can go higher if needed
+n_od_pairs <- 20000 
+java_mem <- "-Xmx64G" 
 
 # Color scheme for custom CI (shared across plots and maps)
 ci_colors <- c(

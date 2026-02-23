@@ -104,7 +104,7 @@ for (city in target_cities) {
 
     infra_region <- region_map[[city]]
 
-    for (v in versions) {
+    for (v in VERSIONS) {
         out_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", v, ".gpkg"))
 
         if (file.exists(out_path)) {
@@ -121,7 +121,7 @@ for (city in target_cities) {
                     boundary = perim,
                     boundary_type = "clipsrc",
                     version = v,
-                    download_directory = city_dir,
+                    download_directory = osm_raw_dir,
                     quiet = FALSE
                 )
 
@@ -144,15 +144,13 @@ for (city in target_cities) {
         if (exists("cycle_net")) rm(cycle_net)
         gc()
 
-        cached_pbf <- file.path(city_dir, paste0("geofabrik_", infra_region, "-", v, ".osm.pbf"))
-        cached_gpkg <- file.path(city_dir, paste0("geofabrik_", infra_region, "-", v, ".gpkg"))
-        if (file.exists(cached_pbf)) {
-            file.remove(cached_pbf)
-            cat("Deleted cached PBF:", cached_pbf, "\n")
-        }
+        # We DO NOT delete the cached PBF anymore to allow sharing across cities
+        # But we remove the intermediate GPKG if osmactive created it in raw_dir
+        # geofabrik_region-v.gpkg
+        infra_file_base <- gsub("/", "_", infra_region)
+        cached_gpkg <- file.path(osm_raw_dir, paste0("geofabrik_", infra_file_base, "-", v, ".gpkg"))
         if (file.exists(cached_gpkg)) {
             file.remove(cached_gpkg)
-            cat("Deleted cached GPKG:", cached_gpkg, "\n")
         }
     }
 }
