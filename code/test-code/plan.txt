@@ -2,7 +2,7 @@
 
 # methods
 
-0. Select 100 cities from the list described in city_buffers.R, that should have a minumum of 1milion residents in metropolitan area, and at least a 50 km cycling infrastructure km (50 km as a variable to refine later)
+0. Select 100 cities from the list described in city_buffers.R (10km from city center), that should have a minumum of 1milion residents in metropolitan area, and at least a 50 km cycling infrastructure km (50 km as a variable to refine later)
 The dataset from People for Bikes (data/all-pfb-cr-results-2025.csv) can serve as a base for selecting a city as a proxy of the cycling infrastructure presence.
 1. use the buildings_height global dataset, and the buildings_height_function.R to retreive the buildings and volume for the city polygon.
 Estimate 20k random origins and destinations (different o than d) with a fixed set.seed(42) as points (sf), and weight the destinations by volume, (replace =TRUE). See od_data.R. This will be our origins and destinations, for each city. The 20k can be a variable to escalate later.
