@@ -24,7 +24,7 @@ if (!exists("versions")) versions <- c("160101", "210101", "260101")
 
 # Global settings
 n_od_pairs <- 20000 
-java_mem <- "-Xmx64G" 
+java_mem <- "-Xmx96G" 
 
 # Color scheme for custom CI (shared across plots and maps)
 ci_colors <- c(
