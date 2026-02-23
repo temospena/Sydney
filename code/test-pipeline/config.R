@@ -2,13 +2,16 @@
 # Centralized configuration for the CI pipeline
 
 # Base directory where all city data is stored
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
+# Updated to match server mount point
+data_dir <- "/media/rosa/Dados/GIS/Sydney/data/test-pipeline"
 
 # Directory to cache large Geofabrik PBF files (shared across cities)
 osm_raw_dir <- "/home/rosa/GIS/osm_raw_cache"
 
 # List of cities to process
-if (!exists("target_cities")) target_cities <- c("Sydney", "Lisbon", "Paris", "Barcelona")
+if (!exists("target_cities") || length(target_cities) == 0) {
+  target_cities <- c("Sydney", "Lisbon", "Paris", "Barcelona")
+}
 
 # Map of cities to the most specific Geofabrik region available
 region_map <- list(

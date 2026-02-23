@@ -8,6 +8,7 @@ library(sf)
 source("code/test-pipeline/config.R")
 if (exists("city_to_run")) target_cities <- city_to_run
 options(java.parameters = java_mem)
+cat("[DEBUG] Target cities in Step 03:", paste(target_cities, collapse=", "), "\n")
 library(r5r)
 
 for (city in target_cities) {
