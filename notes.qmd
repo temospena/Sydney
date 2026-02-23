@@ -314,9 +314,13 @@ For the **impacts estimation**
 
 -   Sydney (city - Local Government Area or larger!)
 
-Use a 10km radius from city center, for comparision purposes
+-   
 
 Also, because some places do not have a good definition of "city" or "metropolitan area" as an administrative area (polygon).
+
+List of +700 cities worldwide, with population, lat and lon from the historical city center or CBD (<https://gist.github.com/nkrusch/848e4d6ca0be879e2e03b78b051f17da>)
+
+Use a 10km radius from city center, for comparision purposes
 
 ## Data
 
