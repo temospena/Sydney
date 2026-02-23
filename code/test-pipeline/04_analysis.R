@@ -21,9 +21,8 @@ for (city in target_cities) {
 
     cat(paste("Processing analysis for", city, "\n"))
 
-    # Only parsing LTS 2 and LTS 3 for general analysis as they are standard indicators
-    # Feel free to extend to LTS 1 and LTS 4
-    for (lts_level in 2:3) {
+    # Process analysis for LTS 1 to 4
+    for (lts_level in 1:4) {
         cat(paste("  Analyzing LTS", lts_level, "\n"))
 
         trips_list <- list()

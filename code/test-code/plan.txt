@@ -22,7 +22,7 @@ osm_link_ids = TRUE to check after the LTS levels used for each route by the osm
 
 
 # the dataset
-a csv file with city, population, identification (year, lts, other options), and all the estimations
+a csv file with city, population, identification (year, lts, other options), and all the estimations. add timestamp to know when it was created..
 a backup of this csv, in case we run again with other parameters 
 each city enters as a new row.
 
