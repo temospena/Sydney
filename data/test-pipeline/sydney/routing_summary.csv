@@ -1,4 +1,16 @@
-"city","year","lts","found_routes"
+"city","year","lts","found_routes","avg_dist_km"
+"sydney",16,1,869,8.85
+"sydney",16,2,890,9.06
+"sydney",16,3,985,9.59
+"sydney",16,4,1000,8.47
+"sydney",21,1,914,9.17
+"sydney",21,2,932,9.24
+"sydney",21,3,988,9.5
+"sydney",21,4,995,8.41
+"sydney",26,1,955,9.39
+"sydney",26,2,971,9.39
+"sydney",26,3,991,9.27
+"sydney",26,4,995,8.54
 "sydney",16,1,869
 "sydney",16,2,890
 "sydney",16,3,985

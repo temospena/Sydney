@@ -67,7 +67,7 @@ for (city in target_cities) {
         p1 <- ggplot(trips_df, aes(x = total_distance, color = year)) +
             stat_ecdf(lwd = 1.2) +
             geom_vline(xintercept = 5000, linetype = "dashed", color = "gray40") +
-            annotate("text", x = 5400, y = 0.87, label = "5 km threshold", angle = 90) +
+            annotate("text", x = 5400, y = 0.87, label = "5 km", angle = 90) +
             scale_color_viridis_d() +
             labs(
                 title = paste(city, "- Cumulative Travel Distance Distribution (LTS", lts_level, ")"),
@@ -84,7 +84,7 @@ for (city in target_cities) {
             scale_color_viridis_d() +
             labs(
                 title = paste(city, "- Route Circuity Distribution (LTS", lts_level, ")"),
-                x = "Circuity (Total Distance / Snapped Linear Distance)", y = "Density"
+                x = "Circuity (Total Distance / Linear Distance)", y = "Density"
             ) +
             theme_minimal() +
             xlim(1, 3)
@@ -117,12 +117,37 @@ for (city in target_cities) {
         plot_diff("dist_2016", "dist_2026", "2016", "2026")
 
         # Final CSV export with comparison
-        if ("dist_2016" %in% names(trips_wide) && "dist_2026" %in% names(trips_wide)) {
+        if ("dist_2016" %in% names(trips_wide) && "dist_2021" %in% names(trips_wide) && "dist_2026" %in% names(trips_wide)) {
             trips_wide <- trips_wide |>
                 mutate(
+                    diff_1621 = dist_2021 - dist_2016,
+                    diff_2126 = dist_2026 - dist_2021,
                     diff_1626 = dist_2026 - dist_2016,
                     change_pct = (dist_2026 - dist_2016) / dist_2016
                 )
+                
+            # Distribution of Trip Distance Changes Histogram
+            gains_long <- trips_wide |>
+              select(diff_1621, diff_2126) |>
+              pivot_longer(everything(), names_to = "period", values_to = "diff") |>
+              mutate(period = recode(period, 
+                                     "diff_1621" = "2016 to 2021", 
+                                     "diff_2126" = "2021 to 2026"))
+            
+            p_hist <- ggplot(gains_long, aes(x = diff, fill = period)) +
+              geom_histogram(binwidth = 250, color = "white", alpha = 0.7, position = "identity") +
+              geom_vline(xintercept = 0, linetype = "dashed", size = 1) +
+              # annotate("text", x = -2500, y = 1500, label = "Efficiency Gain\n(Shorter Trips)", color = "darkgreen") +
+              # annotate("text", x = 2500, y = 1500, label = "Efficiency Loss\n(Longer Trips)", color = "darkred") +
+              scale_fill_manual(values = c("2016 to 2021" = "#3498db", "2021 to 2026" = "#e67e22")) +
+              labs(title = paste(city, "- Distribution of Trip Distance Changes (LTS", lts_level, ")"),
+                   subtitle = "Negative values indicate the new infrastructure allowed for shorter routes",
+                   x = "Change in Distance (meters)",
+                   y = "Number of OD Pairs") +
+              theme_minimal() + 
+              xlim(-3500, 3500) # Cutting off outliers for better visibility
+              
+            ggsave(file.path(results_dir, paste0("distance_change_histogram_lts", lts_level, ".png")), p_hist, width = 8, height = 6)
         }
         write.csv(trips_wide, file.path(results_dir, paste0("routing_differences_lts", lts_level, ".csv")), row.names = FALSE)
 
@@ -148,17 +173,17 @@ for (city in target_cities) {
         map_obj <- tm_shape(map_data) +
             tm_lines(
                 col = "year",
+                col.scale = tm_scale_categorical(values = "Set1"),
                 lwd = "trips",
-                scale = 5,
-                palette = "Set1",
-                title.lwd = "Number of Trips\n(LTS2)"
+                lwd.scale = tm_scale_continuous(values.scale = 5),
+                lwd.legend = tm_legend(title = paste0("Number of Trips\n(LTS", lts_level, ")"))
             ) +
             tm_facets(by = "year", sync = TRUE, free.coords = FALSE)
 
         tmap_save(map_obj, file.path(results_dir, paste0("overline_map_lts", lts_level, ".png")), width = 12, height = 8)
 
-        # Save network `.rds` for advanced interactive loading, then wipe the heavy files!
-        saveRDS(map_data, file.path(results_dir, paste0("overline_map_data_lts", lts_level, ".rds")))
+        # Skip saving network `.rds` for advanced interactive loading to avoid filling up disk space
+        # saveRDS(map_data, file.path(results_dir, paste0("overline_map_data_lts", lts_level, ".rds")))
 
         rm(trips_list, trips_combined, trips_df, trips_wide, trips_overline, map_data, map_obj, p1)
         gc()

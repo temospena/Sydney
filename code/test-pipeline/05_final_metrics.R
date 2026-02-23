@@ -84,11 +84,10 @@ for (city in target_cities) {
     pct_lts3_total <- NA
     pct_lts4_total <- NA
     
-    ci_type_orp_pct <- NA
-    ci_type_pcl_pct <- NA
-    ci_type_stn_pct <- NA
-    ci_type_stw_pct <- NA
-    ci_type_sf_pct <- NA
+    ci_type_sep_m <- NA
+    ci_type_paint_m <- NA
+    ci_type_mixed_m <- NA
+    ci_type_foot_m <- NA
 
     if (!is.null(edges)) {
       # Total road length without pedestrians (car or bicycle access allowed)
@@ -116,19 +115,17 @@ for (city in target_cities) {
       
       if ("infra5" %in% names(ci)) {
         ci_types <- data.frame(infra5 = ci$infra5, len = ci_lengths) |>
-          group_by(infra5) |> summarise(total_len = sum(len, na.rm = TRUE)) |>
-          mutate(pct = round(total_len / pmax(total_ci_m, 1) * 100, 2))
+          group_by(infra5) |> summarise(total_len = sum(len, na.rm = TRUE))
         
-        get_ci_pct <- function(type_name) {
-          val <- ci_types$pct[ci_types$infra5 == type_name]
+        get_ci_len <- function(type_name) {
+          val <- ci_types$total_len[ci_types$infra5 == type_name]
           if (length(val) > 0) return(val[1]) else return(0)
         }
         
-        ci_type_orp_pct <- get_ci_pct("Off Road Path")
-        ci_type_pcl_pct <- get_ci_pct("Painted Cycle Lane")
-        ci_type_stn_pct <- get_ci_pct("Segregated Track (narrow)")
-        ci_type_stw_pct <- get_ci_pct("Segregated Track (wide)")
-        ci_type_sf_pct <- get_ci_pct("Shared Footway")
+        ci_type_sep_m <- get_ci_len("Separated cycling infrastructure")
+        ci_type_paint_m <- get_ci_len("Painted on-road cycle lane")
+        ci_type_mixed_m <- get_ci_len("Mixed traffic (motor vehicles with light infra)")
+        ci_type_foot_m <- get_ci_len("Cycling on pedestrian infrastructure")
       }
     }
 
@@ -156,11 +153,10 @@ for (city in target_cities) {
         pct_lts2_total = pct_lts2_total,
         pct_lts3_total = pct_lts3_total,
         pct_lts4_total = pct_lts4_total,
-        ci_type_orp_pct = ci_type_orp_pct,
-        ci_type_pcl_pct = ci_type_pcl_pct,
-        ci_type_stn_pct = ci_type_stn_pct,
-        ci_type_stw_pct = ci_type_stw_pct,
-        ci_type_sf_pct = ci_type_sf_pct
+        ci_type_sep_m = ci_type_sep_m,
+        ci_type_paint_m = ci_type_paint_m,
+        ci_type_mixed_m = ci_type_mixed_m,
+        ci_type_foot_m = ci_type_foot_m
       )
       
       # 10. Estimate Accessibility
@@ -259,12 +255,29 @@ final_df <- bind_rows(final_dataset) |>
   group_by(city, lts) |>
   arrange(year) |>
   mutate(
-    # Find baseline distance from 2016 for this specific city & lts scenario
     baseline_dist = first(avg_distance_m[year == "2016"]),
     avg_dist_change_pct = round((avg_distance_m - baseline_dist) / pmax(baseline_dist, 1) * 100, 2)
   ) |>
   select(-baseline_dist) |>
   ungroup()
+
+# Read routing_summary files to join found_routes metric
+summaries <- list()
+for (city in target_cities) {
+  sum_file <- file.path(data_dir, tolower(city), "routing_summary.csv")
+  if (file.exists(sum_file)) {
+    sum_df <- read.csv(sum_file) |>
+      mutate(year = paste0("20", year))
+    summaries[[city]] <- sum_df
+  }
+}
+if (length(summaries) > 0) {
+  all_sums <- bind_rows(summaries) |>
+    mutate(city = tools::toTitleCase(city)) # Match city case format
+  
+  # Ensure column names match before join! final_df uses character city
+  final_df <- final_df |> left_join(all_sums, by = c("city", "year", "lts"))
+}
 
 out_csv <- file.path(data_dir, "final_city_estimations.csv")
 write.csv(final_df, out_csv, row.names = FALSE)

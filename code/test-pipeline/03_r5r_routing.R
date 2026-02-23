@@ -71,11 +71,13 @@ for (city in target_cities) {
                     rm(edges)
                 }
 
+                print(paste("Entering LTS loop for Year", yr))
                 # Calculate routing for LTS 1 to 4
                 for (lts_level in 1:4) {
                     res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
+                    print(paste("Checking", res_file))
                     if (!file.exists(res_file)) {
-                        cat("  Calculating itineraries for LTS", lts_level, "\n")
+                        print(paste("  Calculating itineraries for Year", yr, "LTS", lts_level))
                         trips <- detailed_itineraries(
                             r5r_network = r5_engine,
                             origins = origins_df,
@@ -101,6 +103,8 @@ for (city in target_cities) {
 
                         rm(trips)
                         gc()
+                    } else {
+                        print(paste("  FILE EXISTS - SKIPPING", res_file))
                     }
                 }
 

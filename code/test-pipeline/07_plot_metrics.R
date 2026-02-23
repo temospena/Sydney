@@ -13,6 +13,14 @@ if (!file.exists(metrics_file)) {
 
 final_df <- read.csv(metrics_file)
 
+# The new mapping array for specific colors 
+ci_colors <- c(
+  "Separated cycling infrastructure" = "#054d05",
+  "Painted on-road cycle lane" = "#1A7832",
+  "Mixed traffic (motor vehicles with light infra)" = "#AFD4A0",
+  "Cycling on pedestrian infrastructure" = "#ebc0d4"
+)
+
 for (current_city in unique(final_df$city)) {
   city_lower <- tolower(current_city)
   results_dir <- file.path(data_dir, city_lower, "results")
@@ -64,23 +72,28 @@ for (current_city in unique(final_df$city)) {
   ggsave(file.path(results_dir, "plot_existing_lts_breakdown.png"), p2, width = 8, height = 4)
   
   # 3. Plot: stacked horizontal bar for pct of CI by type
-  ci_type <- city_df |> filter(lts == 1) |>
-    select(year, ci_type_orp_pct, ci_type_pcl_pct, ci_type_stn_pct, ci_type_stw_pct, ci_type_sf_pct) |>
+  ci_type_abs <- city_df |> filter(lts == 1) |>
+    select(year, ci_type_sep_m, ci_type_paint_m, ci_type_mixed_m, ci_type_foot_m) |>
     rename(
-      `Off Road Path` = ci_type_orp_pct,
-      `Painted Cycle Lane` = ci_type_pcl_pct,
-      `Segregated Track (narrow)` = ci_type_stn_pct,
-      `Segregated Track (wide)` = ci_type_stw_pct,
-      `Shared Footway` = ci_type_sf_pct
+      `Separated cycling infrastructure` = ci_type_sep_m,
+      `Painted on-road cycle lane` = ci_type_paint_m,
+      `Mixed traffic (motor vehicles with light infra)` = ci_type_mixed_m,
+      `Cycling on pedestrian infrastructure` = ci_type_foot_m
     ) |>
-    pivot_longer(-year, names_to = "CI_Type", values_to = "pct") |>
+    pivot_longer(-year, names_to = "CI_Type", values_to = "len_m") |>
     mutate(year = as.factor(year))
     
-  p3 <- ggplot(ci_type, aes(y = fct_rev(year), x = pct, fill = CI_Type)) +
+  # Create a percentage version manually for the pct plot
+  ci_type_pct <- ci_type_abs |>
+    group_by(year) |>
+    mutate(pct = round(len_m / pmax(sum(len_m, na.rm = TRUE), 1) * 100, 2)) |>
+    ungroup()
+    
+  p3 <- ggplot(ci_type_pct, aes(y = fct_rev(year), x = pct, fill = CI_Type)) +
     geom_bar(stat = "identity", position = "stack") +
-    scale_fill_brewer(palette = "Set3") +
+    scale_fill_manual(values = ci_colors) +
     labs(
-      title = paste(current_city, "- Cycling Infrastructure Evolution"),
+      title = paste(current_city, "- Cycling Infrastructure Evolution (Percentage)"),
       subtitle = "Percentage of total CI length split by Infrastructure Type",
       x = "Percentage (%)",
       y = "Year",
@@ -89,6 +102,21 @@ for (current_city in unique(final_df$city)) {
     theme_minimal()
     
   ggsave(file.path(results_dir, "plot_ci_types_breakdown.png"), p3, width = 8, height = 4)
+  
+  # 4. Plot: absolute stacked length of CI by type
+  p4 <- ggplot(ci_type_abs, aes(y = fct_rev(year), x = len_m / 1000, fill = CI_Type)) +
+    geom_bar(stat = "identity", position = "stack") +
+    scale_fill_manual(values = ci_colors) +
+    labs(
+      title = paste(current_city, "- Cycling Infrastructure Evolution (Absolute Length)"),
+      subtitle = "Total CI length split by Infrastructure Type",
+      x = "Length (km)",
+      y = "Year",
+      fill = "CI Type"
+    ) +
+    theme_minimal()
+    
+  ggsave(file.path(results_dir, "plot_ci_types_absolute.png"), p4, width = 8, height = 4)
 }
 
 cat("Phase 07 Plotting Metrics Completed!\n")
