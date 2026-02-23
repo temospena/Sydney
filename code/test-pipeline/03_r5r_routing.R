@@ -72,10 +72,18 @@ for (city in target_cities) {
                 # Calculate routing for LTS 1 to 4
                 for (lts_level in 1:4) {
                     res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
-                    print(paste("Checking", res_file))
-                    if (!file.exists(res_file)) {
-                        print(paste("  Calculating itineraries for Year", yr, "LTS", lts_level))
-                        trips <- detailed_itineraries(
+                    if (file.exists(res_file)) {
+                        # If the OD matrix was updated (e.g. n_od_pairs changed) after results were generated, re-run
+                        if (file.mtime(res_file) < file.mtime(origins_path)) {
+                            cat("  Existing results are older than updated OD matrix. Re-running routing...\n")
+                        } else {
+                            print(paste("  Valid results already exist - SKIPPING", res_file))
+                            next
+                        }
+                    }
+
+                    print(paste("  Calculating itineraries for Year", yr, "LTS", lts_level))
+                    trips <- detailed_itineraries(
                             r5r_network = r5_engine,
                             origins = origins_df,
                             destinations = dests_df,

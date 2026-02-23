@@ -107,6 +107,11 @@ for (city in target_cities) {
     for (v in versions) {
         out_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", v, ".gpkg"))
 
+        if (file.exists(out_path)) {
+            cat(paste("CI for", city, "version", v, "already exists. Skipping extraction...\n"))
+            next
+        }
+
         cat(paste("Extracting CI for", city, "version", v, "...\n"))
 
         tryCatch(

@@ -512,6 +512,54 @@ bash
 Rscript code/test-pipeline/06_tidy_up.R
 
 
+---
+Prompt 12
+
+I am running. But if Sydney is already estimated, shouln't it skip downloading osm again, and detect if it already has the necessary files to run the analysis, plots and maps only?
+Please detect if files already exist before downloading again.
+
+
+Response:
+
+I have implemented robust "intelligent skipping" logic across the entire pipeline to ensure that redundant work (like re-downloading OSM or re-sampling OD pairs) is avoided, while still ensuring that transitions (like your 1k to 20k points increase) are correctly handled.
+
+Intelligent Skipping Logic:
+Step 01 (
+
+01_od_data.R
+):
+
+Now checks if origins.gpkg and destinations.gpkg already exist.
+Size-Aware: It reads the existing files and checks if the row count matches your n_od_pairs from
+
+config.R
+.
+If you have 1,000 points and change the config to 20,000, it will automatically re-sample to the new size. If you already have 20,000, it skips building fetching entirely.
+Step 02b (
+
+02b_ci_osmactive.R
+):
+
+Now checks if the targeted Cycling Infrastructure GeoPackage (e.g., sydney_ci_osmactive_160101.gpkg) already exists.
+Internet Efficiency: If the file exists, it skips the osmactive download and extraction process. This is the fix for your "Sydney is already estimated" concern.
+Step 03 (
+
+03_r5r_routing.R
+):
+
+Stale-Aware: It now compares the modification time of the routing results (trips_*.rds) against the OD matrices (origins.gpkg).
+If you just updated your OD sample to 20,000 points, the results file will be "older" than the input, and the script will automatically re-run the routing to match the new sample.
+If both are up to date, it skips the heavy routing calculations.
+Deployment Instructions:
+Since you are working on a server and coordinating with a local environment, please pull these updates to the server before your next run.
+
+Once updated, you can safely run the master script:
+
+bash
+Rscript code/test-pipeline/00_run_all.R
+The script will now fly through Sydney (detecting it's already done) and focus its resources on your new cities (Paris, Barcelona, Lisbon).
+
+
 
 
 

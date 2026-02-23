@@ -81,6 +81,17 @@ for (city in target_cities) {
     bbox <- st_bbox(city_poly)
     tile_name <- tile_map[[city]]
 
+    # Skip if OD already exists with correct size
+    origins_path <- file.path(city_dir, "origins.gpkg")
+    destinations_path <- file.path(city_dir, "destinations.gpkg")
+    if (file.exists(origins_path) && file.exists(destinations_path)) {
+        o_check <- st_read(origins_path, quiet = TRUE)
+        if (nrow(o_check) == n_od_pairs) {
+            cat(paste("OD matrices for", city, "already exist with correctly sampled", n_od_pairs, "pairs. Skipping...\n"))
+            next
+        }
+    }
+
     buildings <- fetch_building_points(city, bbox, tile_name)
 
     if (is.null(buildings) || nrow(buildings) == 0) {
