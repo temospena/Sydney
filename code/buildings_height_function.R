@@ -55,6 +55,7 @@ fetch_building_points <- function(city_name, bbox_list, parket_file_dir) {
       footprint_m2 = round(as.numeric(st_area(st_transform(., 3857)))), #A0
       est_floors = pmax(1, round(height / 3)), # average 3m height per floor, with a minimum of 1 flooror
       total_floor_area_m2 = round(footprint_m2 * est_floors), # ABC
+      volume_m3 = round(footprint_m2 * height), # volume
       # Midpoints for the final point geometry
       lon = (bbox$xmin + bbox$xmax) / 2,
       lat = (bbox$ymin + bbox$ymax) / 2
@@ -62,7 +63,7 @@ fetch_building_points <- function(city_name, bbox_list, parket_file_dir) {
     # Convert polygons to points using the midpoints calculated
     st_drop_geometry() %>% 
     st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
-    select(source, id, height, var, est_floors, footprint_m2, total_floor_area_m2)
+    select(source, id, height, var, est_floors, footprint_m2, total_floor_area_m2, volume_m3)
   
   return(buildings_centroids)
 }
