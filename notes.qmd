@@ -320,6 +320,8 @@ Also, because some places do not have a good definition of "city" or "metropolit
 
 List of +700 cities worldwide, with population, lat and lon from the historical city center or CBD (<https://gist.github.com/nkrusch/848e4d6ca0be879e2e03b78b051f17da>)
 
+List from People for Bikes with city ratings regarding a score of cycling friendly cities, as 2025 (<https://cityratings.peopleforbikes.org/ratings>)
+
 Use a 10km radius from city center, for comparision purposes
 
 ## Data
