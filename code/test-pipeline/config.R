@@ -8,7 +8,7 @@ data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
 osm_raw_dir <- "/home/rosa/GIS/osm_raw_cache"
 
 # List of cities to process
-target_cities <- c("Sydney", "Lisbon", "Paris", "Barcelona")
+if (!exists("target_cities")) target_cities <- c("Sydney", "Lisbon", "Paris", "Barcelona")
 
 # Map of cities to the most specific Geofabrik region available
 region_map <- list(
@@ -19,8 +19,8 @@ region_map <- list(
 )
 
 # Years to process
-years <- c("16", "21", "26")
-versions <- c("160101", "210101", "260101")
+if (!exists("years")) years <- c("16", "21", "26")
+if (!exists("versions")) versions <- c("160101", "210101", "260101")
 
 # Global settings
 n_od_pairs <- 20000 

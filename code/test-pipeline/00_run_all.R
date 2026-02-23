@@ -11,6 +11,7 @@ cat("==========================================\n\n")
 # List of steps in sequence
 pipeline_steps <- c(
   "code/test-pipeline/01_od_data.R",
+  "code/test-pipeline/02_historical_routing_osm.R",
   "code/test-pipeline/02b_ci_osmactive.R",
   "code/test-pipeline/03_r5r_routing.R",
   "code/test-pipeline/04_analysis.R",

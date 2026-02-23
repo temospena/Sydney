@@ -150,11 +150,7 @@ for (city in target_cities) {
                     if (file.exists(mapdb_file)) file.remove(mapdb_file)
                     if (file.exists(mapdbp_file)) file.remove(mapdbp_file)
                 }
-                if (file.exists(pbf_file)) {
-                    file.remove(pbf_file)
-                    
-                    cat("  Deleted intermediate raw PBF and associated mapdb files:", pbf_file, "\n")
-                }
+                # Keep the cropped PBF in the city_dir for future analysis/re-runs
             },
             error = function(cond) {
                 warning(paste("r5r failed for", city, yr, ":", cond$message))
