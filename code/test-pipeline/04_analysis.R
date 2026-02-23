@@ -28,8 +28,19 @@ for (city in target_cities) {
         trips_list <- list()
         for (yr in years) {
             res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
+            res_file_long <- file.path(city_dir, paste0("trips_", city_lower, "_20", yr, "_lts", lts_level, ".rds"))
+            
+            trips_to_read <- NULL
             if (file.exists(res_file)) {
-                trips_list[[yr]] <- readRDS(res_file) |> mutate(year = paste0("20", yr))
+                trips_to_read <- res_file
+            } else if (file.exists(res_file_long)) {
+                trips_to_read <- res_file_long
+            }
+
+            if (!is.null(trips_to_read)) {
+                trips_list[[yr]] <- readRDS(trips_to_read) |> mutate(year = paste0("20", yr))
+            } else {
+                cat("    [MISSING] No results found for Year", yr, "(LTS", lts_level, ")\n")
             }
         }
 

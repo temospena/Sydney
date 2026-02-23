@@ -191,9 +191,19 @@ for (city in target_cities) {
       
       # Load generated itineraries for 6, 8, 9
       res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
+      res_file_long <- file.path(city_dir, paste0("trips_", city_lower, "_20", yr, "_lts", lts_level, ".rds"))
+      
+      trips_to_read <- NULL
       if (file.exists(res_file)) {
-        trips <- readRDS(res_file)
+          trips_to_read <- res_file
+      } else if (file.exists(res_file_long)) {
+          trips_to_read <- res_file_long
+      }
+
+      if (!is.null(trips_to_read)) {
+        trips <- readRDS(trips_to_read)
         if (nrow(trips) > 0) {
+            cat("    Found", nrow(trips), "trips in", basename(trips_to_read), "\n")
           
           # 6 & 9: Snapped distances and circuity
           trips <- trips |>
@@ -247,6 +257,8 @@ for (city in target_cities) {
             row_data$pct_lts4 <- round(mean(trips_df$pct_lts4, na.rm = TRUE) * 100, 2)
           }
         }
+      } else {
+          cat("    [MISSING] No itinerary file found for Year", yr, "(LTS", lts_level, "). Checked path:", res_file, "\n")
       }
       final_dataset[[length(final_dataset) + 1]] <- row_data
     }
