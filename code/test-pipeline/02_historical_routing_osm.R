@@ -53,33 +53,31 @@ for (city in target_cities) {
             }
         }
 
-        # If raw file is missing, fallback to download using osmextract
+        # If raw file is missing, attempt strict historical download
         if (!file.exists(raw_file)) {
             cat(sprintf("!!! [MISSING HISTORICAL DATA] Raw PBF missing for %s year %s. !!!\n", city, yr))
             
-            # Critical fix: If we don't have historical data, using 'latest' for 2016 is wrong.
-            # We will attempt to forceoe_download to find a match.
-            cat("Attempting to download best match from Geofabrik...\n")
+            # Geofabrik archive URL pattern
+            archive_url <- paste0("https://download.geofabrik.de/", geofabrik_region, "-", yr, "0101.osm.pbf")
             
-            temp_pbf <- tryCatch({
-              oe_download(
-                  file_url = geofabrik_region,
-                  provider = "geofabrik",
-                  download_directory = raw_pbf_dir, # Download to shared cache!
-                  quiet = FALSE
-              )
+            cat("Attempting to fetch historical archive from Geofabrik:", archive_url, "\n")
+            
+            # This will only succeed if the file exists on the server. 
+            # Note: Public Geofabrik archive is often restricted to certain dates or regions.
+            download_success <- tryCatch({
+              oe_download(file_url = archive_url, download_directory = raw_pbf_dir, quiet = FALSE)
+              TRUE
             }, error = function(e) {
-              cat("  Geofabrik download failed, falling back to any available provider...\n")
-              oe_download(file_url = geofabrik_region, download_directory = raw_pbf_dir)
+              cat("  [FAIL] Historical file not found in public Geofabrik archive.\n")
+              FALSE
             })
             
-            raw_file <- temp_pbf
-            downloaded_pbf_path <- temp_pbf
-            
-            # Check if what we downloaded is actually the current one (no date in filename)
-            if (!grepl(paste0("-", yr), basename(raw_file))) {
-                cat("  [WARNING]: Using LATEST map for historical year", yr, ". This will result in 0% routing change!\n")
+            if (!download_success) {
+                stop(sprintf("\nCRITICAL ERROR: No historical PBF found for %s year %s.\nTo fix this:\n1. Manually download the PBF for this date.\n2. Place it here: %s\n3. Rename it to: %s\n", 
+                             city, yr, raw_pbf_dir, basename(raw_file)))
             }
+            
+            raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", safe_region, "-", yr, "0101.osm.pbf"))
         }
 
         # Run Osmium to crop using bounding box

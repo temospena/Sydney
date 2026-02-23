@@ -157,4 +157,3 @@ for (city in target_cities) {
 }
 
 cat("Historical cycling infrastructure extraction finished.\n")
-                cycle_net <- osmactive::classify_cycle_infrastructure(cycle_net, include_mixed_traffic = FALSE)
