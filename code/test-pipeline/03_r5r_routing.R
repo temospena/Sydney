@@ -89,7 +89,7 @@ for (city in target_cities) {
                         )
                         saveRDS(trips, res_file)
 
-                        # Export route finding metrics tracking how many out of 20K successfully found a route
+                        # Export route finding metrics tracking how many successfully found a route
                         found_routes <- nrow(trips)
                         summary_file <- file.path(city_dir, "routing_summary.csv")
                         summary_row <- data.frame(city = city_lower, year = yr, lts = lts_level, found_routes = found_routes)
@@ -108,11 +108,19 @@ for (city in target_cities) {
                 stop_r5()
                 rJava::.jgc(R.gc = TRUE)
 
-                # Cleanup strategy: delete PBF unconditionally now that network.dat exists
-                if (file.exists(temp_pbf)) file.remove(temp_pbf)
+                if (file.exists(temp_pbf)) {
+                    file.remove(temp_pbf)
+                    
+                    # Also remove the mapdb files created by r5r in r5r_dir
+                    mapdb_file <- paste0(temp_pbf, ".mapdb")
+                    mapdbp_file <- paste0(temp_pbf, ".mapdb.p")
+                    if (file.exists(mapdb_file)) file.remove(mapdb_file)
+                    if (file.exists(mapdbp_file)) file.remove(mapdbp_file)
+                }
                 if (file.exists(pbf_file)) {
                     file.remove(pbf_file)
-                    cat("  Deleted intermediate raw PBF:", pbf_file, "\n")
+                    
+                    cat("  Deleted intermediate raw PBF and associated mapdb files:", pbf_file, "\n")
                 }
             },
             error = function(cond) {

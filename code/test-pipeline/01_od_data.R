@@ -1,5 +1,5 @@
 # 01_od_data.R
-# Generate 20k origins and destinations per city weighted by building volume
+# Generate 1000 origins and destinations per city weighted by building volume
 
 library(duckdb)
 library(sf)
@@ -8,6 +8,7 @@ sf_use_s2(FALSE)
 
 data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
 target_cities <- c("Sydney")
+n_od_pairs <- 1000 # scale up later to 20000
 
 # Map of cities to the S3 bucket tile name
 tile_map <- list(
@@ -65,7 +66,7 @@ fetch_building_points <- function(city_name, city_bbox, tile_name) {
     return(buildings_centroids)
 }
 
-set.seed(42)
+set.seed(42) # for reproducibility (because of reasons)
 
 for (city in target_cities) {
     city_lower <- tolower(city)
@@ -96,14 +97,14 @@ for (city in target_cities) {
 
     # Sample origins (unweighted)
     origins <- buildings_city |>
-        slice_sample(n = 20000, replace = TRUE) |>
+        slice_sample(n = n_od_pairs, replace = TRUE) |>
         select(volume_m3) |>
         rename(volume = volume_m3) |>
         mutate(id = row_number())
 
     # Sample destinations (weighted by building volume/area)
     destinations <- buildings_city |>
-        slice_sample(n = 20000, weight_by = volume_m3, replace = TRUE) |>
+        slice_sample(n = n_od_pairs, weight_by = volume_m3, replace = TRUE) |>
         select(volume_m3) |>
         rename(volume = volume_m3) |>
         mutate(id = row_number())

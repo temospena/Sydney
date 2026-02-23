@@ -15,14 +15,14 @@ crop_osm_pbf_bbox.sh . Estimate the lenght of the higways (excluding pedestrian 
 osm_link_ids = TRUE to check after the LTS levels used for each route by the osm_id segments (links). export the number of found routes from the 20k (not all will be found, and we need to know hom many were).
 6. Check distances, maybe use some of the trip_distances_circuity.R script, and save plots so we can analyse later. snap O and D to the road network before estimate the linear distance, to avoid imprecision (r5 also does it). Discard the od pairs that have at least one missing route.
 7. With stpanar::overline2 (see r5r_run.R) estimate the segments' trip volume so later we can idenfiy the ones with higher route volume, and save a facet plot of the 3 years map with lwd depending on the volume.
-8. Estimate the lenghth and the percentage of the route that uses any ci, and the percentage and leght of each LTS level for each route.
+8. Estimate the length and the percentage of the route that uses any ci, and the percentage and legth of each LTS level for each route.
 9. Estimate the circuity of each route (total_distance / linear distance between origin and destination)
 10. Estimate the accessibility using each LTS for opportunities, measured by buildings volume in 15 minutes cuttoff.
 
 
 
 # the dataset
-a csv file with city and population, identification, and all the estimations
+a csv file with city, population, identification (year, lts, other options), and all the estimations
 a backup of this csv, in case we run again with other parameters 
 each city enters as a new row.
 
