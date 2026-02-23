@@ -5,7 +5,7 @@ library(sf)
 sf_use_s2(TRUE)
 
 # Define directories
-data_dir <- "~/GIS/Sydney/data"
+data_dir <- path.expand("~/GIS/Sydney/data")
 output_dir <- file.path(data_dir, "test-pipeline")
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
@@ -23,7 +23,7 @@ city_list <- city_list |>
     st_as_sf(crs = 4326, coords = c("lon", "lat"))
 
 # Target cities
-target_cities <- c("Lisbon", "Sydney", "Paris", "Barcelona")
+target_cities <- c("Sydney")
 
 city_list_target <- city_list |>
     filter(city %in% target_cities)

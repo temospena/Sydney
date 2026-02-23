@@ -5,11 +5,12 @@
 library(sf)
 library(osmextract)
 library(dplyr)
+options(timeout = 3600) # give 1hr limit for large file downloads over wifi
 
 # Config
-target_cities <- c("Lisbon", "Sydney", "Paris", "Barcelona")
+target_cities <- c("Sydney")
 years <- c(16, 21, 26)
-data_dir <- "~/GIS/Sydney/data/test-pipeline"
+data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
 raw_pbf_dir <- "/media/rosa/Dados/GIS/Sydney/networks/osmpbf files" # Or wherever the user mounts the raw PBFs
 
 # Map full geofabrik region names for our target cities

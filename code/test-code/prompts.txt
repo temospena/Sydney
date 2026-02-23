@@ -35,3 +35,11 @@ Important Note for your local run: 02_historical_routing_osm.R expects the heavy
 Let me know if you would like me to adjust the workflow, run the remainder of the analysis, or if there is anything else I should tweak on these scripts!
 
 created ImplementationPlan.md file with the following tasks
+
+
+----
+
+Prompt 2
+This time use only one city, for instance Sydney, do it does not crash again.
+
+There is probably a missunderstanding with the osm data per year, and the ci per year. both are needed for different reasons. the osm data (that will be cropped) is to use in r5r. The ci data (from osmactive) ist to estimate some variables described in the plan.txt. the ci per year can be saved in .gokg, but the osm per year needs to be in .pbf.

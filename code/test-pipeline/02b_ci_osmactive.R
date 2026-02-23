@@ -5,9 +5,10 @@ library(osmactive)
 library(sf)
 library(dplyr)
 sf_use_s2(TRUE)
+options(timeout = 3600)
 
-data_dir <- "~/GIS/Sydney/data/test-pipeline"
-target_cities <- c("Lisbon", "Sydney", "Paris", "Barcelona")
+data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
+target_cities <- c("Sydney")
 # osmactive historical versions correspond to YYMMDD strings, like "160101"
 versions <- c("160101", "210101", "260101")
 
@@ -49,11 +50,12 @@ for (city in target_cities) {
         tryCatch(
             {
                 osm <- osmactive::get_travel_network(
-                    place         = infra_region,
-                    boundary      = perim,
+                    place = infra_region,
+                    boundary = perim,
                     boundary_type = "clipsrc",
-                    version       = v,
-                    quiet         = FALSE
+                    version = v,
+                    download_directory = city_dir,
+                    quiet = FALSE
                 )
 
                 cycle_net <- osmactive::get_cycling_network(osm)

@@ -7,8 +7,8 @@ library(stplanr)
 library(tmap)
 library(ggplot2)
 
-data_dir <- "~/GIS/Sydney/data/test-pipeline"
-target_cities <- c("Lisbon", "Sydney", "Paris", "Barcelona")
+data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
+target_cities <- c("Sydney")
 years <- c("16", "21", "26")
 
 cat("Starting Phase 3 Analysis...\n")

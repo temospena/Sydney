@@ -6,8 +6,8 @@ library(sf)
 library(dplyr)
 sf_use_s2(TRUE)
 
-data_dir <- "~/GIS/Sydney/data/test-pipeline"
-target_cities <- c("Lisbon", "Sydney", "Paris", "Barcelona")
+data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
+target_cities <- c("Sydney")
 
 # Map of cities to the S3 bucket tile name
 tile_map <- list(
