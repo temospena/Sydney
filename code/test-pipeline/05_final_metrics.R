@@ -56,22 +56,34 @@ for (city in target_cities) {
     })
     
     # Load CI layer
-    ci_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", yr, "0101.gpkg"))
+    # Fix: CI files are named with versions like 160101, but yr is "16"
+    v_ext <- versions[which(years == yr)]
+    ci_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", v_ext, ".gpkg"))
+    
+    ci <- NULL
+    ci_osm_ids <- character(0)
     if (file.exists(ci_path)) {
-      ci <- st_read(ci_path, quiet = TRUE)
-      ci_osm_ids <- ci$osm_id
-    } else {
-      ci_osm_ids <- character(0)
+      ci <- tryCatch({
+        st_read(ci_path, quiet = TRUE)
+      }, error = function(e) {
+        warning("Could not read CI file: ", ci_path)
+        NULL
+      })
+      if (!is.null(ci)) ci_osm_ids <- ci$osm_id
     }
     
     # Load edges (LTS info)
     edges_path <- file.path(r5r_dir, paste0(city_lower, "_", yr, "_lts.gpkg"))
+    edges <- NULL
     if (file.exists(edges_path)) {
-      edges <- st_read(edges_path, quiet = TRUE) |> 
-        st_drop_geometry() |>
-        select(edge_index, osm_id, bicycle_lts, length, car, bicycle)
-    } else {
-      edges <- NULL
+      edges <- tryCatch({
+        st_read(edges_path, quiet = TRUE) |> 
+          st_drop_geometry() |>
+          select(edge_index, osm_id, bicycle_lts, length, car, bicycle)
+      }, error = function(e) {
+        warning("Detected corrupt LTS file: ", edges_path, ". You should delete it to re-generate.")
+        NULL
+      })
     }
     
     # Calculate Overall Non-Routing Land Use network stats for the year

@@ -63,9 +63,24 @@ for (city in target_cities) {
 
                 # Extract LTS
                 lts_gpkg <- file.path(r5r_dir, paste0(city_lower, "_", yr, "_lts.gpkg"))
-                if (!file.exists(lts_gpkg)) {
+                
+                # Robust check: file must exist AND be readable/not corrupt
+                file_valid <- FALSE
+                if (file.exists(lts_gpkg)) {
+                    file_valid <- tryCatch({
+                        # Just check if we can read the layer info
+                        st_layers(lts_gpkg)
+                        TRUE
+                    }, error = function(e) FALSE)
+                }
+
+                if (!file_valid) {
+                    if (file.exists(lts_gpkg)) {
+                        cat("  Detected corrupt or unreadable LTS file. Re-generating...\n")
+                        file.remove(lts_gpkg)
+                    }
                     edges <- street_network_to_sf(r5_engine) |> purrr::pluck("edges")
-                    st_write(edges, lts_gpkg, append = FALSE, quiet = TRUE)
+                    st_write(edges, lts_gpkg, append = FALSE, delete_dsn = TRUE, quiet = TRUE)
                     rm(edges)
                 }
 
