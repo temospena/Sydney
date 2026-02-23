@@ -108,7 +108,7 @@ for (city in target_cities) {
     for (v in VERSIONS) {
         out_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", v, ".gpkg"))
 
-        if (file.exists(out_path)) {
+        if (file.exists(out_path) && !FORCE_RERUN) {
             cat(paste("CI for", city, "version", v, "already exists. Skipping extraction...\n"))
             next
         }
@@ -157,3 +157,4 @@ for (city in target_cities) {
 }
 
 cat("Historical cycling infrastructure extraction finished.\n")
+                cycle_net <- osmactive::classify_cycle_infrastructure(cycle_net, include_mixed_traffic = FALSE)

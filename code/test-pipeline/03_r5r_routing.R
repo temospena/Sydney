@@ -76,7 +76,7 @@ for (city in target_cities) {
         tryCatch(
             {
                 # Build / load network
-                r5_engine <- build_network(data_path = r5r_dir, verbose = FALSE)
+                r5_engine <- build_network(data_path = r5r_dir, verbose = FALSE, overwrite = rebuild_needed)
 
                 # Extract LTS
                 lts_gpkg <- file.path(r5r_dir, paste0(city_lower, "_", yr, "_lts.gpkg"))
