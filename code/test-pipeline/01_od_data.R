@@ -18,13 +18,13 @@ tile_map <- list(
 )
 
 # Function to fetch buildings from S3 parquet using exact bbox
-fetch_building_points <- function(city_name, bbox, tile_name) {
+fetch_building_points <- function(city_name, city_bbox, tile_name) {
     parquet_s3_path <- paste0("s3://us-west-2.opendata.source.coop/tge-labs/globalbuildingatlas-lod1/", tile_name, ".parquet")
 
-    q_xmin <- bbox["xmin"]
-    q_ymin <- bbox["ymin"]
-    q_xmax <- bbox["xmax"]
-    q_ymax <- bbox["ymax"]
+    q_xmin <- city_bbox["xmin"]
+    q_ymin <- city_bbox["ymin"]
+    q_xmax <- city_bbox["xmax"]
+    q_ymax <- city_bbox["ymax"]
 
     con <- dbConnect(duckdb())
     dbExecute(con, "INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs; SET s3_region='us-west-2'; SET preserve_insertion_order=false;")
@@ -46,19 +46,17 @@ fetch_building_points <- function(city_name, bbox, tile_name) {
     }
 
     buildings_centroids <- raw_data %>%
-        mutate(geometry = st_as_sfc(geom_wkb, crs = 4326)) %>%
+        mutate(
+            geometry = st_as_sfc(geom_wkb, crs = 4326),
+            lon = (bbox$xmin + bbox$xmax) / 2,
+            lat = (bbox$ymin + bbox$ymax) / 2
+        ) %>%
         st_as_sf() %>%
         mutate(
             footprint_m2 = round(as.numeric(st_area(st_transform(., 3857)))),
             est_floors = pmax(1, round(height / 3)),
             total_floor_area_m2 = round(footprint_m2 * est_floors),
             volume_m3 = round(footprint_m2 * height)
-        ) %>%
-        st_make_valid() %>%
-        st_centroid() %>%
-        mutate(
-            lon = st_coordinates(geometry)[, 1],
-            lat = st_coordinates(geometry)[, 2]
         ) %>%
         st_drop_geometry() %>%
         st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%

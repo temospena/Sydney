@@ -83,7 +83,9 @@ for (city in target_cities) {
                             mode = "BICYCLE",
                             shortest_path = TRUE,
                             max_lts = lts_level,
-                            progress = FALSE
+                            progress = TRUE, # know when it is done and how many routes are found
+                            # verbose = FALSE, # hide warning messages
+                            osm_link_ids = TRUE
                         )
                         saveRDS(trips, res_file)
 
