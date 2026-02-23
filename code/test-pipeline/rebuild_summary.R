@@ -3,11 +3,12 @@
 
 library(tidyverse)
 
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
-city <- "Sydney"
-city_lower <- tolower(city)
-city_dir <- file.path(data_dir, city_lower)
-years <- c(16, 21, 26)
+source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
+
+for (city in target_cities) {
+  city_lower <- tolower(city)
+  city_dir <- file.path(data_dir, city_lower)
 
 results_summary <- list()
 
@@ -31,6 +32,7 @@ for (yr in years) {
   }
 }
 
-final_summary <- bind_rows(results_summary)
-write.csv(final_summary, file.path(city_dir, "routing_summary.csv"), row.names = FALSE)
-cat("routing_summary.csv rebuilt successfully.\n")
+  final_summary <- bind_rows(results_summary)
+  write.csv(final_summary, file.path(city_dir, "routing_summary.csv"), row.names = FALSE)
+  cat("routing_summary.csv rebuilt for", city, "\n")
+}

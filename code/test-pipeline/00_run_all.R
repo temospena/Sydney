@@ -13,6 +13,7 @@ all_cities <- target_cities
 
 # List of steps in sequence
 pipeline_steps <- c(
+  "code/test-pipeline/00_city_buffers.R",
   "code/test-pipeline/01_od_data.R",
   "code/test-pipeline/02_historical_routing_osm.R",
   "code/test-pipeline/02b_ci_osmactive.R",

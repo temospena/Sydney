@@ -4,13 +4,22 @@ library(dplyr)
 library(sf)
 sf_use_s2(TRUE)
 
-# Define directories
-data_dir <- path.expand("~/GIS/Sydney/data")
-output_dir <- file.path(data_dir, "test-pipeline")
+# Load global configuration
+source("code/test-pipeline/config.R")
+output_dir <- data_dir
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
+# The city_list.txt is expected to be in the 'data' folder
+if (requireNamespace("here", quietly = TRUE)) {
+    city_list_path <- here::here("data/city_list.txt")
+} else {
+    city_list_path <- "data/city_list.txt"
+    if (!file.exists(city_list_path)) city_list_path <- "../../data/city_list.txt"
+}
+
 # Read the full dataset
-city_list <- read.csv(file.path(data_dir, "city_list.txt"), header = FALSE)
+city_list <- read.csv(city_list_path, header = FALSE)
+if (exists("city_to_run")) target_cities <- city_to_run
 city_list <- city_list |>
     rename(
         city = V1,
@@ -23,7 +32,7 @@ city_list <- city_list |>
     st_as_sf(crs = 4326, coords = c("lon", "lat"))
 
 # Target cities
-target_cities <- c("Sydney")
+if (!exists("target_cities")) target_cities <- c("Sydney", "Lisbon", "Paris", "Barcelona")
 
 city_list_target <- city_list |>
     filter(city %in% target_cities)

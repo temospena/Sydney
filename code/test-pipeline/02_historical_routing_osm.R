@@ -51,17 +51,31 @@ for (city in target_cities) {
 
         # If raw file is missing, fallback to download using osmextract
         if (!file.exists(raw_file)) {
-            cat(sprintf("Raw PBF missing for %s year %s. Attempting to download fallback to %s/temp ...\n", city, yr, city_dir))
-
-            # We will try to download the *current* PBF using oe_get or oe_download into a temp directory
-            # as a fallback if the exact historical one isn't located. This fulfills the user request.
-            file_url <- oe_match(geofabrik_region, provider = "geofabrik")$url
-            temp_pbf <- oe_download(
-                file_url = file_url,
-                download_directory = city_dir
-            )
+            cat(sprintf("!!! [MISSING HISTORICAL DATA] Raw PBF missing for %s year %s. !!!\n", city, yr))
+            
+            # Critical fix: If we don't have historical data, using 'latest' for 2016 is wrong.
+            # We will attempt to forceoe_download to find a match.
+            cat("Attempting to download best match from Geofabrik...\n")
+            
+            temp_pbf <- tryCatch({
+              oe_download(
+                  file_url = geofabrik_region,
+                  provider = "geofabrik",
+                  download_directory = raw_pbf_dir, # Download to shared cache!
+                  quiet = FALSE
+              )
+            }, error = function(e) {
+              cat("  Geofabrik download failed, falling back to any available provider...\n")
+              oe_download(file_url = geofabrik_region, download_directory = raw_pbf_dir)
+            })
+            
             raw_file <- temp_pbf
             downloaded_pbf_path <- temp_pbf
+            
+            # Check if what we downloaded is actually the current one (no date in filename)
+            if (!grepl(paste0("-", yr), basename(raw_file))) {
+                cat("  [WARNING]: Using LATEST map for historical year", yr, ". This will result in 0% routing change!\n")
+            }
         }
 
         # Run Osmium to crop using bounding box
