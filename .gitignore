@@ -49,3 +49,4 @@ data/paris/paris_city_buildings.geojson
 data/sydney/sydney_city_buildings.geojson
 data/sydney/barcelona_city_buildings.geojson
 
+*.pbf
