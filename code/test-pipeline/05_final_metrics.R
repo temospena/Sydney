@@ -321,7 +321,7 @@ out_csv <- file.path(data_dir, "final_city_estimations.csv")
 
 # INCREMENTAL UPDATE LOGIC:
 if (file.exists(out_csv)) {
-  existing_df <- read.csv(out_csv)
+  existing_df <- read.csv(out_csv) |> mutate(year = as.character(year))
   # Filter out rows for the cities we just processed to avoid duplication
   processed_cities <- unique(final_df$city)
   existing_df <- existing_df %>% filter(!(city %in% processed_cities))
