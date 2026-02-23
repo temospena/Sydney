@@ -96,29 +96,35 @@ for (city in target_cities) {
             select(from_id, to_id, total_distance, year) |>
             pivot_wider(values_from = total_distance, names_from = year, names_prefix = "dist_")
 
+        plot_diff <- function(x_col, y_col, yr_x, yr_y) {
+            if (x_col %in% names(trips_wide) && y_col %in% names(trips_wide)) {
+                p <- ggplot(trips_wide, aes(x = .data[[x_col]], y = .data[[y_col]])) +
+                    geom_point(alpha = 0.1, color = "midnightblue") +
+                    geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+                    geom_smooth(method = "lm", color = "green") +
+                    labs(
+                        title = paste(city, "OD Distance:", yr_x, "vs.", yr_y, "(LTS", lts_level, ")"),
+                        subtitle = "Points below the red line represent improved routing efficiency",
+                        x = paste("Distance", yr_x, "(m)"), y = paste("Distance", yr_y, "(m)")
+                    ) +
+                    theme_minimal()
+                ggsave(file.path(results_dir, paste0("distance_comparison_", substring(yr_x, 3), "_", substring(yr_y, 3), "_lts", lts_level, ".png")), p, width = 8, height = 6)
+            }
+        }
+
+        plot_diff("dist_2016", "dist_2021", "2016", "2021")
+        plot_diff("dist_2021", "dist_2026", "2021", "2026")
+        plot_diff("dist_2016", "dist_2026", "2016", "2026")
+
+        # Final CSV export with comparison
         if ("dist_2016" %in% names(trips_wide) && "dist_2026" %in% names(trips_wide)) {
-            p2 <- ggplot(trips_wide, aes(x = dist_2016, y = dist_2026)) +
-                geom_point(alpha = 0.1, color = "midnightblue") +
-                geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
-                geom_smooth(method = "lm", color = "green") +
-                labs(
-                    title = paste(city, "OD Distance: 2016 vs. 2026 (LTS", lts_level, ")"),
-                    subtitle = "Points below the red line represent improved routing efficiency",
-                    x = "Original Distance 2016 (m)", y = "Projected Distance 2026 (m)"
-                ) +
-                theme_minimal()
-
-            ggsave(file.path(results_dir, paste0("distance_comparison_16_26_lts", lts_level, ".png")), p2, width = 8, height = 6)
-
-            # Final CSV export with comparison
             trips_wide <- trips_wide |>
                 mutate(
                     diff_1626 = dist_2026 - dist_2016,
                     change_pct = (dist_2026 - dist_2016) / dist_2016
                 )
-
-            write.csv(trips_wide, file.path(results_dir, paste0("routing_differences_lts", lts_level, ".csv")), row.names = FALSE)
         }
+        write.csv(trips_wide, file.path(results_dir, paste0("routing_differences_lts", lts_level, ".csv")), row.names = FALSE)
 
         # 3. Spatial overline generation for segment volume
         cat("    Generating overline map (this may take a while)...\n")

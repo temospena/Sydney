@@ -70,11 +70,68 @@ for (city in target_cities) {
     if (file.exists(edges_path)) {
       edges <- st_read(edges_path, quiet = TRUE) |> 
         st_drop_geometry() |>
-        select(edge_index, osm_id, bicycle_lts, length)
+        select(edge_index, osm_id, bicycle_lts, length, car, bicycle)
     } else {
       edges <- NULL
     }
     
+    # Calculate Overall Non-Routing Land Use network stats for the year
+    total_road_m <- NA
+    total_ci_m <- NA
+    pct_ci_total <- NA
+    pct_lts1_total <- NA
+    pct_lts2_total <- NA
+    pct_lts3_total <- NA
+    pct_lts4_total <- NA
+    
+    ci_type_orp_pct <- NA
+    ci_type_pcl_pct <- NA
+    ci_type_stn_pct <- NA
+    ci_type_stw_pct <- NA
+    ci_type_sf_pct <- NA
+
+    if (!is.null(edges)) {
+      # Total road length without pedestrians (car or bicycle access allowed)
+      valid_edges <- edges |> filter(car == "TRUE" | bicycle == "TRUE")
+      total_road_m <- sum(valid_edges$length, na.rm = TRUE)
+      
+      lts1_m <- sum(valid_edges$length[valid_edges$bicycle_lts == 1], na.rm = TRUE)
+      lts2_m <- sum(valid_edges$length[valid_edges$bicycle_lts == 2], na.rm = TRUE)
+      lts3_m <- sum(valid_edges$length[valid_edges$bicycle_lts == 3], na.rm = TRUE)
+      lts4_m <- sum(valid_edges$length[valid_edges$bicycle_lts == 4], na.rm = TRUE)
+      
+      pct_lts1_total <- round(lts1_m / pmax(total_road_m, 1) * 100, 2)
+      pct_lts2_total <- round(lts2_m / pmax(total_road_m, 1) * 100, 2)
+      pct_lts3_total <- round(lts3_m / pmax(total_road_m, 1) * 100, 2)
+      pct_lts4_total <- round(lts4_m / pmax(total_road_m, 1) * 100, 2)
+    }
+
+    if (exists("ci")) {
+      ci_lengths <- as.numeric(st_length(ci))
+      total_ci_m <- sum(ci_lengths, na.rm = TRUE)
+      
+      if (!is.na(total_road_m)) {
+        pct_ci_total <- round(total_ci_m / pmax(total_road_m, 1) * 100, 2)
+      }
+      
+      if ("infra5" %in% names(ci)) {
+        ci_types <- data.frame(infra5 = ci$infra5, len = ci_lengths) |>
+          group_by(infra5) |> summarise(total_len = sum(len, na.rm = TRUE)) |>
+          mutate(pct = round(total_len / pmax(total_ci_m, 1) * 100, 2))
+        
+        get_ci_pct <- function(type_name) {
+          val <- ci_types$pct[ci_types$infra5 == type_name]
+          if (length(val) > 0) return(val[1]) else return(0)
+        }
+        
+        ci_type_orp_pct <- get_ci_pct("Off Road Path")
+        ci_type_pcl_pct <- get_ci_pct("Painted Cycle Lane")
+        ci_type_stn_pct <- get_ci_pct("Segregated Track (narrow)")
+        ci_type_stw_pct <- get_ci_pct("Segregated Track (wide)")
+        ci_type_sf_pct <- get_ci_pct("Shared Footway")
+      }
+    }
+
     for (lts_level in 1:4) {
       cat("  LTS", lts_level, "...\n")
       
@@ -84,13 +141,26 @@ for (city in target_cities) {
         lts = lts_level, 
         population = NA, # Can be updated with true population later from People for bikes dataset
         avg_distance_m = NA, 
-        avg_circuity = NA, 
+        avg_circuity = NA,
+        avg_dist_change_pct = NA, # Value populated dynamically across full dataframe
         pct_ci_route = NA, 
         pct_lts1 = NA, 
         pct_lts2 = NA, 
         pct_lts3 = NA, 
         pct_lts4 = NA, 
-        access_15min_vol = NA
+        access_15min_vol = NA,
+        total_road_m = total_road_m,
+        total_ci_m = total_ci_m,
+        pct_ci_total = pct_ci_total,
+        pct_lts1_total = pct_lts1_total,
+        pct_lts2_total = pct_lts2_total,
+        pct_lts3_total = pct_lts3_total,
+        pct_lts4_total = pct_lts4_total,
+        ci_type_orp_pct = ci_type_orp_pct,
+        ci_type_pcl_pct = ci_type_pcl_pct,
+        ci_type_stn_pct = ci_type_stn_pct,
+        ci_type_stw_pct = ci_type_stw_pct,
+        ci_type_sf_pct = ci_type_sf_pct
       )
       
       # 10. Estimate Accessibility
@@ -185,7 +255,17 @@ for (city in target_cities) {
   }
 }
 
-final_df <- bind_rows(final_dataset)
+final_df <- bind_rows(final_dataset) |>
+  group_by(city, lts) |>
+  arrange(year) |>
+  mutate(
+    # Find baseline distance from 2016 for this specific city & lts scenario
+    baseline_dist = first(avg_distance_m[year == "2016"]),
+    avg_dist_change_pct = round((avg_distance_m - baseline_dist) / pmax(baseline_dist, 1) * 100, 2)
+  ) |>
+  select(-baseline_dist) |>
+  ungroup()
+
 out_csv <- file.path(data_dir, "final_city_estimations.csv")
 write.csv(final_df, out_csv, row.names = FALSE)
 cat("Dataset dynamically created and archived to:\n", out_csv, "\n")
