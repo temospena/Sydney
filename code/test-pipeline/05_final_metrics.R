@@ -1,17 +1,13 @@
-# 05_final_metrics.R
-# Estimate detailed route metrics and accessibility, returning one dataset row per city/year/LTS scenario.
+# Load global configuration
+source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
+options(java.parameters = java_mem)
 
 library(tidyverse)
 library(sf)
 library(r5r)
 library(lwgeom)
 library(stringr)
-
-# Load global configuration
-# Load global configuration
-source("code/test-pipeline/config.R")
-if (exists("city_to_run")) target_cities <- city_to_run
-options(java.parameters = java_mem)
 
 final_dataset <- list()
 
@@ -262,7 +258,10 @@ for (city in target_cities) {
   }
 }
 
-final_df <- bind_rows(final_dataset) |>
+if (length(final_dataset) == 0) {
+    cat("No new data rows estimated for", target_cities, ". Skipping metrics finalization.\n")
+} else {
+    final_df <- bind_rows(final_dataset) |>
   group_by(city, lts) |>
   arrange(year) |>
   mutate(
@@ -303,5 +302,6 @@ if (file.exists(out_csv)) {
   final_df <- bind_rows(existing_df, final_df)
 }
 
-write.csv(final_df, out_csv, row.names = FALSE)
-cat("Dataset dynamically updated and saved to:\n", out_csv, "\n")
+    write.csv(final_df, out_csv, row.names = FALSE)
+    cat("Dataset dynamically updated and saved to:\n", out_csv, "\n")
+}

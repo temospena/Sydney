@@ -124,9 +124,6 @@ for (city in target_cities) {
 
                         rm(trips)
                         gc()
-                    } else {
-                        print(paste("  FILE EXISTS - SKIPPING", res_file))
-                    }
                 }
 
                 # Stop engine to free JVM limits
