@@ -43,10 +43,14 @@ for (city in target_cities) {
 
         out_file <- file.path(city_dir, paste0(city_lower, "_", yr, ".osm.pbf"))
 
-        # If the clipped output already exists, we skip downloading/processing
-        if (file.exists(out_file) && !FORCE_RERUN) {
-            cat(paste("Output", out_file, "already exists. Skipping osmium crop.\n"))
-            next
+        # If the clipped output already exists, we skip downloading/processing unless FORCE_RERUN is TRUE
+        if (file.exists(out_file)) {
+            if (FORCE_RERUN) {
+                cat(paste("  [FORCING RE-CROP] Output", out_file, "exists but FORCE_RERUN is TRUE.\n"))
+            } else {
+                cat(paste("  [SKIPPING] Output", out_file, "already exists. Set FORCE_RERUN <- TRUE in config.R to overwrite.\n"))
+                next
+            }
         }
 
         # If raw file is missing, fallback to download using osmextract

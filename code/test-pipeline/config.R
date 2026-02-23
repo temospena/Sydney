@@ -32,7 +32,8 @@ if (!exists("versions")) versions <- c("160101", "210101", "260101")
 # Routing Settings
 n_od_pairs <- 20000 
 java_mem <- "-Xmx96G" 
-FORCE_RERUN <- FALSE # Set to TRUE to bypass all skip logic and force a fresh run
+if (!exists("FORCE_RERUN")) FORCE_RERUN <- FALSE # Set to TRUE to bypass all skip logic
+cat("[CONFIG] FORCE_RERUN is currently:", FORCE_RERUN, "\n")
 
 # Color scheme for custom CI (shared across plots and maps)
 ci_colors <- c(
