@@ -44,7 +44,7 @@ for (city in target_cities) {
         out_file <- file.path(city_dir, paste0(city_lower, "_", yr, ".osm.pbf"))
 
         # If the clipped output already exists, we skip downloading/processing
-        if (file.exists(out_file)) {
+        if (file.exists(out_file) && !FORCE_RERUN) {
             cat(paste("Output", out_file, "already exists. Skipping osmium crop.\n"))
             next
         }

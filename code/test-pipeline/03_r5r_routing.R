@@ -50,9 +50,25 @@ for (city in target_cities) {
 
         dir.create(r5r_dir, showWarnings = FALSE, recursive = TRUE)
 
-        # Move PBF to r5r_dir if needed for setup
+        # Move PBF and trigger rebuild if network is stale
         temp_pbf <- file.path(r5r_dir, basename(pbf_file))
-        if (!file.exists(network_dat) && file.exists(pbf_file)) {
+        
+        rebuild_needed <- FALSE
+        if (!file.exists(network_dat) || FORCE_RERUN) {
+            if (FORCE_RERUN && file.exists(network_dat)) {
+                cat("  FORCE_RERUN is TRUE. Invalidating R5 cache...\n")
+                file.remove(network_dat)
+            }
+            rebuild_needed <- TRUE
+        } else if (file.exists(pbf_file)) {
+             if (file.mtime(pbf_file) > file.mtime(network_dat)) {
+                 cat("  Detected updated Street Network (PBF). Invalidating R5 cache...\n")
+                 file.remove(network_dat)
+                 rebuild_needed <- TRUE
+             }
+        }
+
+        if (rebuild_needed && file.exists(pbf_file)) {
             file.copy(pbf_file, temp_pbf, overwrite = TRUE)
         }
 
@@ -101,9 +117,19 @@ for (city in target_cities) {
                     }
 
                     if (found_existing) {
-                        # If the OD matrix was updated (e.g. n_od_pairs changed) after results were generated, re-run
-                        if (file.mtime(check_file) < file.mtime(origins_path)) {
-                            cat("  Existing results are older than updated OD matrix. Re-running routing...\n")
+                        # Re-run if results are older than OD matrices OR older than the updated PBF network
+                        od_updated <- file.mtime(check_file) < file.mtime(origins_path)
+                        pbf_updated <- FALSE
+                        if (file.exists(pbf_file)) {
+                            pbf_updated <- file.mtime(check_file) < file.mtime(pbf_file)
+                        }
+                        
+                        if (FORCE_RERUN) {
+                            cat("  FORCE_RERUN is TRUE. Ignoring existing results and re-running...\n")
+                        } else if (od_updated) {
+                            cat("  Existing results are older than updated OD matrix. Re-running...\n")
+                        } else if (pbf_updated) {
+                            cat("  Existing results are older than updated Street Network (PBF). Re-running...\n")
                         } else {
                             cat(paste("  Valid results already exist - SKIPPING. Path:", check_file, "\n"))
                             next

@@ -29,9 +29,10 @@ region_map <- list(
 if (!exists("years")) years <- c("16", "21", "26")
 if (!exists("versions")) versions <- c("160101", "210101", "260101")
 
-# Global settings
+# Routing Settings
 n_od_pairs <- 20000 
 java_mem <- "-Xmx96G" 
+FORCE_RERUN <- FALSE # Set to TRUE to bypass all skip logic and force a fresh run
 
 # Color scheme for custom CI (shared across plots and maps)
 ci_colors <- c(
