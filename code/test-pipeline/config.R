@@ -23,12 +23,12 @@ if (!exists("target_cities") || length(target_cities) == 0) {
   target_cities <- c("Lisbon", "Paris", "Barcelona")
 }
 
-# Map of cities to the most specific Geofabrik region available
+# Map of cities to the Geofabrik region name
 region_map <- list(
-    Lisbon = "europe/portugal",
-    Sydney = "australia/new-south-wales",
-    Paris = "europe/france/ile-de-france",
-    Barcelona = "europe/spain/cataluna"
+    Lisbon = "portugal",
+    Sydney = "new-south-wales",
+    Paris = "ile-de-france",
+    Barcelona = "cataluna"
 )
 
 # Years to process

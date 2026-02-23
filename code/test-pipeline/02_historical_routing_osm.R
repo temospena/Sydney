@@ -57,13 +57,25 @@ for (city in target_cities) {
         if (!file.exists(raw_file)) {
             cat(sprintf("!!! [MISSING HISTORICAL DATA] Raw PBF missing for %s year %s. !!!\n", city, yr))
             
-            # Geofabrik archive URL pattern
-            archive_url <- paste0("https://download.geofabrik.de/", geofabrik_region, "-", yr, "0101.osm.pbf")
+            # Smart Discovery: Use oe_match to find the continent and base URL
+            match_res <- tryCatch({
+              oe_match(geofabrik_region, provider = "geofabrik")
+            }, error = function(e) {
+                # Try fallback names if specific region fails
+                if (geofabrik_region == "cataluna") return(oe_match("spain", provider = "geofabrik"))
+                return(NULL)
+            })
             
-            cat("Attempting to fetch historical archive from Geofabrik:", archive_url, "\n")
+            if (is.null(match_res)) {
+              stop(sprintf("CRITICAL ERROR: Region '%s' not found on Geofabrik.", geofabrik_region))
+            }
             
-            # This will only succeed if the file exists on the server. 
-            # Note: Public Geofabrik archive is often restricted to certain dates or regions.
+            # Construct archive URL by replacing '-latest' with our target date
+            # Geofabrik archive format: https://download.geofabrik.de/europe/portugal-160101.osm.pbf
+            archive_url <- gsub("-latest.osm.pbf", paste0("-", yr, "0101.osm.pbf"), match_res$url)
+            
+            cat("Attempting to fetch historical archive from Discovery URL:", archive_url, "\n")
+            
             download_success <- tryCatch({
               oe_download(file_url = archive_url, download_directory = raw_pbf_dir, quiet = FALSE)
               TRUE
@@ -77,6 +89,7 @@ for (city in target_cities) {
                              city, yr, raw_pbf_dir, basename(raw_file)))
             }
             
+            # Update path once downloaded
             raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", safe_region, "-", yr, "0101.osm.pbf"))
         }
 
