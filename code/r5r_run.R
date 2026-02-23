@@ -187,6 +187,10 @@ map_data <- trips_overline %>%
   }) |> 
   filter(trips > 1)
 
+saveRDS(map_data, "networks/results_ttm/lisbon_lts2_overline.rds")
+# saveRDS(map_data, "networks/results_ttm/lisbon_lts3_overline.rds")
+
+
 # map
 tm_shape(map_data) +
   tm_lines(
@@ -200,4 +204,3 @@ tm_shape(map_data) +
   # tm_facets(by = "year", sync = TRUE, free.coords = FALSE) # paper
   tm_facets(by = "year", as.layers = TRUE) # interactive
 
-saveRDS(map_data, "networks/results_ttm/lisbon_lts2_overline")
