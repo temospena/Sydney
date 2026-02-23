@@ -53,3 +53,7 @@ data/sydney/barcelona_city_buildings.geojson
 *.mapdb
 *.mapdb.p
 *_lts.gpkg
+*_lts1.rds
+*_lts2.rds
+*_lts3.rds
+*_lts4.rds
