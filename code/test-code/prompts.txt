@@ -123,4 +123,46 @@ The
 04_analysis.R
 !
 
+I'm totally tracking with you! No worries about the mid-run feedback; it gave me the exact context needed to make sure the pipelines reflect your most up-to-date specs in
+
+plan.txt
+ and
+
+r5r_setup.R
+!
+
+Here are the precise updates I applied while 03_r5r_routing continues churning through the full 20K x 20K array arrays in the background:
+
+
+03_r5r_routing.R
+ Update:
+
+Upgraded the deprecated function to the modern build_network(data_path = r5r_dir) strictly matching your codebase setup.
+Formatted the call using the modern standard r5r_network = r5_engine instead of the legacy r5r_core argument.
+Added a new tracking line natively inside the mapping loops. It cleanly exports the found_routes = nrow(trips) tally dynamically after every LTS level finishes computing into ~/GIS/Sydney/data/test-pipeline/sydney/routing_summary.csv so you can verify exactly how many out of 20K matched.
+
+04_analysis.R
+ Enhancement:
+
+I integrated standard sf endpoint logic to implicitly extract the specific snapped X/Y that r5r locked onto for every route.
+r
+linear_distance = as.numeric(st_distance(lwgeom::st_startpoint(geometry), lwgeom::st_endpoint(geometry), by_element = TRUE))
+circuity = total_distance / linear_distance
+Implemented your strict filtering logic. Before generating any metrics, density peaks, or plots, the system dynamically aggregates the from_id and to_id combinations that successfully built a route across all target years (16/21/26), and completely purges any OD pair exhibiting routing failure dropouts!
+And lastly, verifying your concern on the cached
+
+.pbf
+ bloat: Yes!
+
+03_r5r_routing.R
+ retains that strict cleanup logic we patched in earlier. Once street_network_to_sf() exports the
+
+.gpkg
+ array securely, it aggressively wipes the heavy unneeded parent
+
+.pbf
+ duplicate and cache prior to actually commencing the routing loop!
+
+The r5r engine is crunching through LTS levels mapping those paths in the background seamlessly right now. It usually takes several minutes per year for a full 20K array matrix! Let me know if you want to tweak anything else while it runs
+
 ---

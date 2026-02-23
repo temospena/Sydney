@@ -86,6 +86,17 @@ for (city in target_cities) {
                             progress = FALSE
                         )
                         saveRDS(trips, res_file)
+
+                        # Export route finding metrics tracking how many out of 20K successfully found a route
+                        found_routes <- nrow(trips)
+                        summary_file <- file.path(city_dir, "routing_summary.csv")
+                        summary_row <- data.frame(city = city_lower, year = yr, lts = lts_level, found_routes = found_routes)
+                        if (!file.exists(summary_file)) {
+                            write.csv(summary_row, summary_file, row.names = FALSE)
+                        } else {
+                            write.table(summary_row, summary_file, append = TRUE, sep = ",", col.names = FALSE, row.names = FALSE)
+                        }
+
                         rm(trips)
                         gc()
                     }
