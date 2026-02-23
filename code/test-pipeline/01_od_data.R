@@ -103,6 +103,7 @@ for (city in target_cities) {
 
     # Sample destinations (weighted by building volume/area)
     destinations <- buildings_city |>
+    filter(!is.na(volume_m3), volume_m3 > 0) |> # filter out NA or non-positive weights to avoid 'negative probability' error
         slice_sample(n = n_od_pairs, weight_by = volume_m3, replace = TRUE) |>
         select(volume_m3) |>
         rename(volume = volume_m3) |>
