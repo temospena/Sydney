@@ -8,7 +8,9 @@ library(lwgeom)
 library(stringr)
 
 # Load global configuration
+# Load global configuration
 source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
 options(java.parameters = java_mem)
 
 final_dataset <- list()
@@ -277,5 +279,17 @@ if (length(summaries) > 0) {
 }
 
 out_csv <- file.path(data_dir, "final_city_estimations.csv")
+
+# INCREMENTAL UPDATE LOGIC:
+if (file.exists(out_csv)) {
+  existing_df <- read.csv(out_csv)
+  # Filter out rows for the cities we just processed to avoid duplication
+  processed_cities <- unique(final_df$city)
+  existing_df <- existing_df %>% filter(!(city %in% processed_cities))
+  
+  # Merge new data with old
+  final_df <- bind_rows(existing_df, final_df)
+}
+
 write.csv(final_df, out_csv, row.names = FALSE)
-cat("Dataset dynamically created and archived to:\n", out_csv, "\n")
+cat("Dataset dynamically updated and saved to:\n", out_csv, "\n")

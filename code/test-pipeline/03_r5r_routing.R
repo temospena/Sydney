@@ -6,6 +6,7 @@ library(sf)
 # Allocate memory securely without overflowing the 16GB RAM laptop limitations
 # Load global configuration
 source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
 options(java.parameters = java_mem)
 library(r5r)
 

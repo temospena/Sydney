@@ -6,13 +6,15 @@ library(ggplot2)
 
 # Load global configuration
 source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
 metrics_file <- file.path(data_dir, "final_city_estimations.csv")
 
 if (!file.exists(metrics_file)) {
   stop("Metrics file not found. Run 05_final_metrics.R first.")
 }
 
-final_df <- read.csv(metrics_file)
+final_df <- read.csv(metrics_file) |>
+  filter(city %in% target_cities)
 
 for (current_city in unique(final_df$city)) {
   city_lower <- tolower(current_city)

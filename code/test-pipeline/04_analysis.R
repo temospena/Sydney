@@ -9,6 +9,7 @@ library(ggplot2)
 
 # Load global configuration
 source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
 
 cat("Starting Phase 3 Analysis...\n")
 

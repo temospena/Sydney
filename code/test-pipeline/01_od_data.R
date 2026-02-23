@@ -8,6 +8,7 @@ sf_use_s2(FALSE)
 
 # Load global configuration
 source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
 
 # Map of cities to the S3 bucket tile name
 tile_map <- list(

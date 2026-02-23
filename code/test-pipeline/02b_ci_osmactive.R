@@ -9,6 +9,7 @@ options(timeout = 3600)
 
 # Load global configuration
 source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
 VERSIONS <- versions
 
 region_map <- list(

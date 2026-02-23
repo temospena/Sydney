@@ -9,6 +9,7 @@ options(timeout = 3600) # give 1hr limit for large file downloads over wifi
 
 # Load global configuration
 source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
 raw_pbf_dir <- osm_raw_dir
 
 cat("Starting OSMIUM cropping for routing files...\n")

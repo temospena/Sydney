@@ -7,6 +7,7 @@ library(tmap)
 
 # Load global configuration
 source("code/test-pipeline/config.R")
+if (exists("city_to_run")) target_cities <- city_to_run
 years_labels <- paste0("20", years)
 
 cat("Starting Phase 08 CI Facet Mapping...\n")

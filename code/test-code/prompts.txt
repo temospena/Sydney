@@ -595,6 +595,51 @@ Master Control: Use
 code/test-pipeline/00_run_all.R
  to run everything.
 
+ ---
+ Prompt 14
+
+ is there an alternative way of not downloading the entire country from geofabrik? because to escalate this for more cities, it will take a very long time and storage, particularly if cities are from the same country (from the people for bikes list)
+
+
+ Response:
+
+
+ I've refactored the pipeline to operate "horizontally" city-by-city.
+
+Instead of performing the same step for all cities before moving to the next one, the pipeline now completes the entire lifecycle for City A (Extraction → Routing → Analysis → Metrics → Plots → Maps) before starting City B.
+
+Improvements Made:
+Master Loop (
+
+00_run_all.R
+):
+
+The outer loop now iterates over target_cities.
+It sets a global city_to_run variable which the downstream scripts detect.
+Resilience: If a city fails (e.g., due to a data error), the pipeline catches the error and moves on to the next city instead of stopping the entire script.
+Modular Script Support:
+
+Every script from 01 to 08 now checks for the city_to_run variable.
+If you run a script individually (like Rscript 01_od_data.R), it still defaults to processing all cities in
+
+config.R
+. But when called from the master script, it focuses exclusively on the active city.
+Incremental Metrics (
+
+05_final_metrics.R
+):
+
+I've updated the metrics aggregator to be "incremental."
+It now reads the existing final_city_estimations.csv, removes any old data for the current city, and appends the new results. This ensures your master CSV is always up to date even if you process cities across different days or server sessions.
+Targeted Plotting (07 & 08):
+
+Plotting scripts now only refresh the maps and charts for the city currently being processed, saving significant render time.
+Deployment:
+You can now restart your server run. Even if you have already completed Sydney, the "intelligent skipping" we added previously combined with this new horizontal flow will ensure it moves straight to finishing Lisbon, then Paris, then Barcelona—each producing its full set of results as it goes.
+
+bash
+Rscript code/test-pipeline/00_run_all.R
+
 
 
 
