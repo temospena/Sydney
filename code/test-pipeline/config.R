@@ -2,14 +2,20 @@
 # Centralized configuration for the CI pipeline
 
 # Base directory where all city data is stored
-# Using here() for robust relative paths regardless of execution context
+# Using here() but ensuring we handle the media drive mount correctly
 if (requireNamespace("here", quietly = TRUE)) {
-  data_dir <- here::here("data/test-pipeline")
-  osm_raw_dir <- here::here("../osm_raw_cache")
+  # If we are running from the media drive, use the current working directory as the root
+  proj_root <- here::here()
+  if (!grepl("media", proj_root) && grepl("media", getwd())) proj_root <- getwd()
+  
+  data_dir <- file.path(proj_root, "data/test-pipeline")
+  osm_raw_dir <- file.path(dirname(proj_root), "osm_raw_cache")
 } else {
   data_dir <- "data/test-pipeline"
   osm_raw_dir <- "../osm_raw_cache"
 }
+cat("[DEBUG] Working Directory:", getwd(), "\n")
+cat("[DEBUG] Data Directory:", data_dir, "\n")
 
 # List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {

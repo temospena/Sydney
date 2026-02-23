@@ -122,6 +122,9 @@ for (city in target_cities) {
                         pbf_updated <- FALSE
                         if (file.exists(pbf_file)) {
                             pbf_updated <- file.mtime(check_file) < file.mtime(pbf_file)
+                        } else {
+                            # If PBF is missing, we MUST re-run if this is not the first scan
+                            if (!file.exists(network_dat)) pbf_updated <- TRUE
                         }
                         
                         if (FORCE_RERUN) {
@@ -129,11 +132,14 @@ for (city in target_cities) {
                         } else if (od_updated) {
                             cat("  Existing results are older than updated OD matrix. Re-running...\n")
                         } else if (pbf_updated) {
-                            cat("  Existing results are older than updated Street Network (PBF). Re-running...\n")
+                            cat("  Existing results are older than updated/missing Street Network. Re-running...\n")
                         } else {
                             cat(paste("  Valid results already exist - SKIPPING. Path:", check_file, "\n"))
                             next
                         }
+                        
+                        # Triggered a re-run: delete the old RDS to force fresh computation
+                        if (file.exists(check_file)) file.remove(check_file)
                     }
 
                     print(paste("  Calculating itineraries for Year", yr, "LTS", lts_level))
