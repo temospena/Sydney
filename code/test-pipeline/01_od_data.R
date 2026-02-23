@@ -6,9 +6,8 @@ library(sf)
 library(dplyr)
 sf_use_s2(FALSE)
 
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
-target_cities <- c("Sydney")
-n_od_pairs <- 1000 # scale up later to 20000
+# Load global configuration
+source("code/test-pipeline/config.R")
 
 # Map of cities to the S3 bucket tile name
 tile_map <- list(

@@ -7,9 +7,9 @@ library(dplyr)
 sf_use_s2(TRUE)
 options(timeout = 3600)
 
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
-target_cities <- c("Sydney")
-versions <- c("160101", "210101", "260101")
+# Load global configuration
+source("code/test-pipeline/config.R")
+VERSIONS <- versions
 
 region_map <- list(
     Lisbon = "portugal",

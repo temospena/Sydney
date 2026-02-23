@@ -7,12 +7,9 @@ library(r5r)
 library(lwgeom)
 library(stringr)
 
-options(java.parameters = "-Xmx8G")
-sf_use_s2(TRUE)
-
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
-target_cities <- c("Sydney")
-years <- c("16", "21", "26")
+# Load global configuration
+source("code/test-pipeline/config.R")
+options(java.parameters = java_mem)
 
 final_dataset <- list()
 

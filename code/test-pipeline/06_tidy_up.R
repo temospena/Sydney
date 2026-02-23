@@ -1,9 +1,8 @@
 # 06_tidy_up.R
 # Tidy up large intermediate routing .rds results
 
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
-target_cities <- c("Sydney")
-years <- c("16", "21", "26")
+# Load global configuration
+source("code/test-pipeline/config.R")
 
 cat("Starting Tidy Up Phase...\n")
 

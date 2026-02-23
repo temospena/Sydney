@@ -4,13 +4,10 @@
 library(tidyverse)
 library(sf)
 # Allocate memory securely without overflowing the 16GB RAM laptop limitations
-options(java.parameters = "-Xmx8G") # change later to 96GB when running in server
+# Load global configuration
+source("code/test-pipeline/config.R")
+options(java.parameters = java_mem)
 library(r5r)
-sf_use_s2(TRUE)
-
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
-target_cities <- c("Sydney")
-years <- c(16, 21, 26)
 
 for (city in target_cities) {
     city_lower <- tolower(city)

@@ -5,17 +5,9 @@ library(tidyverse)
 library(sf)
 library(tmap)
 
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
-target_cities <- c("Sydney")
-years_labels <- c("2016", "2021", "2026")
-versions <- c("160101", "210101", "260101")
-
-ci_colors <- c(
-  "Separated cycling infrastructure" = "#054d05",
-  "Painted on-road cycle lane" = "#1A7832",
-  "Mixed traffic (motor vehicles with light infra)" = "#AFD4A0",
-  "Cycling on pedestrian infrastructure" = "#ebc0d4"
-)
+# Load global configuration
+source("code/test-pipeline/config.R")
+years_labels <- paste0("20", years)
 
 cat("Starting Phase 08 CI Facet Mapping...\n")
 

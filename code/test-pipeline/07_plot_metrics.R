@@ -4,7 +4,8 @@
 library(tidyverse)
 library(ggplot2)
 
-data_dir <- path.expand("~/GIS/Sydney/data/test-pipeline")
+# Load global configuration
+source("code/test-pipeline/config.R")
 metrics_file <- file.path(data_dir, "final_city_estimations.csv")
 
 if (!file.exists(metrics_file)) {
@@ -12,14 +13,6 @@ if (!file.exists(metrics_file)) {
 }
 
 final_df <- read.csv(metrics_file)
-
-# The new mapping array for specific colors 
-ci_colors <- c(
-  "Separated cycling infrastructure" = "#054d05",
-  "Painted on-road cycle lane" = "#1A7832",
-  "Mixed traffic (motor vehicles with light infra)" = "#AFD4A0",
-  "Cycling on pedestrian infrastructure" = "#ebc0d4"
-)
 
 for (current_city in unique(final_df$city)) {
   city_lower <- tolower(current_city)
