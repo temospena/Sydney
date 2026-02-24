@@ -1,0 +1,51 @@
+# aim: estimate how changes in cycling infrastructure benefits cycling performance, safety, and accessibility.
+
+# methods
+
+0. Select 100 cities from the list described in city_buffers.R (10km from city center), that should have a minumum of 1milion residents in metropolitan area, and at least a 50 km cycling infrastructure km (50 km as a variable to refine later)
+The dataset from People for Bikes (data/all-pfb-cr-results-2025.csv) can serve as a base for selecting a city as a proxy of the cycling infrastructure presence.
+1. use the buildings_height global dataset, and the buildings_height_function.R to retreive the buildings and volume for the city polygon.
+Estimate 20k random origins and destinations (different o than d) with a fixed set.seed(42) as points (sf), and weight the destinations by volume, (replace =TRUE). See od_data.R. This will be our origins and destinations, for each city. The 20k can be a variable to escalate later.
+2. get the cycling network infrastructure (ci) from OSM existing at each 3 years (2016.01.01, 2021.01.01, 2026.01.01), using the eugenevidal_historicalOSM script 
+03_ci_osmactive.R, for the polygon only defined in city_buffers. Estimate the lenght of each type of ci. The years can be tagged as only 26, 21 and 16 - make the years as a variable so in the future we can choose other dates.
+3. get the historical OSM data (including the ci) with other highways too, for each year, and crop it to the city_buffer bbox, using the osmium described in 
+crop_osm_pbf_bbox.sh . Estimate the lenght of the higways (excluding pedestrian only), and estimate the percentage of ci/total_roads, and by type too. Exclude unnecessaty files - they can be very large and unnecessary. For the city, sometimes it requires to extract first all the county and then crop, but try to make it in system tmp/ and remove derby.
+4. setup r5r networks for each city, based on the cropped osm.pbf file, for each year. Extract and export the lts levels of each segment using (street_network_to_sf() |> purrr::pluck("edges")). Remove all the unnecessaty files, except the built network.dat and network_settings.json, to have better efficient space use.
+5. run r5r::detailed_iteneraries() based in city origins, destinations, network for each year, shortest_path = TRUE, mode = "BICYCLE", max_lts (run for the 1,2,3 and 4). If necessary, the
+osm_link_ids = TRUE to check after the LTS levels used for each route by the osm_id segments (links). export the number of found routes from the 20k (not all will be found, and we need to know hom many were).
+6. Check distances, maybe use some of the trip_distances_circuity.R script, and save plots so we can analyse later. snap O and D to the road network before estimate the linear distance, to avoid imprecision (r5 also does it). Discard the od pairs that have at least one missing route.
+7. With stpanar::overline2 (see r5r_run.R) estimate the segments' trip volume so later we can idenfiy the ones with higher route volume, and save a facet plot of the 3 years map with lwd depending on the volume.
+8. Estimate the length and the percentage of the route that uses any ci, and the percentage and legth of each LTS level for each route.
+9. Estimate the circuity of each route (total_distance / linear distance between origin and destination)
+10. Estimate the accessibility using each LTS for opportunities, measured by buildings volume in 15 minutes cuttoff.
+
+
+
+# the dataset
+a csv file with city, population, identification (year, lts, other options), and all the estimations. add timestamp to know when it was created..
+a backup of this csv, in case we run again with other parameters 
+each city enters as a new row.
+
+
+# some preferences
+We have space constraints for the downloaded data, so store only data nedded.
+Use a folder per city with the necessary processed data and outputs.
+For now, run for lisbon, sydney, paris, barcelona, but leave it ready to use for the remaining 96 (of 100) selected cities.
+If the data alrewady exists, skip, to avoid intenet and processing issues.
+For the server instance, memory is not a problem (128GB RAM, 500GB disk space)
+I am running locally in my laptop for these 4 cities (16GB RAM, and only 10GB disk space), but the aim is to later run in the server.
+add to gitignore the data that was produced, leaving only the necessary
+use targets R package to atomate the process for any given city? maybe too complex, but a R package can be setup instead later.
+
+
+# final goal - can be done later
+we will look at the pieces of ci with higher benefits.
+model and estimate elasticities.
+the benefits from investments in cycling infrastructure by type and lenght.
+the benefits are a combination of:
+- increase in cycline performance, measured by travel distance change (descrease) and circuity (decrease)
+- changes the percentage of trip distance made in lower LTS levels (for safety)
+- change in accessibility to opportunities (buildings volume, as proxy of population) (accessibility)
+other variables can have impact on the benefits.
+
+

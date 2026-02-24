@@ -39,15 +39,16 @@ networks/osmpbf files/
 networks/lts/
 networks/r5r/
 networks/results_ttm/
+data/osm_pbf/
 
 data/*_buildings_height.geojson
-data/lisbon/lisbon_metro_buildings_height.geojson
-data/paris/paris_metro_buildings_height.geojson
-data/sydney/sydney_metro_buildings_height.geojson
-data/lisbon/lisbon_city_buildings.geojson
-data/paris/paris_city_buildings.geojson
-data/sydney/sydney_city_buildings.geojson
-data/sydney/barcelona_city_buildings.geojson
+data/old/lisbon/lisbon_metro_buildings_height.geojson
+data/old/paris/paris_metro_buildings_height.geojson
+data/old/sydney/sydney_metro_buildings_height.geojson
+data/old/lisbon/lisbon_city_buildings.geojson
+data/old/paris/paris_city_buildings.geojson
+data/old/sydney/sydney_city_buildings.geojson
+data/old/barcelona/barcelona_city_buildings.geojson
 
 *.pbf
 *.mapdb
@@ -57,3 +58,8 @@ data/sydney/barcelona_city_buildings.geojson
 *_lts2.rds
 *_lts3.rds
 *_lts4.rds
+data/pipeline/barcelona/barcelona_metro_buildings_height.geojson
+data/pipeline/paris/paris_metro_buildings_height.geojson
+data/pipeline/lisbon/lisbon_metro_buildings_height.geojson
+data/pipeline/lisbon/lisbon_city_buildings.geojson
+data/pipeline/sydney/sydney_metro_buildings_height.geojson
