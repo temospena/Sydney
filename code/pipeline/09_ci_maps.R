@@ -1,4 +1,4 @@
-# 08_ci_maps.R
+# 09_ci_maps.R
 # Generate multi-year facet maps for custom cycling infrastructure
 
 library(tidyverse)
@@ -23,7 +23,7 @@ for (city in target_cities) {
         v <- versions[i]
         yr <- years_labels[i]
         ci_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", v, ".gpkg"))
-        
+
         if (file.exists(ci_path)) {
             ci_layer <- st_read(ci_path, quiet = TRUE) |>
                 mutate(year = yr) |>
@@ -42,7 +42,7 @@ for (city in target_cities) {
 
     # Static plot mode
     tmap_mode("plot")
-    
+
     # Load perimeter for clipping/boundary
     perim_path <- file.path(city_dir, paste0(city_lower, "_10km.gpkg"))
     if (file.exists(perim_path)) {
@@ -77,7 +77,7 @@ for (city in target_cities) {
 
     # Load and filter LTS data per year (filtering early is much faster)
     all_lts_list <- list()
-    
+
     # Simplify perim slightly for faster intersections (10m tolerance approx)
     perim_simple <- if (!is.null(perim)) st_simplify(perim, dTolerance = 0.0001) else NULL
 
@@ -85,20 +85,20 @@ for (city in target_cities) {
         yr_short <- substring(years_labels[i], 3)
         yr_full <- years_labels[i]
         lts_path <- file.path(city_dir, paste0("r5r_", yr_short), paste0(city_lower, "_", yr_short, "_lts.gpkg"))
-        
+
         if (file.exists(lts_path)) {
             cat("  Loading and filtering LTS for", yr_full, "...\n")
             lts_layer <- st_read(lts_path, quiet = TRUE)
-            
+
             # Filter by perimeter if available
             if (!is.null(perim_simple)) {
                 lts_layer <- st_filter(lts_layer, perim_simple)
             }
-            
+
             lts_layer <- lts_layer |>
                 mutate(year = yr_full) |>
                 select(bicycle_lts, year)
-            
+
             all_lts_list[[yr_full]] <- lts_layer
         }
     }

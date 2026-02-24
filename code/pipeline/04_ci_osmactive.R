@@ -1,4 +1,4 @@
-# 02b_ci_osmactive.R
+# 04_ci_osmactive.R
 # Extract historical cycling network infrastructure using osmactive and custom OSM tags logic
 
 library(osmactive)
@@ -20,73 +20,77 @@ region_map <- list(
 )
 
 # Custom ci classification logic ported from 02_ci_osmextract_custom.R
-cycleway_cols <- function(x) { names(x)[grepl("^cycleway($|[:_])", names(x), ignore.case = TRUE)] }
+cycleway_cols <- function(x) {
+    names(x)[grepl("^cycleway($|[:_])", names(x), ignore.case = TRUE)]
+}
 has_cycleway_vals <- function(x, vals) {
-  cols <- cycleway_cols(x)
-  if (!length(cols)) return(rep(FALSE, nrow(x)))
-  vals <- tolower(vals)
-  out  <- rep(FALSE, nrow(x))
-  for (cc in cols) {
-    v <- tolower(trimws(as.character(x[[cc]])))
-    v[is.na(v)] <- ""
-    hit <- vapply(strsplit(v, ";", fixed = TRUE), function(parts) any(trimws(parts) %in% vals), logical(1))
-    out <- out | hit
-  }
-  out
+    cols <- cycleway_cols(x)
+    if (!length(cols)) {
+        return(rep(FALSE, nrow(x)))
+    }
+    vals <- tolower(vals)
+    out <- rep(FALSE, nrow(x))
+    for (cc in cols) {
+        v <- tolower(trimws(as.character(x[[cc]])))
+        v[is.na(v)] <- ""
+        hit <- vapply(strsplit(v, ";", fixed = TRUE), function(parts) any(trimws(parts) %in% vals), logical(1))
+        out <- out | hit
+    }
+    out
 }
 
 STRONG_ONROAD_VALS <- c("track", "opposite_track")
 MODERATE_ONROAD_VALS <- c("lane", "opposite_lane")
 WEAK_ONROAD_VALS <- c("share_busway", "shared_lane")
-FOOT_SHARED_HWY  <- c("path", "footway", "pedestrian")
-FOOT_SHARED_BIC  <- c("yes", "designated")
+FOOT_SHARED_HWY <- c("path", "footway", "pedestrian")
+FOOT_SHARED_BIC <- c("yes", "designated")
 FOOT_SHARED_FOOT <- c("yes", "designated")
 PAVEMENT_LANE_HWY <- c("footway", "path", "pedestrian")
 PAVEMENT_LANE_BIC <- c("designated")
 
 classify_custom_ci <- function(lines_m) {
-  highway    <- tolower(trimws(as.character(lines_m$highway)))
-  if ("bicycle" %in% names(lines_m)) bicycle <- tolower(trimws(as.character(lines_m$bicycle))) else bicycle <- rep(NA_character_, nrow(lines_m))
-  if ("foot" %in% names(lines_m)) foot <- tolower(trimws(as.character(lines_m$foot))) else foot <- rep(NA_character_, nrow(lines_m))
-  if ("segregated" %in% names(lines_m)) segregated <- tolower(trimws(as.character(lines_m$segregated))) else segregated <- rep(NA_character_, nrow(lines_m))
-  
-  is_cyclewy <- !is.na(highway) & highway == "cycleway"
-  
-  has_strong_onroad   <- has_cycleway_vals(lines_m, STRONG_ONROAD_VALS)
-  has_moderate_onroad <- has_cycleway_vals(lines_m, MODERATE_ONROAD_VALS)
-  has_weak_onroad     <- has_cycleway_vals(lines_m, WEAK_ONROAD_VALS)
-  
-  is_foot_shared <- (!is.na(highway) & highway %in% FOOT_SHARED_HWY) &
-    (!is.na(bicycle) & bicycle %in% FOOT_SHARED_BIC) &
-    (!is.na(foot) & foot %in% FOOT_SHARED_FOOT) &
-    !(segregated %in% "yes")
-  
-  is_pavement_lane <- (!is.na(highway) & highway %in% PAVEMENT_LANE_HWY) &
-    (!is.na(bicycle) & bicycle %in% PAVEMENT_LANE_BIC) &
-    (TRUE | !(segregated %in% "yes"))
-  
-  lines_m$cycle_cat <- NA_character_
-  lines_m$cycle_cat[is_cyclewy] <- "strong_ci"
-  
-  sel_foot <- (is_foot_shared | is_pavement_lane) & is.na(lines_m$cycle_cat)
-  lines_m$cycle_cat[sel_foot] <- "shared_foot"
-  
-  sel_other <- is.na(lines_m$cycle_cat)
-  lines_m$cycle_cat[sel_other & has_strong_onroad] <- "strong_ci"
-  
-  sel_other <- is.na(lines_m$cycle_cat)
-  lines_m$cycle_cat[sel_other & has_moderate_onroad] <- "moderate_ci"
-  
-  sel_other <- is.na(lines_m$cycle_cat)
-  lines_m$cycle_cat[sel_other & has_weak_onroad] <- "weak_ci"
-  
-  lines_m <- lines_m[!is.na(lines_m$cycle_cat), , drop = FALSE]
-  
-  lines_m$infra5 <- factor(lines_m$cycle_cat, 
+    highway <- tolower(trimws(as.character(lines_m$highway)))
+    if ("bicycle" %in% names(lines_m)) bicycle <- tolower(trimws(as.character(lines_m$bicycle))) else bicycle <- rep(NA_character_, nrow(lines_m))
+    if ("foot" %in% names(lines_m)) foot <- tolower(trimws(as.character(lines_m$foot))) else foot <- rep(NA_character_, nrow(lines_m))
+    if ("segregated" %in% names(lines_m)) segregated <- tolower(trimws(as.character(lines_m$segregated))) else segregated <- rep(NA_character_, nrow(lines_m))
+
+    is_cyclewy <- !is.na(highway) & highway == "cycleway"
+
+    has_strong_onroad <- has_cycleway_vals(lines_m, STRONG_ONROAD_VALS)
+    has_moderate_onroad <- has_cycleway_vals(lines_m, MODERATE_ONROAD_VALS)
+    has_weak_onroad <- has_cycleway_vals(lines_m, WEAK_ONROAD_VALS)
+
+    is_foot_shared <- (!is.na(highway) & highway %in% FOOT_SHARED_HWY) &
+        (!is.na(bicycle) & bicycle %in% FOOT_SHARED_BIC) &
+        (!is.na(foot) & foot %in% FOOT_SHARED_FOOT) &
+        !(segregated %in% "yes")
+
+    is_pavement_lane <- (!is.na(highway) & highway %in% PAVEMENT_LANE_HWY) &
+        (!is.na(bicycle) & bicycle %in% PAVEMENT_LANE_BIC) &
+        (TRUE | !(segregated %in% "yes"))
+
+    lines_m$cycle_cat <- NA_character_
+    lines_m$cycle_cat[is_cyclewy] <- "strong_ci"
+
+    sel_foot <- (is_foot_shared | is_pavement_lane) & is.na(lines_m$cycle_cat)
+    lines_m$cycle_cat[sel_foot] <- "shared_foot"
+
+    sel_other <- is.na(lines_m$cycle_cat)
+    lines_m$cycle_cat[sel_other & has_strong_onroad] <- "strong_ci"
+
+    sel_other <- is.na(lines_m$cycle_cat)
+    lines_m$cycle_cat[sel_other & has_moderate_onroad] <- "moderate_ci"
+
+    sel_other <- is.na(lines_m$cycle_cat)
+    lines_m$cycle_cat[sel_other & has_weak_onroad] <- "weak_ci"
+
+    lines_m <- lines_m[!is.na(lines_m$cycle_cat), , drop = FALSE]
+
+    lines_m$infra5 <- factor(lines_m$cycle_cat,
         levels = c("strong_ci", "moderate_ci", "weak_ci", "shared_foot"),
         labels = c("Separated cycling infrastructure", "Painted on-road cycle lane", "Mixed traffic (motor vehicles with light infra)", "Cycling on pedestrian infrastructure")
-  )
-  return(lines_m)
+    )
+    return(lines_m)
 }
 
 
@@ -127,7 +131,7 @@ for (city in target_cities) {
                 )
 
                 cycle_net <- osmactive::get_cycling_network(osm)
-                
+
                 cycle_net <- classify_custom_ci(cycle_net)
 
                 cycle_net <- cycle_net |>

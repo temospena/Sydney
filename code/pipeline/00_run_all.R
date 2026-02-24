@@ -14,15 +14,15 @@ all_cities <- target_cities
 # List of steps in sequence
 pipeline_steps <- c(
   "code/pipeline/01_city_buffers.R",
-  "code/pipeline/01b_od_data.R",
-  "code/pipeline/02_historical_routing_osm.R",
-  "code/pipeline/02b_ci_osmactive.R",
-  "code/pipeline/03_r5r_routing.R",
-  "code/pipeline/04_analysis.R",
-  "code/pipeline/05_final_metrics.R",
-  "code/pipeline/07_plot_metrics.R",
-  "code/pipeline/08_ci_maps.R",
-  "code/pipeline/06_tidy_up.R"
+  "code/pipeline/02_od_data.R",
+  "code/pipeline/03_historical_routing_osm.R",
+  "code/pipeline/04_ci_osmactive.R",
+  "code/pipeline/05_r5r_routing.R",
+  "code/pipeline/06_analysis.R",
+  "code/pipeline/07_final_metrics.R",
+  "code/pipeline/08_plot_metrics.R",
+  "code/pipeline/09_ci_maps.R",
+  "code/pipeline/10_tidy_up.R"
 )
 
 # Run the pipeline for one city at a time

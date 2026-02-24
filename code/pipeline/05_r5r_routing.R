@@ -1,4 +1,4 @@
-# 03_r5r_routing.R
+# 05_r5r_routing.R
 # Setup networks and calculate detailed itineraries one by one to save RAM/Disk
 
 library(tidyverse)
@@ -8,7 +8,7 @@ library(sf)
 source("code/pipeline/config.R")
 if (exists("city_to_run")) target_cities <- city_to_run
 options(java.parameters = java_mem)
-cat("[DEBUG] Target cities in Step 03:", paste(target_cities, collapse=", "), "\n")
+cat("[DEBUG] Target cities in Step 03:", paste(target_cities, collapse = ", "), "\n")
 library(r5r)
 
 for (city in target_cities) {
@@ -52,7 +52,7 @@ for (city in target_cities) {
 
         # Move PBF and trigger rebuild if network is stale
         temp_pbf <- file.path(r5r_dir, basename(pbf_file))
-        
+
         rebuild_needed <- FALSE
         if (!file.exists(network_dat) || FORCE_RERUN) {
             if (FORCE_RERUN && file.exists(network_dat)) {
@@ -61,11 +61,11 @@ for (city in target_cities) {
             }
             rebuild_needed <- TRUE
         } else if (file.exists(pbf_file)) {
-             if (file.mtime(pbf_file) > file.mtime(network_dat)) {
-                 cat("  Detected updated Street Network (PBF). Invalidating R5 cache...\n")
-                 file.remove(network_dat)
-                 rebuild_needed <- TRUE
-             }
+            if (file.mtime(pbf_file) > file.mtime(network_dat)) {
+                cat("  Detected updated Street Network (PBF). Invalidating R5 cache...\n")
+                file.remove(network_dat)
+                rebuild_needed <- TRUE
+            }
         }
 
         if (rebuild_needed && file.exists(pbf_file)) {
@@ -80,15 +80,18 @@ for (city in target_cities) {
 
                 # Extract LTS
                 lts_gpkg <- file.path(r5r_dir, paste0(city_lower, "_", yr, "_lts.gpkg"))
-                
+
                 # Robust check: file must exist AND be readable/not corrupt
                 file_valid <- FALSE
                 if (file.exists(lts_gpkg)) {
-                    file_valid <- tryCatch({
-                        # Just check if we can read the layer info
-                        st_layers(lts_gpkg)
-                        TRUE
-                    }, error = function(e) FALSE)
+                    file_valid <- tryCatch(
+                        {
+                            # Just check if we can read the layer info
+                            st_layers(lts_gpkg)
+                            TRUE
+                        },
+                        error = function(e) FALSE
+                    )
                 }
 
                 if (!file_valid) {
@@ -106,7 +109,7 @@ for (city in target_cities) {
                 for (lts_level in 1:4) {
                     res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
                     res_file_long <- file.path(city_dir, paste0("trips_", city_lower, "_20", yr, "_lts", lts_level, ".rds"))
-                    
+
                     found_existing <- FALSE
                     if (file.exists(res_file)) {
                         check_file <- res_file
@@ -126,7 +129,7 @@ for (city in target_cities) {
                             # If PBF is missing, we MUST re-run if this is not the first scan
                             if (!file.exists(network_dat)) pbf_updated <- TRUE
                         }
-                        
+
                         if (FORCE_RERUN) {
                             cat("  FORCE_RERUN is TRUE. Ignoring existing results and re-running...\n")
                         } else if (od_updated) {
@@ -137,37 +140,37 @@ for (city in target_cities) {
                             cat(paste("  Valid results already exist - SKIPPING. Path:", check_file, "\n"))
                             next
                         }
-                        
+
                         # Triggered a re-run: delete the old RDS to force fresh computation
                         if (file.exists(check_file)) file.remove(check_file)
                     }
 
                     print(paste("  Calculating itineraries for Year", yr, "LTS", lts_level))
                     trips <- detailed_itineraries(
-                            r5r_network = r5_engine,
-                            origins = origins_df,
-                            destinations = dests_df,
-                            mode = "BICYCLE",
-                            shortest_path = TRUE,
-                            max_lts = lts_level,
-                            progress = TRUE, # know when it is done and how many routes are found
-                            # verbose = FALSE, # hide warning messages
-                            osm_link_ids = TRUE
-                        )
-                        saveRDS(trips, res_file)
+                        r5r_network = r5_engine,
+                        origins = origins_df,
+                        destinations = dests_df,
+                        mode = "BICYCLE",
+                        shortest_path = TRUE,
+                        max_lts = lts_level,
+                        progress = TRUE, # know when it is done and how many routes are found
+                        # verbose = FALSE, # hide warning messages
+                        osm_link_ids = TRUE
+                    )
+                    saveRDS(trips, res_file)
 
-                        # Export route finding metrics tracking how many successfully found a route
-                        found_routes <- nrow(trips)
-                        summary_file <- file.path(city_dir, "routing_summary.csv")
-                        summary_row <- data.frame(city = city_lower, year = yr, lts = lts_level, found_routes = found_routes)
-                        if (!file.exists(summary_file)) {
-                            write.csv(summary_row, summary_file, row.names = FALSE)
-                        } else {
-                            write.table(summary_row, summary_file, append = TRUE, sep = ",", col.names = FALSE, row.names = FALSE)
-                        }
+                    # Export route finding metrics tracking how many successfully found a route
+                    found_routes <- nrow(trips)
+                    summary_file <- file.path(city_dir, "routing_summary.csv")
+                    summary_row <- data.frame(city = city_lower, year = yr, lts = lts_level, found_routes = found_routes)
+                    if (!file.exists(summary_file)) {
+                        write.csv(summary_row, summary_file, row.names = FALSE)
+                    } else {
+                        write.table(summary_row, summary_file, append = TRUE, sep = ",", col.names = FALSE, row.names = FALSE)
+                    }
 
-                        rm(trips)
-                        gc()
+                    rm(trips)
+                    gc()
                 }
 
                 # Stop engine to free JVM limits
@@ -176,7 +179,7 @@ for (city in target_cities) {
 
                 if (file.exists(temp_pbf)) {
                     file.remove(temp_pbf)
-                    
+
                     # Also remove the mapdb files created by r5r in r5r_dir
                     mapdb_file <- paste0(temp_pbf, ".mapdb")
                     mapdbp_file <- paste0(temp_pbf, ".mapdb.p")
