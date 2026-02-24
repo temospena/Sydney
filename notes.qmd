@@ -332,6 +332,8 @@ Use a 10km radius from city center, for comparision purposes
 
     -   [Getting historical OSM cycling infrastructure data](https://eugenividal.github.io/slides/getting-historical-visible-cycling-infra-from-osm-main/README.html) (Eugene Vidal)
 
+Cities, city centers coordinates from list, buffer of 10 km - to be more comparable (and also many cities do not have limits well established (can be districts, metropolitan areas, and so on)
+
 ## ODs
 
 We can use @costa2021 method for a Random Sample of 100k OD pairs isotropic (randomly distributed), which was also used by @levinson2012 (before matching travel distances with travel survey), or use directly a Mobility Survey Sample.
