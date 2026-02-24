@@ -105,18 +105,19 @@ for (city in target_cities) {
     }
 
     # Calculate Overall Non-Routing Land Use network stats for the year
-    total_road_m <- NA
-    total_ci_m <- NA
-    pct_ci_total <- NA
-    pct_lts1_total <- NA
-    pct_lts2_total <- NA
-    pct_lts3_total <- NA
-    pct_lts4_total <- NA
+    # Initialize as 0 to avoid NA issues when summation happens
+    total_road_m <- 0
+    total_ci_m <- 0
+    pct_ci_total <- 0
+    pct_lts1_total <- 0
+    pct_lts2_total <- 0
+    pct_lts3_total <- 0
+    pct_lts4_total <- 0
 
-    ci_type_sep_m <- NA
-    ci_type_paint_m <- NA
-    ci_type_mixed_m <- NA
-    ci_type_foot_m <- NA
+    ci_type_sep_m <- 0
+    ci_type_paint_m <- 0
+    ci_type_mixed_m <- 0
+    ci_type_foot_m <- 0
 
     if (!is.null(edges)) {
       # Total road length without pedestrians (car or bicycle access allowed)
@@ -134,28 +135,29 @@ for (city in target_cities) {
       pct_lts4_total <- round(lts4_m / pmax(total_road_m, 1) * 100, 2)
     }
 
-    if (exists("ci")) {
+    if (!is.null(ci)) {
       ci_lengths <- as.numeric(st_length(ci))
       total_ci_m <- sum(ci_lengths, na.rm = TRUE)
 
-      if (!is.na(total_road_m)) {
-        pct_ci_total <- round(total_ci_m / pmax(total_road_m, 1) * 100, 2)
+      if (total_road_m > 0) {
+        pct_ci_total <- round(total_ci_m / total_road_m * 100, 2)
       }
 
       if ("infra5" %in% names(ci)) {
-        ci_types <- data.frame(infra5 = ci$infra5, len = ci_lengths) |>
+        ci_types <- data.frame(infra5 = as.character(ci$infra5), len = ci_lengths) |>
           group_by(infra5) |>
-          summarise(total_len = sum(len, na.rm = TRUE))
+          summarise(total_len = sum(len, na.rm = TRUE), .groups = "drop")
 
-        get_ci_len <- function(type_name) {
-          val <- ci_types$total_len[ci_types$infra5 == type_name]
+        get_ci_len <- function(type_names) {
+          val <- ci_types$total_len[ci_types$infra5 %in% type_names]
           if (length(val) > 0) {
-            return(val[1])
+            return(sum(val))
           } else {
             return(0)
           }
         }
 
+        # Use strict single labels (extraction rerun will ensure these are present)
         ci_type_sep_m <- get_ci_len("Separated cycling infrastructure")
         ci_type_paint_m <- get_ci_len("Painted on-road cycle lane")
         ci_type_mixed_m <- get_ci_len("Mixed traffic (motor vehicles with light infra)")
@@ -307,7 +309,11 @@ for (city in target_cities) {
 if (length(final_dataset) == 0) {
   cat("No new data rows estimated for", target_cities, ". Skipping metrics finalization.\n")
 } else {
+  # Add timestamp for the entire run
+  current_timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+
   final_df <- bind_rows(final_dataset) |>
+    mutate(run_timestamp = current_timestamp) |>
     group_by(city, lts) |>
     arrange(year) |>
     mutate(
@@ -331,22 +337,48 @@ if (length(final_dataset) == 0) {
     all_sums <- bind_rows(summaries) |>
       mutate(city = tools::toTitleCase(city)) # Match city case format
 
-    # Ensure column names match before join! final_df uses character city
     final_df <- final_df |> left_join(all_sums, by = c("city", "year", "lts"))
+  }
+
+  # 11. Save individual city results to their results folder
+  for (city in unique(final_df$city)) {
+    city_results_dir <- file.path(data_dir, tolower(city), "results")
+    dir.create(city_results_dir, recursive = TRUE, showWarnings = FALSE)
+
+    city_est_file <- file.path(city_results_dir, paste0("estimations_", current_timestamp, ".csv"))
+    city_data <- final_df |> filter(city == !!city)
+    write.csv(city_data, city_est_file, row.names = FALSE)
+    cat(sprintf("  Saved local city results to: %s/results/%s\n", tolower(city), basename(city_est_file)))
   }
 
   out_csv <- file.path(data_dir, "final_city_estimations.csv")
 
-  # INCREMENTAL UPDATE LOGIC:
+  # INCREMENTAL UPDATE LOGIC (Ensure no duplicates):
   if (file.exists(out_csv)) {
     existing_df <- read.csv(out_csv) |> mutate(year = as.character(year))
-    # Filter out rows for the cities we just processed to avoid duplication
-    processed_cities <- unique(final_df$city)
-    existing_df <- existing_df %>% filter(!(city %in% processed_cities))
 
-    # Merge new data with old
+    # Identify keys in the new data
+    new_keys <- final_df |>
+      select(city, year, lts) |>
+      distinct() |>
+      mutate(key = paste(city, year, lts, sep = "_")) |>
+      pull(key)
+
+    # Filter out existing rows that match the new keys
+    # This effectively "replaces" them with the latest version
+    existing_df <- existing_df %>%
+      mutate(temp_key = paste(city, year, lts, sep = "_")) %>%
+      filter(!(temp_key %in% new_keys)) %>%
+      select(-temp_key)
+
+    # Merge new data with filtered old data
     final_df <- bind_rows(existing_df, final_df)
   }
+
+  # Ensure columns are in a consistent order
+  final_df <- final_df |>
+    select(city, year, lts, run_timestamp, everything()) |>
+    arrange(city, year, lts)
 
   write.csv(final_df, out_csv, row.names = FALSE)
   cat("Dataset dynamically updated and saved to:\n", out_csv, "\n")

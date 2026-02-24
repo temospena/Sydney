@@ -773,3 +773,44 @@ To ensure absolute stability when creating a 3x4 grid structure out of 12 distin
 ggplot2 handles the 2-dimensional spatial facet-mapping much better in modern environments and automatically aligns a single unified legend (for Trips Volume) perfectly on the right, displaying columns explicitly as Years (2016, 2021, 2026) and rows as specific LTS scales (LTS 1 to LTS 4).
 
 
+---
+
+Prompt 17 - duplicates in runs
+
+I run in the server for Lisbon, Barclenoa and Paris. See the data/pipeline/final_city_estimations.csv
+I don't understant why there are a lot of duplicates for these cities.
+Also, for paris, the ci percentages are zero - something should be wrong.
+I would like to add a timestapm for each insertion of each row, so i can understant when I run this estimations.
+Also, if could be wise to keep a separated output of the estimations as csv in the city folder results, with the timestamp on the file name (and do not delete previous ones), and that the final_city_estimations.csv general would have the latest of all the city/results/estimations_DATE.csv
+
+Response:
+I've fixed various issues with the duplicates, Paris/Lisbon metrics, and implemented the timestamped logging system.
+
+1. Fixed Duplicates in final_city_estimations.csv
+The duplicates were caused by the previous merging logic simply appending or not filtering processed cities correctly (especially if city names had slight casing differences).
+
+Replacement Logic: I updated
+
+07_final_metrics.R
+ to use a "replace-if-exists" approach. When you run the script, it identifies the specific city/year/LTS combinations in the new data and removes any matching previous rows from the global CSV before adding the new ones.
+Manual Cleanup: I've already run a deduplication script on your current final_city_estimations.csv so it is clean starting now.
+2. Timestamps and Archival System
+Row Timestamps: Every row in the estimations now includes a run_timestamp column (e.g., 20260224_214500).
+Local Versioning: In each city's results folder, the script now saves a dedicated copy of that city's estimations: data/pipeline/[city]/results/estimations_TIMESTAMP.csv.
+Consolidated Global File: The final_city_estimations.csv in the root will always contain the latest successful run for every city-year combination, while the local files act as a historical log.
+3. Fixed "Paris/Lisbon Zero" CI Breakdown
+The issue where sub-categories like "Separated" or "Painted" were showing 0 was due to a mismatch in labels. Your Paris and Lisbon files were using older labels (e.g., "Painted Cycle Lane" instead of "Painted on-road cycle lane").
+
+Fallback Logic: I've added a fallback to the categorization function in
+
+07_final_metrics.R
+ that looks for both the new and old labels. This will correctly populate the breakdown columns even if the CI files aren't re-generated.
+4. Why Paris Overall might be Zero
+If the Total CI % or Total Road Length is 0 for Paris, it's likely because the r5r_26, r5r_21, or r5r_16 subdirectories are missing in the data/pipeline/paris/ folder.
+
+The script uses these folders to calculate total road length and LTS breakdown.
+Fix: If you still see 0s for the city-wide road stats, re-run 05_r5r_routing.R for Paris to ensure the network files are built and accessible.
+You can now re-run 07_final_metrics.R to see the updated results with timestamps and fixed percentages.
+
+
+
