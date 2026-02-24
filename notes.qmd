@@ -355,7 +355,21 @@ Data from buildings' height was retrieved from @zhu2025, and the number of floor
 
 ## Routing
 
-We use r5r
+We use r5r R package [@pereira2021] for routing in bicycle mode.
+The parameters used are defined below:
+
+```{r, eval=FALSE}
+library(r5r)
+trips = detailed_itineraries(
+  r5r_network = r5_engine, # for each city and year
+  origins = origins_df,
+  destinations = dests_df,
+  mode = "BICYCLE",
+  shortest_path = TRUE,
+  max_lts = lts_level, # 1, 2, 3, or 4
+  osm_link_ids = TRUE # to match segments with LTS level
+  )
+```
 
 LTS is defined by [Mineta Transportation Institute](https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity) and us used in R5 as a set of "surrogate LTS" rules to create similar classifications to the original methodology that can be used with OSM data [@conway2015] and <https://docs.conveyal.com/learn-more/traffic-stress#:~:text=Unsignalized%20intersection%20adjustment%20round,entering%20or%20exiting%20the%20vertex.>
 For each OSM edge:
