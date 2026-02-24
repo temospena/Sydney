@@ -353,6 +353,34 @@ Data from buildings' height was retrieved from @zhu2025, and the number of floor
 
 ![Paris buildings's estimated number of floors (mean: 3.92)](images/Screenshot_20260217_172645.png){width="450"}
 
+## Routing
+
+We use r5r
+
+LTS is defined by [Mineta Transportation Institute](https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity) and us used in R5 as a set of "surrogate LTS" rules to create similar classifications to the original methodology that can be used with OSM data [@conway2015] and <https://docs.conveyal.com/learn-more/traffic-stress#:~:text=Unsignalized%20intersection%20adjustment%20round,entering%20or%20exiting%20the%20vertex.>
+For each OSM edge:
+
+```         
+    If way does not allow cars, assign LTS 1
+    If way has highway=service tag, do not assign LTS in this round
+    If way has a highway=residential or highway=living_street tag, assign LTS 1
+    If tagged maxspeed value is less than 25 mph (40.25 km/h) and the number of lanes is less than 4 or unspecified, assign LTS 2
+    If way has tag highway=unclassified, highway=tertiary, or highway=tertiary-link and the number of lanes is less than 4 or there is cycleway tag for the correct direction, assign LTS 2
+    Otherwise, if there is a cycleway tag for the correct direction, assign LTS 3
+    Otherwise, assign LTS 4
+```
+
+In `R5` the cycling routing algorithm expects a `max_lts` (1, 2, 3, or 4).
+The R5 engine identifies all edges in OSM with a value higher than `max_lts`.
+For the edges exceeding the `max_lts`, the routing engine applies a time-cost of walking speed (default 3.6 km/h), instead of cycling speed (default 12 km/h in `r5r`), as if the cyclist would dismount and walk with the bike on that segment (not accounting for mounting and dismounting time).
+So:
+
+-   If `edge.lts <= max_lts` → `time = distance / bikeSpeed`.
+-   If `edge.lts > max_lts` → `time = distance / walkSpeed`.
+
+Setting a low `max_lts` (1 or 2) will result in routes that favor separated bike paths and quiet backstreets.
+If no low-stress path exists R5 provides a route with longer travel time, due to walk speed penalty.
+
 ## Ground true data
 
 -   Counting points and evolution of cyclists
