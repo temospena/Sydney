@@ -43,12 +43,27 @@ get_geofabrik_url <- function(city, year_short) {
   } else if (city == "Paris") {
     prefix <- "europe/france/ile-de-france"
   } else if (city == "Barcelona") {
-    prefix <- "europe/spain"
+    # Catalunia only exists as a separate historical extract from 2022 onwards
+    if (as.numeric(year_short) >= 22) {
+      prefix <- "europe/spain/cataluna"
+    } else {
+      prefix <- "europe/spain"
+    }
   } else {
     stop(paste("No URL mapping found for", city))
   }
 
   return(paste0(base_url, prefix, postfix))
+}
+
+# Helper function to get the region name for filenames based on the URL
+# This ensures that if we download 'spain' (for older years), we save it as 'spain'
+get_geofabrik_region <- function(city, year_short) {
+  url <- get_geofabrik_url(city, year_short)
+  # Extract the part after the last / and before the -year0101
+  region <- gsub(".*/", "", url)
+  region <- gsub(paste0("-", year_short, "0101.osm.pbf"), "", region)
+  return(region)
 }
 
 # Years to process

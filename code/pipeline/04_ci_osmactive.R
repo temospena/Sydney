@@ -12,12 +12,9 @@ source("code/pipeline/config.R")
 if (exists("city_to_run")) target_cities <- city_to_run
 VERSIONS <- versions
 
-region_map <- list(
-    Lisbon = "portugal",
-    Sydney = "australia",
-    Paris = "ile-de-france",
-    Barcelona = "spain"
-)
+# Use the global region_map from config.R
+# This avoids inconsistent naming (e.g. Barcelona as 'spain' vs 'cataluna')
+# that leads to duplicate downloads of the same data.
 
 # Custom ci classification logic ported from 02_ci_osmextract_custom.R
 cycleway_cols <- function(x) {
@@ -107,9 +104,10 @@ for (city in target_cities) {
     perim <- sf::st_read(perim_path, quiet = TRUE) |> sf::st_make_valid()
     if (sf::st_crs(perim)$epsg != 4326) perim <- sf::st_transform(perim, 4326)
 
-    infra_region <- region_map[[city]]
-
     for (v in VERSIONS) {
+        v_short <- substr(v, 1, 2)
+        infra_region <- get_geofabrik_region(city, v_short)
+
         out_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", v, ".gpkg"))
 
         if (file.exists(out_path) && !FORCE_RERUN) {

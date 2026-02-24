@@ -26,16 +26,15 @@ for (city in target_cities) {
     }
 
     bbox_str <- readLines(bbox_path, warn = FALSE)
-    geofabrik_region <- region_map[[city]]
     downloaded_pbf_path <- NULL
 
-    # Sanitize region for filename
-    safe_region <- gsub("/", "_", geofabrik_region)
-
     for (yr in years) {
+        # Determine the correct regional filename (e.g. spain for 2016, cataluna for 2026)
+        dynamic_region <- get_geofabrik_region(city, yr)
+
         # Expected filename on disk: e.g. geofabrik_portugal-160101.osm.pbf
-        raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", safe_region, "-", yr, "0101.osm.pbf"))
-        local_cache_file <- file.path(city_dir, paste0("geofabrik_", safe_region, "-", yr, "0101.osm.pbf"))
+        raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", dynamic_region, "-", yr, "0101.osm.pbf"))
+        local_cache_file <- file.path(city_dir, paste0("geofabrik_", dynamic_region, "-", yr, "0101.osm.pbf"))
 
         if (!file.exists(raw_file) && file.exists(local_cache_file)) {
             raw_file <- local_cache_file
