@@ -395,6 +395,15 @@ So:
 Setting a low `max_lts` (1 or 2) will result in routes that favor separated bike paths and quiet backstreets.
 If no low-stress path exists R5 provides a route with longer travel time, due to walk speed penalty.
 
+### Overline
+
+We use `stplanr` to overline the routes [@lovelace2018].
+This provides a better ideia of which segments are used more in routing routing, for each year and LTS levels.
+
+The example in Sydney shows that...
+
+![](data/pipeline/sydney/results/overline_matrix_test.png){fig-align="center"}
+
 ## Ground true data
 
 -   Counting points and evolution of cyclists
