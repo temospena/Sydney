@@ -757,5 +757,19 @@ This setup should make your routing sequence faster and significantly more robus
 
 ---
 
+Prompt 16 - overline map as a single one
+
+For the overline maps, can we try to make one that shows the lts as rows and years as colums? so instead of having an image with 3 maps per lts, have one image with 3x4 maps and only one legend?
+I would say to try this as a test code only for the existing pipeline/sydney/results/overline_maps_ltsX.png  - not implement in the pipeline, so we can se the result
+
+Response
+
+I've created and run a test script for you! The resulting output is now available here:
+
+…/pipeline/sydney/results/overline_matrix_test.png
+
+To ensure absolute stability when creating a 3x4 grid structure out of 12 distinct heavy geodataframes simultaneously, I opted to generate this map using ggplot2 + geom_sf() + facet_grid(lts ~ year) instead of the old tmap facet function.
+
+ggplot2 handles the 2-dimensional spatial facet-mapping much better in modern environments and automatically aligns a single unified legend (for Trips Volume) perfectly on the right, displaying columns explicitly as Years (2016, 2021, 2026) and rows as specific LTS scales (LTS 1 to LTS 4).
 
 

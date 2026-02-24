@@ -52,8 +52,8 @@ get_geofabrik_url <- function(city, year_short) {
 }
 
 # Years to process
-if (!exists("years")) years <- c("16", "21", "26")
-if (!exists("versions")) versions <- c("160101", "210101", "260101")
+if (!exists("years", inherits = FALSE)) years <- c("16", "21", "26")
+if (!exists("versions", inherits = FALSE)) versions <- c("160101", "210101", "260101")
 
 # Routing Settings
 n_od_pairs <- 20000
