@@ -37,6 +37,8 @@ for (city in target_cities) {
         volume = destinations$volume
     )
 
+    all_city_acc <- list()
+
     for (yr in years) {
         r5r_dir <- file.path(city_dir, paste0("r5r_", yr))
         if (!dir.exists(r5r_dir)) {
@@ -50,8 +52,6 @@ for (city in target_cities) {
             {
                 # Build / load network
                 r5_engine <- build_network(data_path = r5r_dir, verbose = FALSE)
-
-                acc_results <- list()
 
                 for (lts_level in 1:4) {
                     cat(paste("    LTS", lts_level, "... "))
@@ -73,7 +73,7 @@ for (city in target_cities) {
 
                     cat(paste(avg_acc, "\n"))
 
-                    acc_results[[lts_level]] <- data.frame(
+                    all_city_acc[[paste0(yr, "_", lts_level)]] <- data.frame(
                         city = city_lower,
                         year = as.integer(yr),
                         lts = lts_level,
@@ -84,32 +84,43 @@ for (city in target_cities) {
                 # Stop engine to free JVM limits
                 stop_r5()
                 rJava::.jgc(R.gc = TRUE)
-
-                # Update routing_summary.csv
-                summary_file <- file.path(city_dir, "routing_summary.csv")
-                city_acc_df <- bind_rows(acc_results)
-
-                if (!file.exists(summary_file)) {
-                    write.csv(city_acc_df, summary_file, row.names = FALSE)
-                } else {
-                    existing_summary <- read.csv(summary_file) |> mutate(year = as.integer(year))
-
-                    # Merge the new accessibility results into the existing summary
-                    # If access_15min_vol already exists, replace it, otherwise add it
-                    if ("access_15min_vol" %in% names(existing_summary)) {
-                        existing_summary <- existing_summary |> select(-access_15min_vol)
-                    }
-
-                    updated_summary <- existing_summary |>
-                        left_join(city_acc_df, by = c("city", "year", "lts"))
-
-                    write.csv(updated_summary, summary_file, row.names = FALSE)
-                }
             },
             error = function(e) {
                 cat(paste("  [ERROR] Accessibility failed for", city, yr, ":", e$message, "\n"))
             }
         )
+    }
+
+    # Update routing_summary.csv ONCE per city after all years are done
+    if (length(all_city_acc) > 0) {
+        summary_file <- file.path(city_dir, "routing_summary.csv")
+        new_acc_df <- bind_rows(all_city_acc)
+
+        if (!file.exists(summary_file)) {
+            write.csv(new_acc_df, summary_file, row.names = FALSE)
+        } else {
+            # Load and consolidate existing summary
+            existing_summary <- read.csv(summary_file) |>
+                mutate(year = as.integer(year)) |>
+                # Important: remove existing duplicates before merging
+                distinct(city, year, lts, .keep_all = TRUE)
+
+            # Prepare for clean merge: remove existing accessibility column if it exists
+            if ("access_15min_vol" %in% names(existing_summary)) {
+                existing_summary <- existing_summary |> select(-access_15min_vol)
+            }
+
+            # Join new data. Use left_join if we want to stick to rows with routing data,
+            # or full_join if we want to preserve all results regardless.
+            # Using full_join is safer to ensure no metadata is lost.
+            updated_summary <- existing_summary |>
+                full_join(new_acc_df, by = c("city", "year", "lts")) |>
+                # Final sort for readability
+                arrange(year, lts)
+
+            write.csv(updated_summary, summary_file, row.names = FALSE)
+            cat(paste("  Updated routing_summary.csv with accessibility results for", city, "\n"))
+        }
     }
 }
 

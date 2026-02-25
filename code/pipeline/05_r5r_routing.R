@@ -177,7 +177,12 @@ for (city in target_cities) {
                     } else {
                         existing_summary <- read.csv(summary_file) |>
                             mutate(year = as.integer(year))
-                        updated_summary <- bind_rows(existing_summary, summary_row)
+
+                        # Remove existing entry for this specific city/year/LTS to avoid duplicates
+                        updated_summary <- existing_summary |>
+                            filter(!(city == summary_row$city & year == summary_row$year & lts == summary_row$lts)) |>
+                            bind_rows(summary_row)
+
                         write.csv(updated_summary, summary_file, row.names = FALSE)
                     }
 
