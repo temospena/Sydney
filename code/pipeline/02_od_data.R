@@ -85,10 +85,32 @@ for (city in target_cities) {
 
     city_poly <- st_read(city_poly_path, quiet = TRUE)
     bbox <- st_bbox(city_poly)
-    tile_name <- city_list_tiles$tile_name[city_list_tiles$city == city]
 
-    if (length(tile_name) == 0 || is.na(tile_name)) {
+    # Robustly handle multiple cities with the same name (e.g., London UK vs London Canada)
+    # Read full list to find all matches and their coordinates
+    city_list_all <- read.csv(city_list_path, header = FALSE) |>
+        rename(city = V1, lat = V2, lon = V3, tile_name = V7)
+
+    matches <- city_list_all |> filter(city == !!city)
+
+    if (nrow(matches) == 0) {
         warning(paste("No tile mapping found in city_list.txt for", city))
+        next
+    }
+
+    if (nrow(matches) > 1) {
+        # Differentiate by distance to the existing buffer center
+        buf_centroid <- st_centroid(city_poly)
+        matches_sf <- matches |> st_as_sf(coords = c("lon", "lat"), crs = 4326)
+        dists <- st_distance(matches_sf, buf_centroid)
+        tile_name <- matches$tile_name[which.min(dists)]
+        cat(paste("    Multiple matches found for", city, "- Selected tile based on distance:", tile_name, "\n"))
+    } else {
+        tile_name <- matches$tile_name
+    }
+
+    if (is.na(tile_name) || tile_name == "") {
+        warning(paste("Invalid tile name found in city_list.txt for", city))
         next
     }
 
