@@ -951,6 +951,72 @@ I reviewed the linear distance calculation. Since R handles vectorized operation
 
  ---
 ## Prompt 20
- ok. The population field is in data/city_list.txt this could be added to the fianl_city_estimations now for the existing dataset, but also in the final_metrics script?
+ The population field is in data/city_list.txt this could be added to the fianl_city_estimations now for the existing dataset, but also in the final_metrics script?
+ I would like to run in my server for Munich, London, New York and Sao Paulo after that, to check everything is working with a fresh city.
+ I assume that if the city has more than one word, a - will be added to the paths and lower city?
+ The geofabrik paths are:
+ Munich:
+ http://download.geofabrik.de/europe/germany/bayern/oberbayern-160101.osm.pbf
+ http://download.geofabrik.de/europe/germany/bayern/oberbayern-210101.osm.pbf
+ http://download.geofabrik.de/europe/germany/bayern/oberbayern-260101.osm.pbf
 
+ London:
+ http://download.geofabrik.de/europe/united-kingdom/england/greater-london-160101.osm.pbf
+ http://download.geofabrik.de/europe/united-kingdom/england/greater-london-210101.osm.pbf
+ http://download.geofabrik.de/europe/united-kingdom/england/greater-london-260101.osm.pbf
+
+
+New York:
+http://download.geofabrik.de/north-america/us/new-york-160101.osm.pbf
+http://download.geofabrik.de/north-america/us/new-york-210101.osm.pbf
+http://download.geofabrik.de/north-america/us/new-york-260101.osm.pbf
+
+
+Sao Paulo:
+(2016)
+http://download.geofabrik.de/south-america/brazil-160101.osm.pbf
+(2021 and 2026)
+http://download.geofabrik.de/south-america/brazil/sudeste-210101.osm.pbf
+http://download.geofabrik.de/south-america/brazil/sudeste-210101.osm.pbf
+
+
+### Response
+
+I've updated both the final_city_estimations.csv dataset and the configuration to support your new cities. Here is a summary of the changes:
+
+1. Added Population to Metrics
+Historical Data Updated: I wrote a quick script to update the existing final_city_estimations.csv. The population column is now fully populated, pulling correct values directly from
+
+city_list.txt
+ based on the city name (e.g., Barcelona shows 3,250,798).
+Pipeline Script Updated: I updated
+
+08_final_metrics.R
+ so that any future pipeline runs will automatically look up the population from
+
+city_list.txt
+ and populate row_data$population.
+2. Configured New Cities (Munich, London, New York, Sao Paulo)
+Target Cities: I added the four new cities to target_cities in
+
+config.R
+.
+Geofabrik URLs: I updated get_geofabrik_url in
+
+config.R
+ to exactly match the specific paths you provided for each city. It correctly handles the special case for "Sao Paulo" using south-america/brazil for 2016 and south-america/brazil/sudeste for later years.
+Multi-word Cities: Yes, multi-word cities are completely fine. The tolower(city) functionality in R handles spaces gracefully, so "New York" becomes the folder data/pipeline/new york/. You do not need to replace the space with a hyphen for the R pipeline; only the Geofabrik URLs expect hyphens, which is handled specifically by the logic I just added.
+Building Footprints (S3): Furthermore, since
+
+02_od_data.R
+ requires a bounding box tile for the Gloabl Building Atlas (S3 Bucket), I ran a small test to determine the exact 5-degree grid tiles mapping to the coordinates of the new cities. I have updated tile_map in
+
+02_od_data.R
+ with the correct S3 tiles so step 2 can successfully download the building volume data:
+Munich: e010_n50_e015_n45
+London: w005_n55_e000_n50 (Using the UK coordinates)
+New York: w075_n45_w070_n40
+Sao Paulo: w050_s20_w045_s25
+
+(RF) a script was added to retrieve all the tiles from the lod1.geojson data for each city, and added to city_list.xtx
 

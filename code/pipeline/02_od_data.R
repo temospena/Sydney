@@ -10,13 +10,18 @@ sf_use_s2(FALSE)
 source("code/pipeline/config.R")
 if (exists("city_to_run")) target_cities <- city_to_run
 
-# Map of cities to the S3 bucket tile name
-tile_map <- list(
-    Lisbon = "w010_n40_w005_n35",
-    Sydney = "e150_s30_e155_s35",
-    Paris = "e000_n50_e005_n45",
-    Barcelona = "e000_n45_e005_n40"
-)
+# The city_list.txt is expected to be in the 'data' folder
+if (requireNamespace("here", quietly = TRUE)) {
+    city_list_path <- here::here("data/city_list.txt")
+} else {
+    city_list_path <- "data/city_list.txt"
+    if (!file.exists(city_list_path)) city_list_path <- "../../data/city_list.txt"
+}
+
+# Read city list for tiles
+city_list_tiles <- read.csv(city_list_path, header = FALSE) |>
+    select(V1, V7) |>
+    rename(city = V1, tile_name = V7)
 
 # Function to fetch buildings from S3 parquet using exact bbox
 fetch_building_points <- function(city_name, city_bbox, tile_name) {
@@ -80,7 +85,12 @@ for (city in target_cities) {
 
     city_poly <- st_read(city_poly_path, quiet = TRUE)
     bbox <- st_bbox(city_poly)
-    tile_name <- tile_map[[city]]
+    tile_name <- city_list_tiles$tile_name[city_list_tiles$city == city]
+
+    if (length(tile_name) == 0 || is.na(tile_name)) {
+        warning(paste("No tile mapping found in city_list.txt for", city))
+        next
+    }
 
     # Skip if OD already exists with correct size
     origins_path <- file.path(city_dir, "origins.gpkg")

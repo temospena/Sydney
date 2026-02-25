@@ -27,7 +27,8 @@ city_list <- city_list |>
         lon = V3,
         population = V4,
         country = V5,
-        country_code = V6
+        country_code = V6,
+        buildings_tile = V7
     ) |>
     st_as_sf(crs = 4326, coords = c("lon", "lat"))
 

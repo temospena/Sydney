@@ -52,6 +52,24 @@ for (city in target_cities) {
     )
   )
 
+  # Read population
+  city_list_path <- if (requireNamespace("here", quietly = TRUE)) {
+    here::here("data/city_list.txt")
+  } else {
+    "data/city_list.txt"
+  }
+
+  if (!file.exists(city_list_path)) city_list_path <- "../../data/city_list.txt"
+
+  city_population <- NA
+  if (file.exists(city_list_path)) {
+    city_list <- read.csv(city_list_path, header = FALSE)
+    match_idx <- which(tolower(city_list$V1) == city_lower)
+    if (length(match_idx) > 0) {
+      city_population <- city_list$V4[match_idx[1]]
+    }
+  }
+
   for (yr in years) {
     cat("Processing scenario for", city, "Year", yr, "\n")
     r5r_dir <- file.path(city_dir, paste0("r5r_", yr))
@@ -162,7 +180,7 @@ for (city in target_cities) {
         city = city,
         year = paste0("20", yr),
         lts = lts_level,
-        population = NA, # Can be updated with true population later from People for bikes dataset
+        population = city_population,
         avg_distance_m = NA,
         avg_circuity = NA,
         avg_dist_change_pct = NA, # Value populated dynamically across full dataframe
