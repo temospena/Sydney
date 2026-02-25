@@ -178,10 +178,10 @@ for (city in target_cities) {
         pct_lts2_total = pct_lts2_total,
         pct_lts3_total = pct_lts3_total,
         pct_lts4_total = pct_lts4_total,
-        ci_type_sep_m = ci_type_sep_m,
-        ci_type_paint_m = ci_type_paint_m,
-        ci_type_mixed_m = ci_type_mixed_m,
-        ci_type_foot_m = ci_type_foot_m
+        ci_type_sep_m = round(ci_type_sep_m, 0),
+        ci_type_paint_m = round(ci_type_paint_m, 0),
+        ci_type_mixed_m = round(ci_type_mixed_m, 0),
+        ci_type_foot_m = round(ci_type_foot_m, 0)
       )
 
 
@@ -256,11 +256,13 @@ for (city in target_cities) {
             row_data$pct_lts3 <- round(mean(final_trips$pct_lts3, na.rm = TRUE) * 100, 2)
             row_data$pct_lts4 <- round(mean(final_trips$pct_lts4, na.rm = TRUE) * 100, 2)
           }
+
+          final_dataset[[length(final_dataset) + 1]] <- row_data
         }
       } else {
-        cat("    [MISSING] No itinerary file found for Year", yr, "(LTS", lts_level, "). Checked path:", res_file, "\n")
+        cat("    [MISSING] No itinerary file found for Year", yr, "(LTS", lts_level, "). Checked path:", res_file, ". Skipping to avoid overwriting with NAs.\n")
       }
-      final_dataset[[length(final_dataset) + 1]] <- row_data
+
     }
   }
 }
