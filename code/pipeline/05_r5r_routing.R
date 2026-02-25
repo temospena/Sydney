@@ -160,28 +160,23 @@ for (city in target_cities) {
                     )
                     saveRDS(trips, res_file)
 
-                    # 10. Estimate Accessibility
+                    # 10. Estimate Accessibility with accessibility package
                     acc_15min_vol <- NA
                     tryCatch(
                         {
-                            acc <- accessibility(
-                                r5r_network = r5_engine,
-                                origins = origins_df,
-                                destinations = dests_df,
-                                mode = "BICYCLE",
-                                opportunities_colnames = "volume",
-                                decay_function = "step",
-                                cutoffs = 15,
-                                max_lts = lts_level,
-                                verbose = FALSE,
-                                progress = FALSE
+                            acc <- accessibility::cumulative_cutoff(
+                                travel_matrix = sf::st_drop_geometry(trips)[, c("from_id", "to_id", "total_duration")],
+                                land_use_data = dests_df,
+                                opportunity = "volume",
+                                travel_cost = "total_duration",
+                                cutoff = 15
                             )
                             if (nrow(acc) > 0) {
                                 acc_15min_vol <- round(mean(acc$accessibility, na.rm = TRUE))
                             }
                         },
                         error = function(e) {
-                            warning("Accessibility calculation failed for LTS ", lts_level)
+                            warning("Accessibility calculation failed for LTS ", lts_level, ": ", e$message)
                         }
                     )
 
