@@ -1,0 +1,337 @@
+<mxfile host="app.diagrams.net" modified="2026-02-25T18:27:00.000Z" agent="Antigravity" version="24.0.0">
+  <diagram id="pipeline" name="CI Pipeline Methodology">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ======================== TITLE ======================== -->
+        <mxCell id="title" value="Cycling Infrastructure Historical Analysis Pipeline" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="1000" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ======================== LEGEND ======================== -->
+        <mxCell id="leg_title" value="Legend" style="text;html=1;fontSize=11;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="30" y="80" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_step" value="Pipeline Step" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="105" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_data" value="Data / File" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="145" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_output" value="Key Output" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="185" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_external" value="External Source" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="225" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_loop" value="Loops over Cities × Years × LTS" style="text;html=1;fontSize=10;align=left;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="30" y="265" width="160" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ======================== INPUTS ======================== -->
+        <mxCell id="in_citylist" value="city_list.txt&#xa;(city, lat, lon, population)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="80" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="in_geofabrik" value="Geofabrik OSM PBF&#xa;(Historical: 2016, 2021, 2026)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="80" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="in_gba" value="Global Building Atlas&#xa;(S3 Parquet — LOD1 heights)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="900" y="80" width="170" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 01 — City Buffers                                  -->
+        <!-- ====================================================== -->
+        <mxCell id="s01" value="01 — City Buffers&#xa;01_city_buffers.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="180" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s01_desc" value="• Read city coords from city_list.txt&#xa;• Create 10 km buffer polygon (EPSG:3857)&#xa;• Export bounding box (.txt)" style="text;html=1;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="440" y="180" width="250" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_in_citylist_s01" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="in_citylist" target="s01" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_01a" value="city_10km.gpkg" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="265" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="out_01b" value="city_bbox.txt" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="365" y="265" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s01_out01a" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s01" target="out_01a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s01_out01b" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s01" target="out_01b" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 02 — OD Data                                       -->
+        <!-- ====================================================== -->
+        <mxCell id="s02" value="02 — OD Data&#xa;02_od_data.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="820" y="180" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s02_desc" value="• Fetch buildings from S3 parquet (DuckDB)&#xa;• Clip to city polygon&#xa;• Sample 20k origins (uniform) &amp; destinations&#xa;  (weighted by volume_m³)&#xa;• Export as geopackages" style="text;html=1;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="168" width="270" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out01a_s02" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_01a" target="s02" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_in_gba_s02" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="in_gba" target="s02" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_02a" value="origins.gpkg&#xa;(20k points + volume)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="770" y="265" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="out_02b" value="destinations.gpkg&#xa;(20k points + volume)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="940" y="265" width="155" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s02_out02a" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s02" target="out_02a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s02_out02b" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s02" target="out_02b" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 03 — Historical OSM                                -->
+        <!-- ====================================================== -->
+        <mxCell id="s03" value="03 — Historical OSM Crop&#xa;03_historical_routing_osm.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="350" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s03_desc" value="• For each city × year:&#xa;• Download historical Geofabrik PBF (if missing)&#xa;• Crop to city bbox via osmium&#xa;→ Loop: 3 years per city" style="text;html=1;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="740" y="345" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out01b_s03" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_01b" target="s03" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_in_geofabrik_s03" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="in_geofabrik" target="s03" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_03" value="city_YY.osm.pbf&#xa;(cropped, per year)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="530" y="430" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s03_out03" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s03" target="out_03" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 04 — CI OSMActive                                  -->
+        <!-- ====================================================== -->
+        <mxCell id="s04" value="04 — CI Extraction&#xa;04_ci_osmactive.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="350" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s04_desc" value="• Run osmactive on each city PBF&#xa;• Extract cycling infrastructure (CI) edges&#xa;• Classify CI type: Separated / Painted /&#xa;  Mixed / Pedestrian (infra5)&#xa;→ Loop: 3 years per city" style="text;html=1;fontSize=9;align=left;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="30" y="340" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out03_s04" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_03" target="s04" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_04" value="city_ci_osmactive_YYMMDD.gpkg&#xa;(CI edges + infra5 type)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="430" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s04_out04" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s04" target="out_04" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 05 — r5r Routing                                   -->
+        <!-- ====================================================== -->
+        <mxCell id="s05" value="05 — r5r Routing&#xa;05_r5r_routing.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="520" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s05_desc" value="• Build r5r network from cropped PBF&#xa;• Run detailed_itineraries() on 20k OD pairs&#xa;• Export LTS network edges (.gpkg)&#xa;• Log found_routes to routing_summary.csv&#xa;→ Loop: 3 years × 4 LTS levels per city" style="text;html=1;fontSize=9;align=left;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="740" y="510" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out03_s05" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_03" target="s05" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out02a_s05" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_02a" target="s05" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out02b_s05" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_02b" target="s05" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_05a" value="trips_city_YY_ltsN.rds&#xa;(detailed itineraries, sf)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="605" width="175" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="out_05b" value="city_YY_lts.gpkg&#xa;(LTS edge network)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="570" y="605" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="out_05c" value="routing_summary.csv&#xa;(city, year, lts, found_routes)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="748" y="605" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s05_out05a" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s05" target="out_05a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s05_out05b" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s05" target="out_05b" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s05_out05c" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s05" target="out_05c" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 06 — Accessibility                                 -->
+        <!-- ====================================================== -->
+        <mxCell id="s06" value="06 — Accessibility&#xa;06_accessibility.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="700" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s06_desc" value="• Re-load r5r network for each city/year&#xa;• Run r5r::accessibility() for 4 LTS levels&#xa;• Opportunities: building volume, cutoff = 15 min&#xa;• Add access_15min_vol to routing_summary.csv&#xa;→ Loop: 3 years × 4 LTS levels per city" style="text;html=1;fontSize=9;align=left;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="740" y="690" width="285" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out05a_s06" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_05a" target="s06" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out02a_s06" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_02a" target="s06" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out02b_s06" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_02b" target="s06" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out05c_s06" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_05c" target="s06" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_06" value="routing_summary.csv (updated)&#xa;+ access_15min_vol per city/year/lts" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="785" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s06_out06" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s06" target="out_06" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 07 — Analysis                                      -->
+        <!-- ====================================================== -->
+        <mxCell id="s07" value="07 — Route Analysis&#xa;07_analysis.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="700" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s07_desc" value="• Combine trips across years per LTS&#xa;• Calculate circuity (route/linear distance)&#xa;• Filter to OD pairs found in ALL years&#xa;• Generate comparison plots (ECDF, scatter)&#xa;• Generate overline maps (stplanr)&#xa;→ Loop: 4 LTS levels per city" style="text;html=1;fontSize=9;align=left;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="30" y="690" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out05a_s07" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_05a" target="s07" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_07a" value="cumulative_distance_ltsN.png&#xa;circuity_density_ltsN.png&#xa;distance_change_histogram_ltsN.png" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="785" width="230" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="out_07b" value="overline_map_ltsN.png&#xa;routing_differences_ltsN.csv" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="345" y="785" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s07_out07a" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s07" target="out_07a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s07_out07b" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s07" target="out_07b" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 08 — Final Metrics                                 -->
+        <!-- ====================================================== -->
+        <mxCell id="s08" value="08 — Final Metrics&#xa;08_final_metrics.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="890" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s08_desc" value="• Load itineraries + LTS edge network + CI layer&#xa;• Pre-calc linear distances (OD pairs lookup)&#xa;• Compute: avg_distance, avg_circuity, avg_dist_change_pct&#xa;• Compute: pct_ci_route, pct_ltsN (route-level)&#xa;• Compute: total_road_m, total_ci_m, pct_ci_total&#xa;• Join routing_summary (found_routes + access_15min_vol)&#xa;• Incremental upsert into final_city_estimations.csv&#xa;→ Loop: 3 years × 4 LTS levels per city" style="text;html=1;fontSize=9;align=left;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="740" y="875" width="315" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out05a_s08" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_05a" target="s08" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out05b_s08" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_05b" target="s08" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out04_s08" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_04" target="s08" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out06_s08" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_06" target="s08" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_08" value="final_city_estimations.csv&#xa;estimations_TIMESTAMP.csv (per city)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="975" width="270" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s08_out08" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s08" target="out_08" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 09 — Plot Metrics                                  -->
+        <!-- ====================================================== -->
+        <mxCell id="s09" value="09 — Plot Metrics&#xa;09_plot_metrics.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="890" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s09_desc" value="• Read final_city_estimations.csv&#xa;• Generate summary metric charts across LTS levels&#xa;  (distance, CI %, accessibility, found_routes)" style="text;html=1;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="30" y="885" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out08_s09" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_08" target="s09" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_09" value="metric_plots/&#xa;(PNG charts per city/metric)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="975" width="175" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s09_out09" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s09" target="out_09" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 10 — CI Maps                                       -->
+        <!-- ====================================================== -->
+        <mxCell id="s10" value="10 — CI Maps&#xa;10_ci_maps.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1065" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s10_desc" value="• Read CI geopackages for each year&#xa;• Generate tmap output coloured by infra5 type" style="text;html=1;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1065" width="180" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out04_s10" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_04" target="s10" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out_10" value="ci_map_YYMM.png&#xa;(per city/year)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1145" width="175" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s10_out10" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s10" target="out_10" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ====================================================== -->
+        <!-- STEP 11 — Tidy Up                                       -->
+        <!-- ====================================================== -->
+        <mxCell id="s11" value="11 — Tidy Up&#xa;11_tidy_up.R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="1065" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s11_desc" value="• Remove large temporary files&#xa;  (cropped PBFs, mapdb caches)&#xa;• Optionally compress .rds outputs" style="text;html=1;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="740" y="1065" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_out08_s11" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="out_08" target="s11" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ======================== CONFIG ======================== -->
+        <mxCell id="cfg" value="config.R&#xa;(cities, years, java_mem,&#xa;n_od_pairs, FORCE_RERUN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="350" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e_cfg_s01" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" edge="1" source="cfg" target="s01" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_cfg_s02" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" edge="1" source="cfg" target="s02" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_cfg_s03" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" edge="1" source="cfg" target="s03" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_cfg_s05" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" edge="1" source="cfg" target="s05" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
