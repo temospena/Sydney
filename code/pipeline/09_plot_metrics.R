@@ -115,6 +115,53 @@ for (current_city in unique(final_df$city)) {
     theme_minimal()
 
   ggsave(file.path(results_dir, "plot_ci_types_absolute.png"), p4, width = 8, height = 4)
+
+  # 5. Overline Density Matrix (Grid of LTS vs Years)
+  cat("  Generating Overline Density Matrix...\n")
+  overlines_list <- list()
+  for (lts_level in 1:4) {
+    ov_rds <- file.path(results_dir, paste0("overline_data_lts", lts_level, ".rds"))
+    if (file.exists(ov_rds)) {
+      ovline <- readRDS(ov_rds) |>
+        mutate(lts = paste0("LTS ", lts_level))
+      overlines_list[[lts_level]] <- ovline
+    }
+  }
+
+  if (length(overlines_list) > 0) {
+    all_overlines <- bind_rows(overlines_list) |>
+      filter(trips > 1) |> # Basic filtering to keep it readable
+      mutate(
+        year = factor(year, levels = c("2016", "2021", "2026")),
+        lts = factor(lts, levels = c("LTS 1", "LTS 2", "LTS 3", "LTS 4"))
+      )
+
+    p_matrix <- ggplot() +
+      geom_sf(data = all_overlines, aes(linewidth = trips, color = trips)) +
+      scale_color_viridis_c(option = "inferno", direction = -1) +
+      scale_linewidth_continuous(range = c(0.1, 2.5)) +
+      facet_grid(lts ~ year, switch = "y") +
+      theme_minimal() +
+      theme(
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        strip.placement = "outside",
+        strip.text.y.left = element_text(angle = 90, size = 11, face = "bold"),
+        strip.text.x = element_text(size = 11, face = "bold"),
+        legend.position = "bottom",
+        legend.direction = "horizontal",
+        legend.key.width = unit(1.2, "cm")
+      ) +
+      labs(
+        title = paste("Routing Density Matrix -", current_city),
+        subtitle = "Comparative trip volumes across all LTS levels and infrastructure years",
+        color = "Trip Volume",
+        linewidth = "Trip Volume"
+      )
+
+    ggsave(file.path(results_dir, "overline_density_matrix.png"), p_matrix, width = 10, height = 14, bg = "white")
+  }
 }
 
 cat("Phase 07 Plotting Metrics Completed!\n")

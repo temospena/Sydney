@@ -214,8 +214,8 @@ for (city in target_cities) {
 
         tmap_save(map_obj, file.path(results_dir, paste0("overline_map_lts", lts_level, ".png")), width = 12, height = 8)
 
-        # Skip saving network `.rds` for advanced interactive loading to avoid filling up disk space
-        # saveRDS(map_data, file.path(results_dir, paste0("overline_map_data_lts", lts_level, ".rds")))
+        # Save overline data for later reuse in global matrix plotting
+        saveRDS(map_data, file.path(results_dir, paste0("overline_data_lts", lts_level, ".rds")))
 
         rm(trips_list, trips_combined, trips_df, trips_wide, trips_overline, map_data, map_obj, p1)
         gc()

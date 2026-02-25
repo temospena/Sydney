@@ -19,8 +19,8 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 
 # List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {
-  # Sydney is excluded as it was already processed successfully
-  target_cities <- c("Munich", "London", "New York", "Sao Paulo")
+  # New requested city batch
+  target_cities <- c("Portland", "Santiago", "Brussels", "Vancouver", "Tokyo")
 }
 
 # Map of cities to the Geofabrik region name
@@ -67,6 +67,20 @@ get_geofabrik_url <- function(city, year_short) {
       prefix <- "south-america/brazil"
     } else {
       prefix <- "south-america/brazil/sudeste"
+    }
+  } else if (city_lower == "portland") {
+    prefix <- "north-america/us/oregon"
+  } else if (city_lower == "santiago") {
+    prefix <- "south-america/chile"
+  } else if (city_lower == "brussels") {
+    prefix <- "europe/belgium"
+  } else if (city_lower == "vancouver") {
+    prefix <- "north-america/canada/british-columbia"
+  } else if (city_lower == "tokyo") {
+    if (year_short == "16") {
+      prefix <- "asia/japan"
+    } else {
+      prefix <- "asia/japan/kanto"
     }
   } else {
     stop(paste("No URL mapping found for", city))

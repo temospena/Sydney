@@ -1020,3 +1020,39 @@ Sao Paulo: w050_s20_w045_s25
 
 (RF) a script was added to retrieve all the tiles from the lod1.geojson data for each city, and added to city_list.xtx
 
+---
+## Prompt 21
+
+I would like to run for thes cities, in my remote server.
+Can you add the geofabrik correct paths?
+Portland, Santiago, Brussels, Vancouver, Tokyo
+https://download.geofabrik.de/north-america/us/oregon-160101.osm.pbf
+https://download.geofabrik.de/north-america/us/oregon-210101.osm.pbf
+https://download.geofabrik.de/north-america/us/oregon-260101.osm.pbf
+https://download.geofabrik.de/south-america/chile-160101.osm.pbf
+https://download.geofabrik.de/south-america/chile-210101.osm.pbf
+https://download.geofabrik.de/south-america/chile-260101.osm.pbf
+https://download.geofabrik.de/europe/belgium-160101.osm.pbf
+https://download.geofabrik.de/europe/belgium-210101.osm.pbf
+https://download.geofabrik.de/europe/belgium-260101.osm.pbf
+https://download.geofabrik.de/north-america/canada/british-columbia-160101.osm.pbf
+https://download.geofabrik.de/north-america/canada/british-columbia-210101.osm.pbf
+https://download.geofabrik.de/north-america/canada/british-columbia-260101.osm.pbf
+https://download.geofabrik.de/asia/japan-160101.osm.pbf
+https://download.geofabrik.de/asia/japan/kanto-210101.osm.pbf
+https://download.geofabrik.de/asia/japan/kanto-260101.osm.pbf
+
+### Response
+I have updated 
+
+code/pipeline/config.R
+ to include the correct Geofabrik path mappings for the new cities and added them to the default target_cities list.
+
+Added City Mappings:
+Portland: north-america/us/oregon
+Santiago: south-america/chile
+Brussels: europe/belgium
+Vancouver: north-america/canada/british-columbia
+Tokyo:
+2016: asia/japan
+2021/2026: asia/japan/kanto (as requested)
