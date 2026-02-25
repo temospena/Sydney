@@ -893,3 +893,15 @@ Adjusted the indentation in
 
 test_acc.R
  to use the standard 2-space style as requested.
+
+
+ ----
+ Prompt 19
+
+ I run agian for sydney, and this time all looks good. Just a small detail, in the final_city_estimations, the acc_15min_vol was not filled as supposed, but created 2 more variables acc_15min_vol.x and acc_15min_vol.y, and the values were in this .y one. Maybe this is a simple fiz do to directly in the csv? Or should be worth to inspect the 07_final_metrics.R to check when binding rows is not producind new variables?
+
+ Also, I need to run again the accessibility for Lisbon, Barcelona and Paris. I think it is worth to separate accessibility in a new script, instead of living in r5r routing script
+ Makes sense to estimate the linear distance (that now lives in final_metris) in the routing script? This would make perhaps the final_metrics script to run faster.
+
+
+

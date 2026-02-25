@@ -18,11 +18,12 @@ pipeline_steps <- c(
   "code/pipeline/03_historical_routing_osm.R",
   "code/pipeline/04_ci_osmactive.R",
   "code/pipeline/05_r5r_routing.R",
-  "code/pipeline/06_analysis.R",
-  "code/pipeline/07_final_metrics.R",
-  "code/pipeline/08_plot_metrics.R",
-  "code/pipeline/09_ci_maps.R",
-  "code/pipeline/10_tidy_up.R"
+  "code/pipeline/06_accessibility.R",
+  "code/pipeline/07_analysis.R",
+  "code/pipeline/08_final_metrics.R",
+  "code/pipeline/09_plot_metrics.R",
+  "code/pipeline/10_ci_maps.R",
+  "code/pipeline/11_tidy_up.R"
 )
 
 # Run the pipeline for one city at a time

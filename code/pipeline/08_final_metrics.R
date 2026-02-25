@@ -181,8 +181,7 @@ for (city in target_cities) {
         ci_type_sep_m = round(ci_type_sep_m, 0),
         ci_type_paint_m = round(ci_type_paint_m, 0),
         ci_type_mixed_m = round(ci_type_mixed_m, 0),
-        ci_type_foot_m = round(ci_type_foot_m, 0),
-        access_15min_vol = NA
+        ci_type_foot_m = round(ci_type_foot_m, 0)
       )
 
 

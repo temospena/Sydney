@@ -160,28 +160,6 @@ for (city in target_cities) {
                     )
                     saveRDS(trips, res_file)
 
-                    # 10. Estimate Accessibility with r5r::accessibility
-                    acc_15min_vol <- NA
-                    tryCatch(
-                        {
-                            acc <- r5r::accessibility(
-                                r5r_network = r5_engine,
-                                origins = origins_df,
-                                destinations = dests_df,
-                                opportunities = "volume",
-                                cutoff = 15,
-                                mode = "BICYCLE",
-                                max_lts = lts_level,
-                                progress = FALSE
-                            )
-                            if (nrow(acc) > 0) {
-                                acc_15min_vol <- round(mean(acc$accessibility, na.rm = TRUE))
-                            }
-                        },
-                        error = function(e) {
-                            warning("Accessibility calculation failed for LTS ", lts_level, ": ", e$message)
-                        }
-                    )
 
                     # Export route finding metrics tracking how many successfully found a route
                     found_routes <- nrow(trips)
@@ -191,8 +169,7 @@ for (city in target_cities) {
                         city = city_lower,
                         year = as.integer(yr),
                         lts = lts_level,
-                        found_routes = found_routes,
-                        access_15min_vol = acc_15min_vol
+                        found_routes = found_routes
                     )
 
                     if (!file.exists(summary_file)) {
