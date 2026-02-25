@@ -160,16 +160,19 @@ for (city in target_cities) {
                     )
                     saveRDS(trips, res_file)
 
-                    # 10. Estimate Accessibility with accessibility package
+                    # 10. Estimate Accessibility with r5r::accessibility
                     acc_15min_vol <- NA
                     tryCatch(
                         {
-                            acc <- accessibility::cumulative_cutoff(
-                                travel_matrix = sf::st_drop_geometry(trips)[, c("from_id", "to_id", "total_duration")],
-                                land_use_data = dests_df,
-                                opportunity = "volume",
-                                travel_cost = "total_duration",
-                                cutoff = 15
+                            acc <- r5r::accessibility(
+                                r5r_network = r5_engine,
+                                origins = origins_df,
+                                destinations = dests_df,
+                                opportunities = "volume",
+                                cutoff = 15,
+                                mode = "BICYCLE",
+                                max_lts = lts_level,
+                                progress = FALSE
                             )
                             if (nrow(acc) > 0) {
                                 acc_15min_vol <- round(mean(acc$accessibility, na.rm = TRUE))
@@ -183,12 +186,20 @@ for (city in target_cities) {
                     # Export route finding metrics tracking how many successfully found a route
                     found_routes <- nrow(trips)
                     summary_file <- file.path(city_dir, "routing_summary.csv")
-                    summary_row <- data.frame(city = city_lower, year = yr, lts = lts_level, found_routes = found_routes, access_15min_vol = acc_15min_vol)
+                    # Force year to integer to avoid type mismatch (integer vs character)
+                    summary_row <- data.frame(
+                        city = city_lower,
+                        year = as.integer(yr),
+                        lts = lts_level,
+                        found_routes = found_routes,
+                        access_15min_vol = acc_15min_vol
+                    )
 
                     if (!file.exists(summary_file)) {
                         write.csv(summary_row, summary_file, row.names = FALSE)
                     } else {
-                        existing_summary <- read.csv(summary_file)
+                        existing_summary <- read.csv(summary_file) |>
+                            mutate(year = as.integer(year))
                         updated_summary <- bind_rows(existing_summary, summary_row)
                         write.csv(updated_summary, summary_file, row.names = FALSE)
                     }

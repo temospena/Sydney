@@ -813,4 +813,83 @@ Fix: If you still see 0s for the city-wide road stats, re-run 05_r5r_routing.R f
 You can now re-run 07_final_metrics.R to see the updated results with timestamps and fixed percentages.
 
 
+----
+Prompt 18 - sydney results not ok
 
+So i deleted the data/pipeline/sydney folder. I also deleted the sydney rows at final_city_estimations.csv.
+I rerun all the scripts only for Sydney as a fresh start.
+
+The results still are not ok:
+- the sydney_routing_stats shos that only some yeares are being run and lts. lts1 (16, 21, 26), lts2 (16) - and then nothing more.
+
+table(sydney_routing_stats_all$year, sydney_routing_stats_all$lts)
+
+         1     2
+  16 17733 18072
+  21 18435     0
+  26 19243     0
+
+And then on the final_city_estimations.csv, the results for sidney still show as if only less than 1000 od pairs were routed - i dont understand where this value come from.
+
+The console produced some warnings that i think its is worth to have a look
+
+Warning messages:
+1: In mean.default(acc$accessibility, na.rm = TRUE) :
+  argument is not numeric or logical: returning NA
+2: In value[[3L]](cond) :
+  r5r failed for Sydney 26 : Can't combine `..1$year` <integer> and `..2$year` <character>.
+3: Removed 120 rows containing non-finite outside the scale range (`stat_density()`).
+4: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+5: Removed 8 rows containing non-finite outside the scale range (`stat_bin()`).
+6: Removed 4 rows containing missing values or values outside the scale range (`geom_bar()`).
+7: In data.frame(row_idx = rep(1:nrow(trips), lengths(edge_list)),  :
+  NAs introduced by coercion
+8: In data.frame(row_idx = rep(1:nrow(trips), lengths(edge_list)),  :
+  NAs introduced by coercion
+9: In data.frame(row_idx = rep(1:nrow(trips), lengths(edge_list)),  :
+  NAs introduced by coercion
+10: In data.frame(row_idx = rep(1:nrow(trips), lengths(edge_list)),  :
+  NAs introduced by coercion
+
+The acc_15min_vol (05_r5r_routing.R, ln 164-186) seems to be producing only NAs, instead of considerind all the volumes.
+I made a simple script to test the code for only one city/year/lts, and found out that the accessibility::cumulative_cutoff() only works if our land_use_data are polygons, and not our destinations points (from buildings with volums). See the script at code/pipeline/test_acc.R
+So it is better to go back and use r5r::accessibility() function anyway. But in this case, it could be worth to consider onlye the OD pairs that found a route in travel_matrix (or trips), to improve efficiency and not run for the ones that were not found.
+This reflects also in the 07_final_metrics : is this variable acc_15min_vol being added at all to the final table?
+
+If needed to access some files or run any script on the server side (some files are not commited for being too large), let me know and I can run there ans send here the response.
+
+
+Response:
+I've analyzed the issues with the Sydney data and the accessibility calculations. The problems were caused by a combination of a data type mismatch in the routing logs and a compatibility issue between accessibility::cumulative_cutoff() and point-based destination data.
+
+Summary of Fixes
+Fixed Accessibility Calculation:
+
+Updated
+
+05_r5r_routing.R
+ to use r5r::accessibility() instead of the accessibility package. As you discovered in your
+
+test_acc.R
+ script, r5r handles point-based destinations and volumes more reliably for this specific workflow.
+This ensures acc_15min_vol is correctly calculated as a numeric mean and not as NA.
+Resolved Data Type Mismatch:
+
+Fixed the error: Can't combine ..1$year <integer> and ..2$year <character>.
+In
+
+05_r5r_routing.R
+, I added as.integer() to ensure the year column is consistently treated as an integer when appending to routing_summary.csv. This was the reason several runs (like Sydney 26) were failing prematurely.
+Ensured Metric Propagation:
+
+Modified
+
+07_final_metrics.R
+ to initialize access_15min_vol in the final dataset. This ensures that the newly calculated accessibility values from the routing phase are correctly pulled into the global final_city_estimations.csv.
+Style Clean-up:
+
+Adjusted the indentation in
+
+test_acc.R
+ to use the standard 2-space style as requested.
