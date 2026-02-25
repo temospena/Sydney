@@ -6,7 +6,6 @@ options(java.parameters = java_mem)
 
 library(tidyverse)
 library(sf)
-library(r5r)
 library(lwgeom)
 library(stringr)
 
@@ -57,15 +56,6 @@ for (city in target_cities) {
     cat("Processing scenario for", city, "Year", yr, "\n")
     r5r_dir <- file.path(city_dir, paste0("r5r_", yr))
 
-    r5_engine <- NULL
-    tryCatch(
-      {
-        r5_engine <- build_network(data_path = r5r_dir, verbose = FALSE)
-      },
-      error = function(e) {
-        warning("r5_engine could not be started for ", yr)
-      }
-    )
 
     # Load CI layer
     # Fix: CI files are named with versions like 160101, but yr is "16"
@@ -181,7 +171,6 @@ for (city in target_cities) {
         pct_lts2 = NA,
         pct_lts3 = NA,
         pct_lts4 = NA,
-        access_15min_vol = NA,
         total_road_m = total_road_m,
         total_ci_m = total_ci_m,
         pct_ci_total = pct_ci_total,
@@ -195,31 +184,6 @@ for (city in target_cities) {
         ci_type_foot_m = ci_type_foot_m
       )
 
-      # 10. Estimate Accessibility
-      if (!is.null(r5_engine)) {
-        tryCatch(
-          {
-            acc <- accessibility(
-              r5r_network = r5_engine,
-              origins = origins_df,
-              destinations = dests_df,
-              mode = "BICYCLE",
-              opportunities_colnames = "volume",
-              decay_function = "step",
-              cutoffs = 15,
-              max_lts = lts_level,
-              verbose = FALSE,
-              progress = FALSE
-            )
-            if (nrow(acc) > 0) {
-              row_data$access_15min_vol <- mean(acc$accessibility, na.rm = TRUE)
-            }
-          },
-          error = function(e) {
-            warning("Accessibility calculation failed for LTS ", lts_level)
-          }
-        )
-      }
 
       # Load generated itineraries for 6, 8, 9
       res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
@@ -297,11 +261,6 @@ for (city in target_cities) {
         cat("    [MISSING] No itinerary file found for Year", yr, "(LTS", lts_level, "). Checked path:", res_file, "\n")
       }
       final_dataset[[length(final_dataset) + 1]] <- row_data
-    }
-
-    if (!is.null(r5_engine)) {
-      stop_r5()
-      rJava::.jgc(R.gc = TRUE)
     }
   }
 }
