@@ -20,7 +20,8 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 # List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {
   # New requested city batch
-  target_cities <- c("Portland", "Santiago", "Brussels", "Vancouver", "Tokyo")
+  # target_cities <- c("Portland", "Santiago", "Brussels", "Vancouver", "Tokyo")
+  target_cities = "Santiago"
 }
 
 # Map of cities to the Geofabrik region name
