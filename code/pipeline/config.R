@@ -19,9 +19,8 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 
 # List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {
-  # New requested city batch
-  # target_cities <- c("Portland", "Santiago", "Brussels", "Vancouver", "Tokyo")
-  target_cities = "Santiago"
+  # New requested city batch: Geographically distributed with strong cycling culture
+  target_cities <- c("Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin", "Seville", "Christchurch")
 }
 
 # Map of cities to the Geofabrik region name
@@ -83,6 +82,26 @@ get_geofabrik_url <- function(city, year_short) {
     } else {
       prefix <- "asia/japan/kanto"
     }
+  } else if (city_lower == "milan") {
+    prefix <- "europe/italy/lombardia"
+  } else if (city_lower == "mexico city") {
+    prefix <- "central-america/mexico"
+  } else if (city_lower == "bogota") {
+    prefix <- "south-america/colombia"
+  } else if (city_lower == "montréal") {
+    prefix <- "north-america/canada/quebec"
+  } else if (city_lower == "minneapolis") {
+    prefix <- "north-america/us/minnesota"
+  } else if (city_lower == "berlin") {
+    prefix <- "europe/germany/berlin"
+  } else if (city_lower == "seville") {
+    if (as.numeric(year_short) >= 21) {
+      prefix <- "europe/spain/andalucia"
+    } else {
+      prefix <- "europe/spain"
+    }
+  } else if (city_lower == "christchurch") {
+    prefix <- "australia-oceania/new-zealand"
   } else {
     stop(paste("No URL mapping found for", city))
   }
