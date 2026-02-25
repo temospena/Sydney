@@ -83,9 +83,9 @@ get_geofabrik_url <- function(city, year_short) {
       prefix <- "asia/japan/kanto"
     }
   } else if (city_lower == "milan") {
-    prefix <- "europe/italy/lombardia"
+    prefix <- "europe/italy/nord-ovest"
   } else if (city_lower == "mexico city") {
-    prefix <- "central-america/mexico"
+    prefix <- "north-america/mexico"
   } else if (city_lower == "bogota") {
     prefix <- "south-america/colombia"
   } else if (city_lower == "montréal") {
