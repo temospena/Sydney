@@ -335,7 +335,10 @@ if (length(final_dataset) == 0) {
   }
   if (length(summaries) > 0) {
     all_sums <- bind_rows(summaries) |>
-      mutate(city = tools::toTitleCase(city)) # Match city case format
+      mutate(city = tools::toTitleCase(city)) |>
+      group_by(city, year, lts) |>
+      slice_tail(n = 1) |>
+      ungroup()
 
     final_df <- final_df |> left_join(all_sums, by = c("city", "year", "lts"))
   }
@@ -375,9 +378,12 @@ if (length(final_dataset) == 0) {
     final_df <- bind_rows(existing_df, final_df)
   }
 
-  # Ensure columns are in a consistent order
+  # Ensure columns are in a consistent order and deduplicate across all cities
   final_df <- final_df |>
     select(city, year, lts, run_timestamp, everything()) |>
+    group_by(city, year, lts) |>
+    slice_tail(n = 1) |>
+    ungroup() |>
     arrange(city, year, lts)
 
   write.csv(final_df, out_csv, row.names = FALSE)
