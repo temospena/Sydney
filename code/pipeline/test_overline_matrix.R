@@ -7,7 +7,7 @@ library(stplanr)
 library(tmap)
 
 source("code/pipeline/config.R")
-city <- "Sydney"
+city <- "Barcelona" # or other
 city_lower <- tolower(city)
 city_dir <- file.path(data_dir, city_lower)
 results_dir <- file.path(city_dir, "results")
