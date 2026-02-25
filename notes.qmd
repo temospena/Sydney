@@ -373,6 +373,8 @@ trips = detailed_itineraries(
   )
 ```
 
+### LTS
+
 LTS is defined by [Mineta Transportation Institute](https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity) and us used in R5 as a set of "surrogate LTS" rules to create similar classifications to the original methodology that can be used with OSM data [@conway2015] and <https://docs.conveyal.com/learn-more/traffic-stress#:~:text=Unsignalized%20intersection%20adjustment%20round,entering%20or%20exiting%20the%20vertex.>
 For each OSM edge:
 
@@ -388,7 +390,7 @@ For each OSM edge:
 
 In `R5` the cycling routing algorithm expects a `max_lts` (1, 2, 3, or 4).
 The R5 engine identifies all edges in OSM with a value higher than `max_lts`.
-For the edges exceeding the `max_lts`, the routing engine applies a time-cost of walking speed (default 3.6 km/h), instead of cycling speed (default 12 km/h in `r5r`), as if the cyclist would dismount and walk with the bike on that segment (not accounting for mounting and dismounting time).
+For the edges exceeding the `max_lts`, the routing engine applies a time-cost of walking speed (default 3.6 km/h), instead of cycling speed (default 12 km/h in `r5r`), as if the cyclist would dismount and walk with the bike on that segment (not accounting for mounting and dismounting time), penalizing cost (time) in 3 times.
 So:
 
 -   If `edge.lts <= max_lts` → `time = distance / bikeSpeed`.
