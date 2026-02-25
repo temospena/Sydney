@@ -20,7 +20,7 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 # List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {
   # Sydney is excluded as it was already processed successfully
-  target_cities <- c("Lisbon", "Paris", "Barcelona")
+  target_cities <- c("Sydney", "Lisbon", "Paris", "Barcelona")
 }
 
 # Map of cities to the Geofabrik region name

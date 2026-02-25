@@ -1,0 +1,4 @@
+"city","year","lts","population","avg_distance_m","avg_circuity","avg_dist_change_pct","pct_ci_route","pct_lts1","pct_lts2","pct_lts3","pct_lts4","total_road_m","total_ci_m","pct_ci_total","pct_lts1_total","pct_lts2_total","pct_lts3_total","pct_lts4_total","ci_type_sep_m","ci_type_paint_m","ci_type_mixed_m","ci_type_foot_m","run_timestamp","found_routes","avg_dist_km"
+"Sydney","2016",1,NA,8871.77,1.52,0,25.03,80.17,0.82,6.41,12.6,5888098.726,241116.811540428,4.09,50.4,2.01,18.21,29.38,143682,46808,10922,39705,"20260225_042219",869,NA
+"Sydney","2021",1,NA,9105.35,1.5,2.63,39.48,85.92,1.34,4.6,8.13,6336313.824,411168.947245955,6.49,56.63,4.09,14.76,24.52,193231,54415,120577,42945,"20260225_042219",914,NA
+"Sydney","2026",1,NA,9313.95,1.46,4.98,49.47,92.94,0.95,2.16,3.94,6794440.947,509407.350761083,7.5,68.95,4.23,10.27,16.55,258898,52524,169934,28050,"20260225_042219",955,NA
