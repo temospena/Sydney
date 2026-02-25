@@ -36,7 +36,13 @@ city_list <- city_list |>
 if (!exists("target_cities")) target_cities <- c("Sydney", "Lisbon", "Paris", "Barcelona")
 
 city_list_target <- city_list |>
-    filter(city %in% target_cities)
+    filter(city %in% target_cities) |>
+    # Handle multiple matches for the same name (e.g. Santiago Chile vs Santiago DR)
+    # Prioritize by population if multiple matches found for a target name
+    group_by(city) |>
+    arrange(desc(population)) |>
+    slice(1) |>
+    ungroup()
 
 # Create 10km buffers from points
 city_list_buf <- city_list_target |>
