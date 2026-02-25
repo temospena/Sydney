@@ -167,18 +167,36 @@ for (city in target_cities) {
 
         # 3. Spatial overline generation for segment volume
         cat("    Generating overline map (this may take a while)...\n")
-        trips_overline <- trips_combined |> mutate(trips = 1)
+
+        # Pre-clean geometries to avoid segfaults in overline2 (common with GEOS version mismatches)
+        trips_overline <- trips_combined |>
+            mutate(trips = 1) |>
+            st_zm(drop = TRUE, what = "ZM") |> # Explicitly drop Z/M dimensions early
+            st_make_valid() |> # Fix any topological errors
+            filter(!st_is_empty(geometry)) # Remove empty geometries
 
         map_data <- trips_overline |>
             group_split(year) |>
             map_dfr(function(year_data) {
-                # Only overline to save size if there are actual geometries
                 if (nrow(year_data) > 0) {
-                    overline2(year_data, attrib = "trips") |> mutate(year = unique(year_data$year))
+                    # Ensure we are working with LINESTRINGs (cast if necessary)
+                    year_data <- st_cast(year_data, "LINESTRING", warn = FALSE)
+
+                    tryCatch(
+                        {
+                            overline2(year_data, attrib = "trips") |>
+                                mutate(year = unique(year_data$year))
+                        },
+                        error = function(e) {
+                            cat(paste0("      [WARNING] overline2 failed for year ", unique(year_data$year), ": ", e$message, "\n"))
+                            NULL
+                        }
+                    )
                 } else {
                     NULL
                 }
             }) |>
+            filter(!is.null(geometry)) |>
             filter(trips > 1) # Filter singlets for cleaner map
 
         # Plot tmap
