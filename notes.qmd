@@ -355,6 +355,301 @@ Data from buildings' height was retrieved from @zhu2025, and the number of floor
 
 ![Paris buildings's estimated number of floors (mean: 3.92)](images/Screenshot_20260217_172645.png){width="450"}
 
+### Trip distribution approach
+
+Use a common trip-length distribution in urban environments, such as [@wang2025]
+
+![](images/clipboard-384952838.png)
+
+Empirical one for Freiburg [@schneider2023]
+
+![](images/clipboard-2639027703.png)
+
+There is also analysis from bike sharing data from 7 cities in the US [@kou2019], with the set parameters for commuting trips (in miles)
+
+| City | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
+|----|----|----|----|----|----|----|----|----|
+| Percentage of round trips | 8.40% | 10.60% | 2.60% | 8.10% | 3.10% | 4.60% | 4.20% | 2.06% |
+| Percentage of commuting trips | 58.43% | 63.61% | 75.55% | 68.59% | 68.98% | 58.56% | 60.78% | 62.32% |
+| Commuting trips | Distance (miles) | Maximum | 7.85 | 3.14 | 3.37 | 7.30 | 8.77 | 27.21 |
+| Median | 1.16 | 0.91 | 1.23 | 1.39 | 1.46 | 1.43 | 1.39 | 1.31 |
+| Average | 1.27 | 1.02 | 1.24 | 1.56 | 1.70 | 1.72 | 1.71 | 1.68 |
+| Standard deviation | 0.74 | 0.50 | 0.53 | 0.79 | 1.02 | 1.14 | 1.14 | 1.21 |
+
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<tbody>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>Empty Cell</p></td>
+<td><p>Empty Cell</p></td>
+<td><p>Seattle</p></td>
+<td><p>Los Angeles</p></td>
+<td><p>Bay area</p></td>
+<td><p>Philadelphia</p></td>
+<td><p>Boston</p></td>
+<td><p>Washington, DC</p></td>
+<td><p>Chicago</p></td>
+<td><p>New York</p></td>
+</tr>
+<tr>
+<td><p>Weibull</p></td>
+<td><p>Parameters</p></td>
+<td><p>Shape</p></td>
+<td><p>1.8512</p></td>
+<td><p>2.1665</p></td>
+<td><p>2.5134</p></td>
+<td><p>2.0996</p></td>
+<td><p>1.7896</p></td>
+<td><p>1.6420</p></td>
+<td><p>1.6144</p></td>
+<td><p>1.5232</p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td></td>
+<td><p>Scale</p></td>
+<td><p>1.4361</p></td>
+<td><p>1.1499</p></td>
+<td><p>1.4011</p></td>
+<td><p>1.7712</p></td>
+<td><p>1.9261</p></td>
+<td><p>1.9317</p></td>
+<td><p>1.9218</p></td>
+<td><p>1.8760</p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>Goodness-of- <br />
+fit statistics/ <br />
+criteria</p></td>
+<td><p>K–S statistic</p></td>
+<td><p><strong>0.0658</strong></p></td>
+<td><p><strong>0.0513</strong></p></td>
+<td><p><strong>0.0497</strong><sup>*</sup></p></td>
+<td><p>0.0555</p></td>
+<td><p>0.0548</p></td>
+<td><p>0.0519</p></td>
+<td><p>0.0547</p></td>
+<td><p>0.0674</p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>AIC</p></td>
+<td><p>107316.3</p></td>
+<td><p>137674.1</p></td>
+<td><p>215312.1</p></td>
+<td><p>693533.8</p></td>
+<td><p>2161993.0</p></td>
+<td><p>3880947.0</p></td>
+<td><p>5717157.5</p></td>
+<td><p>17356522.0</p></td>
+<td></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>BIC</p></td>
+<td><p>107334.1</p></td>
+<td><p>137693.2</p></td>
+<td><p>215331.8</p></td>
+<td><p>693555.1</p></td>
+<td><p>2162016.3</p></td>
+<td><p>3880971.3</p></td>
+<td><p>5717182.6</p></td>
+<td><p>17356549.0</p></td>
+<td></td>
+</tr>
+<tr>
+<td><p>Gamma</p></td>
+<td><p>Parameters</p></td>
+<td><p>Shape</p></td>
+<td><p>3.5464</p></td>
+<td><p>4.0595</p></td>
+<td><p>4.9903</p></td>
+<td><p>4.1294</p></td>
+<td><p>3.0170</p></td>
+<td><p>2.7110</p></td>
+<td><p>2.5535</p></td>
+<td><p>2.3567</p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td></td>
+<td><p>Scale</p></td>
+<td><p>2.7932</p></td>
+<td><p>3.9995</p></td>
+<td><p>4.0206</p></td>
+<td><p>2.6417</p></td>
+<td><p>1.7713</p></td>
+<td><p>1.5799</p></td>
+<td><p>1.4937</p></td>
+<td><p>1.4054</p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>Goodness-of- <br />
+fit statistics/ <br />
+criteria</p></td>
+<td><p>K–S statistic</p></td>
+<td><p><strong>0.0382</strong><sup>*</sup></p></td>
+<td><p><strong>0.0304</strong><sup>*</sup></p></td>
+<td><p>0.0682</p></td>
+<td><p><strong>0.0284</strong><sup>*</sup></p></td>
+<td><p><strong>0.0472</strong><sup>*</sup></p></td>
+<td><p><strong>0.0354</strong><sup>*</sup></p></td>
+<td><p><strong>0.0462</strong><sup>*</sup></p></td>
+<td><p>0.0570</p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>AIC</p></td>
+<td><p>101513.2</p></td>
+<td><p>134402.0</p></td>
+<td><p>216873.8</p></td>
+<td><p>671542.5</p></td>
+<td><p>2113945.2</p></td>
+<td><p>3771463.5</p></td>
+<td><p>5585434.3</p></td>
+<td><p>16907864.0</p></td>
+<td></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>BIC</p></td>
+<td><p>101531.1</p></td>
+<td><p>134421.1</p></td>
+<td><p>216893.5</p></td>
+<td><p>671563.9</p></td>
+<td><p>2113968.4</p></td>
+<td><p>3771487.9</p></td>
+<td><p>5585459.4</p></td>
+<td><p>16907892.0</p></td>
+<td></td>
+</tr>
+<tr>
+<td><p>Lognormal</p></td>
+<td><p>Parameters</p></td>
+<td><p>meanlog</p></td>
+<td><p>0.0912</p></td>
+<td><p>−0.1133</p></td>
+<td><p>0.1126</p></td>
+<td><p>0.3208</p></td>
+<td><p>0.3578</p></td>
+<td><p>0.3444</p></td>
+<td><p>0.3278</p></td>
+<td><p>0.2899</p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td></td>
+<td><p>sdlog</p></td>
+<td><p>0.5500</p></td>
+<td><p>0.5264</p></td>
+<td><p>0.4791</p></td>
+<td><p>0.5136</p></td>
+<td><p>0.6046</p></td>
+<td><p>0.6345</p></td>
+<td><p>0.6563</p></td>
+<td><p>0.6783</p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>Goodness-of- <br />
+fit statistics/ <br />
+criteria</p></td>
+<td><p>K–S statistic</p></td>
+<td><p>0.0504</p></td>
+<td><p><strong>0.0384</strong><sup>*</sup></p></td>
+<td><p>0.0816</p></td>
+<td><p><strong>0.0205</strong><sup>*</sup></p></td>
+<td><p><strong>0.0237</strong><sup>*</sup></p></td>
+<td><p><strong>0.0152</strong><sup>*</sup></p></td>
+<td><p><strong>0.0176</strong><sup>*</sup></p></td>
+<td><p><strong>0.0131</strong><sup>*</sup></p></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>AIC</p></td>
+<td><p>100235.9</p></td>
+<td><p>138111.9</p></td>
+<td><p>226762.0</p></td>
+<td><p>673148.5</p></td>
+<td><p>2104083.5</p></td>
+<td><p>3722622.1</p></td>
+<td><p>5514671.9</p></td>
+<td><p>16539126.0</p></td>
+<td></td>
+</tr>
+<tr>
+<td><p>Empty Cell</p></td>
+<td><p>BIC</p></td>
+<td><p>100253.8</p></td>
+<td><p>138131.0</p></td>
+<td><p>226781.7</p></td>
+<td><p>673169.8</p></td>
+<td><p>2104106.7</p></td>
+<td><p>3722646.5</p></td>
+<td><p>5514697.0</p></td>
+<td><p>16539154.0</p></td>
+<td></td>
+</tr>
+<tr>
+<td><p>Best fit distribution</p></td>
+<td><p>Gamma</p></td>
+<td><p>Gamma</p></td>
+<td><p>Weibull</p></td>
+<td><p>Gamma</p></td>
+<td><p>Lognormal</p></td>
+<td><p>Lognormal</p></td>
+<td><p>Lognormal</p></td>
+<td><p>Lognormal</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><p>Parameters</p></td>
+<td><p>alfa =3.55</p>
+<p>beta =2.79</p></td>
+<td><p>alfa =4.06</p>
+<p>beta =4.0</p></td>
+<td><p>k =2.51</p>
+<p>lamb =1.40</p></td>
+<td><p>alfa =4.13 beta =2.64</p></td>
+<td><p>mu =0.36</p>
+<p>sigma=0.60</p></td>
+<td><p>mu =0.34</p>
+<p>sigma=0.63</p></td>
+<td><p>mu =0.33</p>
+<p>sigma=0.66</p></td>
+<td><p>mu =0.29</p>
+<p>sigma=0.68</p></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+|  |  |  |  |  |  |  |  |  |  |
+|----|----|----|----|----|----|----|----|----|----|
+| Empty Cell | Empty Cell | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
+| Commuting trip distance (mile) | Right side cut-off^1^ | 1.14 | 0.67 | 1.26 | 0.99 | 1.05 | 0.86 | 0.77 | 0.86 |
+| K–S statistic | 0.0518 | 0.0711 | 0.1330 | **0.0243**^\*^ | **0.0347**^\*^ | **0.0287**^\*^ | **0.0176**^\*^ | **0.0347**^\*^ |  |
+| Power law cut-off^2^ | 2.15 | 2.12 | 2.10 | 3.35 | 5.47 | 4.07 | 4.49 | 6.29 |  |
+| Exponent k | 4.28 | 12.07 | 11.70 | 8.27 | 12.60 | 5.51 | 7.25 | 11.44 |  |
+| Percentage of trips in power law fit | 4.74% | 1.94% | 5.81% | 2.22% | 0.24% | 2.41% | 1.67% | 0.39% |  |
+
 ## Routing
 
 We use r5r R package [@pereira2021] for routing in bicycle mode.
