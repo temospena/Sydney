@@ -145,7 +145,7 @@ for (city in target_cities) {
 
     if (!is.null(ci)) {
       ci_lengths <- as.numeric(st_length(ci))
-      total_ci_m <- sum(ci_lengths, na.rm = TRUE)
+      total_ci_m <- round(sum(ci_lengths, na.rm = TRUE))
 
       if (total_road_m > 0) {
         pct_ci_total <- round(total_ci_m / total_road_m * 100, 2)
