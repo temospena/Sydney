@@ -296,8 +296,8 @@ if (length(final_dataset) == 0) {
   if (length(summaries) > 0) {
     all_sums <- bind_rows(summaries) |>
       mutate(city = tools::toTitleCase(city)) |>
-      group_by(city, year, lts) |>
-      slice_tail(n = 1) |>
+      group_by(city) |>
+      slice_tail(n = length(years) * 4) |> # last complete run: n_years × 4 LTS levels
       ungroup()
 
     final_df <- final_df |> left_join(all_sums, by = c("city", "year", "lts"))
