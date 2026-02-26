@@ -367,28 +367,35 @@ Empirical one for Freiburg [@schneider2023]
 
 There is also analysis from bike sharing data from 7 cities in the US [@kou2019], with the set parameters for commuting trips (in miles)
 
-| City | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
-|----|----|----|----|----|----|----|----|----|
-| Percentage of round trips | 8.40% | 10.60% | 2.60% | 8.10% | 3.10% | 4.60% | 4.20% | 2.06% |
-| Percentage of commuting trips | 58.43% | 63.61% | 75.55% | 68.59% | 68.98% | 58.56% | 60.78% | 62.32% |
-| Commuting trips | Distance (miles) | Maximum | 7.85 | 3.14 | 3.37 | 7.30 | 8.77 | 27.21 |
-| Median | 1.16 | 0.91 | 1.23 | 1.39 | 1.46 | 1.43 | 1.39 | 1.31 |
-| Average | 1.27 | 1.02 | 1.24 | 1.56 | 1.70 | 1.72 | 1.71 | 1.68 |
-| Standard deviation | 0.74 | 0.50 | 0.53 | 0.79 | 1.02 | 1.14 | 1.14 | 1.21 |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| City                          | Seattle          | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
++===============================+==================+=============+==========+==============+========+================+=========+==========+
+| Percentage of round trips     | 8.40%            | 10.60%      | 2.60%    | 8.10%        | 3.10%  | 4.60%          | 4.20%   | 2.06%    |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Percentage of commuting trips | 58.43%           | 63.61%      | 75.55%   | 68.59%       | 68.98% | 58.56%         | 60.78%  | 62.32%   |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Commuting trips               | Distance (miles) | Maximum     | 7.85     | 3.14         | 3.37   | 7.30           | 8.77    | 27.21    |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Median                        | 1.16             | 0.91        | 1.23     | 1.39         | 1.46   | 1.43           | 1.39    | 1.31     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Average                       | 1.27             | 1.02        | 1.24     | 1.56         | 1.70   | 1.72           | 1.71    | 1.68     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Standard deviation            | 0.74             | 0.50        | 0.53     | 0.79         | 1.02   | 1.14           | 1.14    | 1.21     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
 
-<table>
+<table style="width:96%;">
 <colgroup>
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
 <col style="width: 8%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
 </colgroup>
 <tbody>
 <tr>
@@ -642,7 +649,7 @@ criteria</p></td>
 </table>
 
 |  |  |  |  |  |  |  |  |  |  |
-|----|----|----|----|----|----|----|----|----|----|
+|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
 | Empty Cell | Empty Cell | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
 | Commuting trip distance (mile) | Right side cut-off^1^ | 1.14 | 0.67 | 1.26 | 0.99 | 1.05 | 0.86 | 0.77 | 0.86 |
 | K–S statistic | 0.0518 | 0.0711 | 0.1330 | **0.0243**^\*^ | **0.0347**^\*^ | **0.0287**^\*^ | **0.0176**^\*^ | **0.0347**^\*^ |  |
@@ -716,6 +723,57 @@ The example in Sydney shows that...
 # Results
 
 # Discussion
+
+## The use of OpenStreetMap data
+
+OpenStreetMap (OSM) datasets provide a common dataset for road networks (including cycling infrastructure), available mostly worldwide.
+However, OSM is a community-based and volunteer open dataset, which means that the detail of information increases with time, but does not mean that the road network was not always there in the real world.
+This can be verified with the size of the extracted osm.pbf files from [geofabrik](https://www.geofabrik.de/) (the largest OSM repository), for the different years (Table X) showing an increase in amount of data available for each selected city region.
+
+```{r}
+# run this only in the server, where the pbf files live
+
+# library(dplyr)
+# library(stringr)
+# library(knitr)
+# 
+# file_list <- list.files(path = "data/osm_pbf/", full.names = TRUE)
+# # file_list
+# # file_list = file_list
+# 
+# file_info <- file.info(file_list)
+# 
+# df <- data.frame(
+#   filename = basename(rownames(file_info)),
+#   size_mb = file_info$size / (1024 * 1024) # convert in MB,
+# )
+# 
+# summary_table <- df |> 
+#   mutate(year = paste0("20", str_extract(filename, "(?<=-)\\d{2}")))|> # 4 digits year 
+#   group_by(year) |> 
+#   summarise(
+#     mean_size_MB = mean(size_mb, na.rm = TRUE),
+#     median_size_MB = median(size_mb, na.rm = TRUE),
+#     total_files = n()
+#   )
+
+summary_table = read.csv("data/osm_file_size_summary.csv")
+
+kable(summary_table |> filter(year != "20NA") |> select(-total_files), # there is one more irrelevant for now
+      digits = 0, 
+      col.names = c("Year", "mean file size (MB)", "median file size (MB)"),
+      caption = "Mean and Median OSM File Sizes by Year")
+```
+
+OSM tagging is not consistent over years, which may lead to inconsistency issues of the results, since we are using the same classification of cycling infrastructure for the three year periods.
+For instance, the classification for Munich (Germany) changes drastically with time, and it does not mean that the infrastructure itself changed - only the tags in OSM did.
+
+![Cycling infrastructre classification for Munich in 2016, 2021 and 2026. There is a massive change in segments' tagging between 2021 and 2026.](data/pipeline/munich/results/ci_evolution_facet_map.png){fig-align="left"}
+
+Additionally tags can become deprecated and new tags can emerge.
+For instance, in June 2025, the OSM community submitted a [proposed an voted](https://wiki.openstreetmap.org/wiki/Proposal:Deprecate_cycleway%3Dopposite_family) in favour for a new way of tagging cycling contra-flows that do not have dedicated infrastructure - which are common in Paris or Munich.
+Our custom reclassification of cycling infrastructure in fewer types does not account for this.
+There are some attempts to directly classify the safety of a cycling infrastructure segment in OSM, with `class:bicycle=*` (values from -3 "Avoid at all costs", to 3 "This path is so beautiful, it's worth taking a detour"), but it is [still under dispute](https://wiki.openstreetmap.org/wiki/Key:class:bicycle).
 
 # Conclusions
 
