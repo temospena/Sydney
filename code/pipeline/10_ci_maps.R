@@ -110,13 +110,14 @@ for (city in target_cities) {
             mutate(
                 year = factor(year, levels = years_labels),
                 bicycle_lts = as.factor(bicycle_lts)
-            )
+            ) |> 
+          arrange(year, bicycle_lts)
 
         lts_map_obj <- tm_shape(all_lts) +
             tm_lines(
                 col = "bicycle_lts",
                 col.scale = tm_scale_categorical(values = c("#26a65b", "#f9bf3b", "#d60700ff", "#502e89ff")),
-                lwd = 0.8,
+                lwd = c(0.6,0.8,1.1,1.4),
                 col.legend = tm_legend(title = "LTS Level")
             ) +
             tm_facets(by = "year", ncol = 3, sync = TRUE, free.coords = FALSE) +
