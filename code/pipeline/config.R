@@ -20,7 +20,9 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 # List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {
   # New requested city batch: Geographically distributed with strong cycling culture
-  target_cities <- c("Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin", "Seville", "Christchurch")
+  # target_cities <- c("Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin", "Seville", "Christchurch")
+  target_cities = "Seville"
+  # target_cities = "Christchurch"
 }
 
 # Map of cities to the Geofabrik region name
@@ -95,7 +97,7 @@ get_geofabrik_url <- function(city, year_short) {
   } else if (city_lower == "berlin") {
     prefix <- "europe/germany/berlin"
   } else if (city_lower == "seville") {
-    if (as.numeric(year_short) >= 21) {
+    if (as.numeric(year_short) > 21) {
       prefix <- "europe/spain/andalucia"
     } else {
       prefix <- "europe/spain"
