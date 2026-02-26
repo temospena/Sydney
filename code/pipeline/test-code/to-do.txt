@@ -1,0 +1,3 @@
+todo:
+rerun for mexico city, with force= TRUE to download again the data for 2026
+https://download.geofabrik.de/north-america/mexico-260101.osm.pbf
