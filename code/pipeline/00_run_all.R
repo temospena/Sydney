@@ -32,6 +32,9 @@ for (city_name in all_cities) {
   cat("PROCESSING CITY:", city_name, "\n")
   cat("******************************************\n\n")
 
+  # Start Timer for this city
+  city_start_time <- Sys.time()
+
   # Set variable so scripts can identify the single city to process
   city_to_run <- city_name
 
@@ -52,6 +55,43 @@ for (city_name in all_cities) {
       }
     )
   }
+
+  # Calculate Total Duration
+  city_end_time <- Sys.time()
+  duration_mins <- as.numeric(difftime(city_end_time, city_start_time, units = "mins"))
+  cat(sprintf("\n[TIMER] Finished %s in %.2f minutes.\n", city_name, duration_mins))
+
+  # Update final_city_estimations.csv with the actual processing time
+  try(
+    {
+      if (requireNamespace("dplyr", quietly = TRUE)) {
+        library(dplyr)
+        csv_path <- file.path(data_dir, "final_city_estimations.csv")
+        if (file.exists(csv_path) && exists("current_timestamp")) {
+          cat("[TIMER] Updating final_city_estimations.csv with processing time...\n")
+          df <- read.csv(csv_path)
+          # Update only the rows from the current run
+          df <- df %>%
+            mutate(processing_time_minutes = if_else(
+              city == city_name & run_timestamp == current_timestamp,
+              round(duration_mins, 2),
+              as.numeric(processing_time_minutes)
+            ))
+          write.csv(df, csv_path, row.names = FALSE)
+
+          # Also update the individual city results file (archived version)
+          city_results_dir <- file.path(data_dir, tolower(city_name), "results")
+          local_csv <- file.path(city_results_dir, paste0("estimations_", current_timestamp, ".csv"))
+          if (file.exists(local_csv)) {
+            local_df <- read.csv(local_csv) %>%
+              mutate(processing_time_minutes = round(duration_mins, 2))
+            write.csv(local_df, local_csv, row.names = FALSE)
+          }
+        }
+      }
+    },
+    silent = TRUE
+  )
 }
 
 cat("==========================================\n")

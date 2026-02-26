@@ -1056,3 +1056,33 @@ Vancouver: north-america/canada/british-columbia
 Tokyo:
 2016: asia/japan
 2021/2026: asia/japan/kanto (as requested)
+
+
+---
+## Prompt 22
+
+Can we add a timer to count how long does it take to process a full city, and add to the final_city:estimations as processing_time_minutes?
+
+### Response
+
+I have updated the pipeline to include a processing timer.
+
+Changes Made:
+08_final_metrics.R: Added a processing_time_minutes column placeholder to the final dataset output.
+00_run_all.R:
+Added a city-level timer that starts at Step 01 and ends after Step 10 (or whatever the last completed step is).
+After each city finishes, it now automatically re-opens the 
+
+final_city_estimations.csv
+ and patches the processing_time_minutes column with the exact duration.
+It also updates the local archived city result file (e.g., data/pipeline/milan/results/estimations_YYYYMMDD_HHMMSS.csv) for consistency.
+How it works:
+When you run the pipeline now, it will look like this in the logs:
+
+text
+[TIMER] Finished Milan in 42.15 minutes.
+[TIMER] Updating final_city_estimations.csv with processing time...
+The 
+
+final_city_estimations.csv
+ will now serve as a benchmark for how long different cities take to process on your server.
