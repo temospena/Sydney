@@ -231,7 +231,7 @@ for (current_city in unique(final_df$city)) {
     if (length(all_ci_list) > 0) {
         all_ci <- bind_rows(all_ci_list) |>
             mutate(year = factor(year, levels = years_labels)) |>
-            arrange(year, desc(infra5))
+            arrange(year, infra5)
         tmap_mode("plot")
 
         perim_path <- file.path(data_dir, city_lower, paste0(city_lower, "_10km.gpkg"))
@@ -241,7 +241,7 @@ for (current_city in unique(final_df$city)) {
             tm_lines(col = "infra5", col.scale = tm_scale_categorical(values = ci_colors), lwd = 1.5, col.legend = tm_legend(title = "Infrastructure Type")) +
             tm_facets(by = "year", ncol = 3, sync = TRUE, free.coords = FALSE) +
             tm_title(paste(current_city, "- Cycling Infrastructure Evolution")) +
-            tm_layout(legend.outside = TRUE, legend.outside.position = "bottom", frame = FALSE)
+            tm_layout(legend.outside = TRUE, legend.outside.position = "bottom", frame = FALSE, legend.reverse = TRUE)
 
         if (!is.null(perim)) map_obj <- tm_shape(perim) + tm_borders(col_alpha = 0.2) + map_obj
 
