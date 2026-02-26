@@ -308,7 +308,9 @@ For the **impacts estimation**
 
 -   Modelling with panel data? considering the temporal effects (existing network at each year), and location and global effects
 
-## Case Studies
+## Cities
+
+Cities, city centers coordinates from list, buffer of 10 km - to be more comparable (and also many cities do not have limits well established (can be districts, metropolitan areas, and so on)
 
 Also, because some places do not have a good definition of "city" or "metropolitan area" as an administrative area (polygon).
 
@@ -316,7 +318,47 @@ List of +700 cities worldwide, with population, lat and lon from the historical 
 
 List from People for Bikes with city ratings regarding a score of cycling friendly cities, as 2025 (<https://cityratings.peopleforbikes.org/ratings>)
 
-Use a 10km radius from city center, for comparision purposes
+The rationale to select the 50 cities was:
+
+-   Cities that faced some improvements in cycling infrastructure in the last 10 years, for instance during the pandemic
+-   Cities with cycling data (checked against People4Bikes index scores for 2025)
+-   Excluded cities with consolidated cycling network (that didn't change much) such as Amsterdam or Copenhagen - outliers
+-   Widelly geographical distribution, equilibrium
+-   A minimum of 20 km of cycling infrastructure in jan 2026: this excludes many sub-tropical cities.
+-   A reasonable good OSM data quality and availability - this excludes most of China (remove?)
+-   Internationally renown cities
+
+Use a 10km projected buffer from city center, that defines the city areas for this research, for comparision purposes
+
+The 50 cities are as follows:
+
+\[table with city, contry, population\]
+
+```{r}
+city_list = read.csv("data/city_list.txt")
+names(city_list) = c("city", "lat", "lon", "population", "country", "countrycode", "building_tile")
+selected_cities = c(
+    "Sydney", "Lisbon", "Paris", "Barcelona",
+    "Munich", "London", "New York", "Sao Paulo", "Portland", "Santiago",
+    "Brussels", "Vancouver", "Tokyo", "Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin",
+    "Seville", "Christchurch",
+    "Lyon", "Seoul", "Cairo", "Shanghai", "Bologna", "Cape Town", "Madrid", "Melbourne", "Vienna",
+    "Oslo", "Dublin", "Taipei", "Turin", "Montpellier", "Stockholm", "Buenos Aires", "Ljubljana",
+    "Leeds", "Zurich", "Warsaw", "Chicago", "Austin", "Strasbourg", "Kyoto"
+  )
+
+city_list_selected = city_list |>
+  filter(city %in% selected_cities) |>
+  select(city, country, population)
+
+kable(city_list_selected, 
+      col.names = c("City", "Country", "Population"))
+# add note that population we don't know the source
+
+
+### Add cycling infrastructure extension by 2026
+
+```
 
 ## Data
 
@@ -325,8 +367,6 @@ Use a 10km radius from city center, for comparision purposes
 -   Historical perspective to access the connectivity gains (?)
 
     -   [Getting historical OSM cycling infrastructure data](https://eugenividal.github.io/slides/getting-historical-visible-cycling-infra-from-osm-main/README.html) (Eugene Vidal)
-
-Cities, city centers coordinates from list, buffer of 10 km - to be more comparable (and also many cities do not have limits well established (can be districts, metropolitan areas, and so on)
 
 ## ODs
 
@@ -341,7 +381,7 @@ For this paper, it would make more sense to use a randomly distributed sample of
 
 Use OD jittering [@lovelace2022], with subpoints as buildings, weighted by their number of floors, as a proxy for trip attractors.
 Data from buildings' height was retrieved from @zhu2025, and the number of floors was estimated assuming an average of 3 meters per floor.
-(we could also user area de construção!)
+(we could also use volume!)
 
 ![Lisbon buildings's estimated number of floors (mean: 2.94)](images/Screenshot_20260217_172324.png){width="450"}
 
@@ -401,6 +441,8 @@ This provides a better idea of which segments are used more in routing routing, 
 The example in Sydney shows that...
 
 ![](data/pipeline/sydney/results/overline_matrix_test.png){fig-align="center"}
+
+Each city took, on average, **22 minutes** to process data, in a i9 32 core computer with 128 GB RAM,
 
 # Results
 
@@ -480,16 +522,36 @@ Empirical one for Freiburg [@schneider2023]
 
 There is also analysis from bike sharing data from 7 cities in the US [@kou2019], with the set parameters for commuting trips (in miles)
 
-| City | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
-|----|----|----|----|----|----|----|----|----|
-| Percentage of round trips | 8.40% | 10.60% | 2.60% | 8.10% | 3.10% | 4.60% | 4.20% | 2.06% |
-| Percentage of commuting trips | 58.43% | 63.61% | 75.55% | 68.59% | 68.98% | 58.56% | 60.78% | 62.32% |
-| Commuting trips | Distance (miles) | Maximum | 7.85 | 3.14 | 3.37 | 7.30 | 8.77 | 27.21 |
-| Median | 1.16 | 0.91 | 1.23 | 1.39 | 1.46 | 1.43 | 1.39 | 1.31 |
-| Average | 1.27 | 1.02 | 1.24 | 1.56 | 1.70 | 1.72 | 1.71 | 1.68 |
-| Standard deviation | 0.74 | 0.50 | 0.53 | 0.79 | 1.02 | 1.14 | 1.14 | 1.21 |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| City                          | Seattle          | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
++===============================+==================+=============+==========+==============+========+================+=========+==========+
+| Percentage of round trips     | 8.40%            | 10.60%      | 2.60%    | 8.10%        | 3.10%  | 4.60%          | 4.20%   | 2.06%    |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Percentage of commuting trips | 58.43%           | 63.61%      | 75.55%   | 68.59%       | 68.98% | 58.56%         | 60.78%  | 62.32%   |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Commuting trips               | Distance (miles) | Maximum     | 7.85     | 3.14         | 3.37   | 7.30           | 8.77    | 27.21    |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Median                        | 1.16             | 0.91        | 1.23     | 1.39         | 1.46   | 1.43           | 1.39    | 1.31     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Average                       | 1.27             | 1.02        | 1.24     | 1.56         | 1.70   | 1.72           | 1.71    | 1.68     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Standard deviation            | 0.74             | 0.50        | 0.53     | 0.79         | 1.02   | 1.14           | 1.14    | 1.21     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
 
-<table>
+<table style="width:98%;">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+</colgroup>
 <tbody>
 <tr>
 <td><p>Empty Cell</p></td>
@@ -742,7 +804,7 @@ criteria</p></td>
 </table>
 
 |  |  |  |  |  |  |  |  |  |  |
-|----|----|----|----|----|----|----|----|----|----|
+|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
 | Empty Cell | Empty Cell | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
 | Commuting trip distance (mile) | Right side cut-off^1^ | 1.14 | 0.67 | 1.26 | 0.99 | 1.05 | 0.86 | 0.77 | 0.86 |
 | K–S statistic | 0.0518 | 0.0711 | 0.1330 | **0.0243**^\*^ | **0.0347**^\*^ | **0.0287**^\*^ | **0.0176**^\*^ | **0.0347**^\*^ |  |
