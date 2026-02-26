@@ -38,7 +38,8 @@ for (city in target_cities) {
     }
 
     all_ci <- bind_rows(all_ci_list) |>
-        mutate(year = factor(year, levels = years_labels))
+        mutate(year = factor(year, levels = years_labels)) |>
+        arrange(year, desc(infra5))
 
     # Static plot mode
     tmap_mode("plot")

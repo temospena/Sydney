@@ -229,7 +229,9 @@ for (current_city in unique(final_df$city)) {
     }
 
     if (length(all_ci_list) > 0) {
-        all_ci <- bind_rows(all_ci_list) |> mutate(year = factor(year, levels = years_labels))
+        all_ci <- bind_rows(all_ci_list) |>
+            mutate(year = factor(year, levels = years_labels)) |>
+            arrange(year, desc(infra5))
         tmap_mode("plot")
 
         perim_path <- file.path(data_dir, city_lower, paste0(city_lower, "_10km.gpkg"))
