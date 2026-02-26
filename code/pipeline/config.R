@@ -20,11 +20,15 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 # List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {
   # New requested city batch: Geographically distributed with strong cycling culture
-  target_cities <- c("Barcelona", "Berlin", "Bogota", "Brussels", "Christchurch",
-                     "Lisbon", "London", "Mexico City", "Milan", "Minneapolis", "Montréal",
-                     "Munich", "New York", "Paris", "Portland", "Santiago", "Sao Paulo",
-                     "Seville", "Sydney", "Tokyo", "Vancouver")
+  # target_cities <- c("Barcelona", "Berlin", "Bogota", "Brussels", "Christchurch",
+  #                    "Lisbon", "London", "Mexico City", "Milan", "Minneapolis", "Montréal",
+  #                    "Munich", "New York", "Paris", "Portland", "Santiago", "Sao Paulo",
+  #                    "Seville", "Sydney", "Tokyo", "Vancouver")
   # target_cities = "Munich"
+  target_cities = c("Lyon", "Seoul", "Cairo", "Shangai", "Bologna", "Cape Town", "Madrid", "Melbourne", "Vienna",
+                    "Oslo", "Dublin", "Taipe", "Turin", "Montpellier", "Stockolm", "Buenos Aires", "Ljubljana",
+                    "Leeds",  "Zurich", "Warsaw", "Chicago", "Austin",  "Strasbourg", "Kyoto") #"Ankara" "Innsbruck" "Regensburg"
+  
 }
 
 # Map of cities to the Geofabrik region name
