@@ -310,12 +310,6 @@ For the **impacts estimation**
 
 ## Case Studies
 
--   Lisbon
-
--   Sydney (city - Local Government Area or larger!)
-
--   
-
 Also, because some places do not have a good definition of "city" or "metropolitan area" as an administrative area (polygon).
 
 List of +700 cities worldwide, with population, lat and lon from the historical city center or CBD (<https://gist.github.com/nkrusch/848e4d6ca0be879e2e03b78b051f17da>)
@@ -355,9 +349,128 @@ Data from buildings' height was retrieved from @zhu2025, and the number of floor
 
 ![Paris buildings's estimated number of floors (mean: 3.92)](images/Screenshot_20260217_172645.png){width="450"}
 
-### Trip distribution approach
+## Routing
 
-Use a common trip-length distribution in urban environments, such as [@wang2025]
+We use r5r R package [@pereira2021] for routing in bicycle mode.
+The parameters used are defined below:
+
+```{r, eval=FALSE}
+library(r5r)
+trips = detailed_itineraries(
+  r5r_network = r5_engine, # for each city and year
+  origins = origins_df,
+  destinations = dests_df,
+  mode = "BICYCLE",
+  shortest_path = TRUE,
+  max_lts = lts_level, # 1, 2, 3, or 4
+  osm_link_ids = TRUE # to match segments with LTS level
+  )
+```
+
+### LTS
+
+LTS is defined by [Mineta Transportation Institute](https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity) and us used in R5 as a set of "surrogate LTS" rules to create similar classifications to the original methodology that can be used with OSM data [@conway2015] and <https://docs.conveyal.com/learn-more/traffic-stress#:~:text=Unsignalized%20intersection%20adjustment%20round,entering%20or%20exiting%20the%20vertex.>
+For each OSM edge:
+
+```         
+    If way does not allow cars, assign LTS 1
+    If way has highway=service tag, do not assign LTS in this round
+    If way has a highway=residential or highway=living_street tag, assign LTS 1
+    If tagged maxspeed value is less than 25 mph (40.25 km/h) and the number of lanes is less than 4 or unspecified, assign LTS 2
+    If way has tag highway=unclassified, highway=tertiary, or highway=tertiary-link and the number of lanes is less than 4 or there is cycleway tag for the correct direction, assign LTS 2
+    Otherwise, if there is a cycleway tag for the correct direction, assign LTS 3
+    Otherwise, assign LTS 4
+```
+
+In `R5` the cycling routing algorithm expects a `max_lts` (1, 2, 3, or 4).
+The R5 engine identifies all edges in OSM with a value higher than `max_lts`.
+For the edges exceeding the `max_lts`, the routing engine applies a time-cost of walking speed (default 3.6 km/h), instead of cycling speed (default 12 km/h in `r5r`), as if the cyclist would dismount and walk with the bike on that segment (not accounting for mounting and dismounting time), penalizing cost (time) in 3 times.
+So:
+
+-   If `edge.lts <= max_lts` → `time = distance / bikeSpeed`.
+-   If `edge.lts > max_lts` → `time = distance / walkSpeed`.
+
+Setting a low `max_lts` (1 or 2) will result in routes that favour separated bike paths and quiet backstreets.
+If no low-stress path exists R5 provides a route with longer travel time, due to walk speed penalty.
+
+### Overline
+
+We use `stplanr` to overline the routes [@lovelace2018].
+This provides a better idea of which segments are used more in routing routing, for each year and LTS levels.
+
+The example in Sydney shows that...
+
+![](data/pipeline/sydney/results/overline_matrix_test.png){fig-align="center"}
+
+# Results
+
+# Discussion
+
+## The use of OpenStreetMap data
+
+OpenStreetMap (OSM) datasets provide a common dataset for road networks (including cycling infrastructure), available mostly worldwide.
+However, OSM is a community-based and volunteer open dataset, which means that the detail of information increases with time, but does not mean that the road network was not always there in the real world.
+This can be verified with the size of the extracted osm.pbf files from [geofabrik](https://www.geofabrik.de/) (the largest OSM repository), for the different years (Table X) showing an increase in amount of data available for each selected city region.
+
+```{r}
+# run this only in the server, where the pbf files live
+
+# library(dplyr)
+# library(stringr)
+# library(knitr)
+# 
+# file_list <- list.files(path = "data/osm_pbf/", full.names = TRUE)
+# # file_list
+# # file_list = file_list
+# 
+# file_info <- file.info(file_list)
+# 
+# df <- data.frame(
+#   filename = basename(rownames(file_info)),
+#   size_mb = file_info$size / (1024 * 1024) # convert in MB,
+# )
+# 
+# summary_table <- df |> 
+#   mutate(year = paste0("20", str_extract(filename, "(?<=-)\\d{2}")))|> # 4 digits year 
+#   group_by(year) |> 
+#   summarise(
+#     mean_size_MB = mean(size_mb, na.rm = TRUE),
+#     median_size_MB = median(size_mb, na.rm = TRUE),
+#     total_files = n()
+#   )
+
+summary_table = read.csv("data/osm_file_size_summary.csv")
+
+kable(summary_table |> filter(year != "20NA") |> select(-total_files), # there is one more irrelevant for now
+      digits = 0, 
+      col.names = c("Year", "mean file size (MB)", "median file size (MB)"),
+      caption = "Mean and Median OSM File Sizes by Year")
+```
+
+OSM tagging is not consistent over years, which may lead to inconsistency issues of the results, since we are using the same classification of cycling infrastructure for the three year periods.
+For instance, the classification for Munich (Germany) changes drastically with time, and it does not mean that the infrastructure itself changed - only the tags in OSM did.
+
+![Cycling infrastructre classification for Munich in 2016, 2021 and 2026. There is a massive change in segments' tagging between 2021 and 2026.](data/pipeline/munich/results/ci_evolution_facet_map.png){fig-align="left"}
+
+Additionally tags can become deprecated and new tags can emerge.
+For instance, in June 2025, the OSM community submitted a [proposed an voted](https://wiki.openstreetmap.org/wiki/Proposal:Deprecate_cycleway%3Dopposite_family) in favour for a new way of tagging cycling contra-flows that do not have dedicated infrastructure - which are common in Paris or Munich.
+Our custom reclassification of cycling infrastructure in fewer types does not account for this.
+There are some attempts to directly classify the safety of a cycling infrastructure segment in OSM, with `class:bicycle=*` (values from -3 "Avoid at all costs", to 3 "This path is so beautiful, it's worth taking a detour"), but it is [still under dispute](https://wiki.openstreetmap.org/wiki/Key:class:bicycle).
+
+## The use of LTS
+
+LTS does not account for the quality of the cycling infrastructure.
+
+Routing engine also does not account for other variables, such as gradients.
+
+## The use of random OD pairs
+
+Our trip distance distribution does not sound like a typical urban bicycle trip distance distribution, with most bicycle trips raging from 2 to 5 km.
+Nevertheless, for the purpose of the study, to address cycling infrastructure improvements, this may represent a minor (although not irrelevant) issue.
+
+![Commulative distance distribution (Lisbon, LTS2). 75% of the trips are over 5km.](data/pipeline/lisbon/results/cumulative_distance_lts2.png)
+
+Further developments of this research include the use a common trip-length distribution in urban environments, such as distributions described by [@wang2025]
 
 ![](images/clipboard-384952838.png)
 
@@ -383,19 +496,19 @@ There is also analysis from bike sharing data from 7 cities in the US [@kou2019]
 | Standard deviation            | 0.74             | 0.50        | 0.53     | 0.79         | 1.02   | 1.14           | 1.14    | 1.21     |
 +-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
 
-<table style="width:96%;">
+<table>
 <colgroup>
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
 </colgroup>
 <tbody>
 <tr>
@@ -656,124 +769,6 @@ criteria</p></td>
 | Power law cut-off^2^ | 2.15 | 2.12 | 2.10 | 3.35 | 5.47 | 4.07 | 4.49 | 6.29 |  |
 | Exponent k | 4.28 | 12.07 | 11.70 | 8.27 | 12.60 | 5.51 | 7.25 | 11.44 |  |
 | Percentage of trips in power law fit | 4.74% | 1.94% | 5.81% | 2.22% | 0.24% | 2.41% | 1.67% | 0.39% |  |
-
-## Routing
-
-We use r5r R package [@pereira2021] for routing in bicycle mode.
-The parameters used are defined below:
-
-```{r, eval=FALSE}
-library(r5r)
-trips = detailed_itineraries(
-  r5r_network = r5_engine, # for each city and year
-  origins = origins_df,
-  destinations = dests_df,
-  mode = "BICYCLE",
-  shortest_path = TRUE,
-  max_lts = lts_level, # 1, 2, 3, or 4
-  osm_link_ids = TRUE # to match segments with LTS level
-  )
-```
-
-### LTS
-
-LTS is defined by [Mineta Transportation Institute](https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity) and us used in R5 as a set of "surrogate LTS" rules to create similar classifications to the original methodology that can be used with OSM data [@conway2015] and <https://docs.conveyal.com/learn-more/traffic-stress#:~:text=Unsignalized%20intersection%20adjustment%20round,entering%20or%20exiting%20the%20vertex.>
-For each OSM edge:
-
-```         
-    If way does not allow cars, assign LTS 1
-    If way has highway=service tag, do not assign LTS in this round
-    If way has a highway=residential or highway=living_street tag, assign LTS 1
-    If tagged maxspeed value is less than 25 mph (40.25 km/h) and the number of lanes is less than 4 or unspecified, assign LTS 2
-    If way has tag highway=unclassified, highway=tertiary, or highway=tertiary-link and the number of lanes is less than 4 or there is cycleway tag for the correct direction, assign LTS 2
-    Otherwise, if there is a cycleway tag for the correct direction, assign LTS 3
-    Otherwise, assign LTS 4
-```
-
-In `R5` the cycling routing algorithm expects a `max_lts` (1, 2, 3, or 4).
-The R5 engine identifies all edges in OSM with a value higher than `max_lts`.
-For the edges exceeding the `max_lts`, the routing engine applies a time-cost of walking speed (default 3.6 km/h), instead of cycling speed (default 12 km/h in `r5r`), as if the cyclist would dismount and walk with the bike on that segment (not accounting for mounting and dismounting time), penalizing cost (time) in 3 times.
-So:
-
--   If `edge.lts <= max_lts` → `time = distance / bikeSpeed`.
--   If `edge.lts > max_lts` → `time = distance / walkSpeed`.
-
-Setting a low `max_lts` (1 or 2) will result in routes that favor separated bike paths and quiet backstreets.
-If no low-stress path exists R5 provides a route with longer travel time, due to walk speed penalty.
-
-### Overline
-
-We use `stplanr` to overline the routes [@lovelace2018].
-This provides a better ideia of which segments are used more in routing routing, for each year and LTS levels.
-
-The example in Sydney shows that...
-
-![](data/pipeline/sydney/results/overline_matrix_test.png){fig-align="center"}
-
-## Ground true data
-
--   Counting points and evolution of cyclists
-
-    -   Sydney [1](https://data.cityofsydney.nsw.gov.au/datasets/5e3b0001a1a4402486d1fb76bb8b290c_0/explore) and [2](https://data.cityofsydney.nsw.gov.au/datasets/cityofsydney::bicycle-count-sites/explore?location=-33.901627%2C151.200321%2C13) - 109 locations 2010-2025, per hour!
-
-    -   Lisbon - 70 locations, 2017-2023, per hour (not all 24h)
-
-![](images/clipboard-1343400768.png)
-
-# Results
-
-# Discussion
-
-## The use of OpenStreetMap data
-
-OpenStreetMap (OSM) datasets provide a common dataset for road networks (including cycling infrastructure), available mostly worldwide.
-However, OSM is a community-based and volunteer open dataset, which means that the detail of information increases with time, but does not mean that the road network was not always there in the real world.
-This can be verified with the size of the extracted osm.pbf files from [geofabrik](https://www.geofabrik.de/) (the largest OSM repository), for the different years (Table X) showing an increase in amount of data available for each selected city region.
-
-```{r}
-# run this only in the server, where the pbf files live
-
-# library(dplyr)
-# library(stringr)
-# library(knitr)
-# 
-# file_list <- list.files(path = "data/osm_pbf/", full.names = TRUE)
-# # file_list
-# # file_list = file_list
-# 
-# file_info <- file.info(file_list)
-# 
-# df <- data.frame(
-#   filename = basename(rownames(file_info)),
-#   size_mb = file_info$size / (1024 * 1024) # convert in MB,
-# )
-# 
-# summary_table <- df |> 
-#   mutate(year = paste0("20", str_extract(filename, "(?<=-)\\d{2}")))|> # 4 digits year 
-#   group_by(year) |> 
-#   summarise(
-#     mean_size_MB = mean(size_mb, na.rm = TRUE),
-#     median_size_MB = median(size_mb, na.rm = TRUE),
-#     total_files = n()
-#   )
-
-summary_table = read.csv("data/osm_file_size_summary.csv")
-
-kable(summary_table |> filter(year != "20NA") |> select(-total_files), # there is one more irrelevant for now
-      digits = 0, 
-      col.names = c("Year", "mean file size (MB)", "median file size (MB)"),
-      caption = "Mean and Median OSM File Sizes by Year")
-```
-
-OSM tagging is not consistent over years, which may lead to inconsistency issues of the results, since we are using the same classification of cycling infrastructure for the three year periods.
-For instance, the classification for Munich (Germany) changes drastically with time, and it does not mean that the infrastructure itself changed - only the tags in OSM did.
-
-![Cycling infrastructre classification for Munich in 2016, 2021 and 2026. There is a massive change in segments' tagging between 2021 and 2026.](data/pipeline/munich/results/ci_evolution_facet_map.png){fig-align="left"}
-
-Additionally tags can become deprecated and new tags can emerge.
-For instance, in June 2025, the OSM community submitted a [proposed an voted](https://wiki.openstreetmap.org/wiki/Proposal:Deprecate_cycleway%3Dopposite_family) in favour for a new way of tagging cycling contra-flows that do not have dedicated infrastructure - which are common in Paris or Munich.
-Our custom reclassification of cycling infrastructure in fewer types does not account for this.
-There are some attempts to directly classify the safety of a cycling infrastructure segment in OSM, with `class:bicycle=*` (values from -3 "Avoid at all costs", to 3 "This path is so beautiful, it's worth taking a detour"), but it is [still under dispute](https://wiki.openstreetmap.org/wiki/Key:class:bicycle).
 
 # Conclusions
 
