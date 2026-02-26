@@ -20,8 +20,10 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 # List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {
   # New requested city batch: Geographically distributed with strong cycling culture
-  # target_cities <- c("Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin", "Seville", "Christchurch")
-  target_cities = "Seville"
+  target_cities <- c("Barcelona", "Berlin", "Bogota", "Brussels", "Christchurch", 
+                     "Lisbon", "London", "Mexico City", "Milan", "Minneapolis", "Montréal", 
+                     "Munich", "New York", "Paris", "Portland", "Santiago", "Sao Paulo", 
+                     "Seville", "Sydney", "Tokyo", "Vancouver")
   # target_cities = "Christchurch"
 }
 
