@@ -50,12 +50,17 @@ classify_custom_ci <- function(lines_m) {
     if ("bicycle" %in% names(lines_m)) bicycle <- tolower(trimws(as.character(lines_m$bicycle))) else bicycle <- rep(NA_character_, nrow(lines_m))
     if ("foot" %in% names(lines_m)) foot <- tolower(trimws(as.character(lines_m$foot))) else foot <- rep(NA_character_, nrow(lines_m))
     if ("segregated" %in% names(lines_m)) segregated <- tolower(trimws(as.character(lines_m$segregated))) else segregated <- rep(NA_character_, nrow(lines_m))
+    if ("bicycle_road" %in% names(lines_m)) bicycle_road <- tolower(trimws(as.character(lines_m$bicycle_road))) else bicycle_road <- rep(NA_character_, nrow(lines_m))
+
 
     is_cyclewy <- !is.na(highway) & highway == "cycleway"
 
     has_strong_onroad <- has_cycleway_vals(lines_m, STRONG_ONROAD_VALS)
     has_moderate_onroad <- has_cycleway_vals(lines_m, MODERATE_ONROAD_VALS)
     has_weak_onroad <- has_cycleway_vals(lines_m, WEAK_ONROAD_VALS)
+
+    is_bicycle_road <- (!is.na(highway) & highway == "residential") &
+        (!is.na(bicycle_road) & bicycle_road == "yes")
 
     is_foot_shared <- (!is.na(highway) & highway %in% FOOT_SHARED_HWY) &
         (!is.na(bicycle) & bicycle %in% FOOT_SHARED_BIC) &
@@ -79,7 +84,7 @@ classify_custom_ci <- function(lines_m) {
     lines_m$cycle_cat[sel_other & has_moderate_onroad] <- "moderate_ci"
 
     sel_other <- is.na(lines_m$cycle_cat)
-    lines_m$cycle_cat[sel_other & has_weak_onroad] <- "weak_ci"
+    lines_m$cycle_cat[sel_other & (has_weak_onroad | is_bicycle_road)] <- "weak_ci"
 
     lines_m <- lines_m[!is.na(lines_m$cycle_cat), , drop = FALSE]
 
@@ -124,6 +129,7 @@ for (city in target_cities) {
                     boundary = perim,
                     boundary_type = "clipsrc",
                     version = v,
+                    extra_tags = c(osmactive::et_active(), "bicycle_road"),
                     download_directory = osm_raw_dir,
                     quiet = FALSE
                 )

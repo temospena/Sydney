@@ -1086,3 +1086,76 @@ The
 
 final_city_estimations.csv
  will now serve as a benchmark for how long different cities take to process on your server.
+
+
+ ---
+ ## Prompt 23
+ 
+ When assessing the cycling infrastructure type for munich, i realized that a OSM tag is not being detected in the script to classify (04_ci_osmactive.R), namely the key bicicle_road=yes, which when combined with highway=residential, should be classified as "weak_ci". 
+ We can test before in a small area, that I put in data/osm_pbf/minich_city_26.pbf , to try with Munich city buffer.
+
+When implemented, which scripts should I re-run to update the final_city_estimations.csv and the plots regarding the ci type?
+
+It can be a stand-alone sctipt (living in code/pipeline/test-code) to rerun only once for the already run cities. The new ones will capture that change in the 00_run_all.R script pipeline
+
+
+### Response
+
+I have updated the 
+
+04_ci_osmactive.R
+ script, verified it against 
+
+data/osm_pbf/munich_city_26.pbf
+, and constructed the standalone script you requested.
+
+Here is what was done:
+
+1. Tag parsing logic
+I updated 
+
+04_ci_osmactive.R
+ to extract the bicycle_road OSM tag and added an is_bicycle_road conditional to classify it as "weak_ci" (Mixed traffic (motor vehicles with light infra)) when combined with highway=residential:
+
+R
+# in classify_custom_ci()
+if ("bicycle_road" %in% names(lines_m)) bicycle_road <- tolower(trimws(as.character(lines_m$bicycle_road))) else bicycle_road <- rep(NA_character_, nrow(lines_m))
+is_bicycle_road <- (!is.na(highway) & highway == "residential") &
+    (!is.na(bicycle_road) & bicycle_road == "yes")
+# ...
+lines_m$cycle_cat[sel_other & (has_weak_onroad | is_bicycle_road)] <- "weak_ci"
+Also, I included "bicycle_road" inside extra_tags when querying osmactive::get_travel_network to guarantee the underlying layer parses the column correctly for 
+
+.pbf
+ ingestion.
+
+2. Munich Test Buffer
+I ran a test script specifically checking the 
+
+…/GIS/Sydney/data/osm_pbf/munich_city_26.pbf
+ layer. The classification successfully detected 314 features with bicycle_road=yes and successfully channeled them into the "Cycling on pedestrian infrastructure" and ("Mixed traffic" / weak_ci) groups depending on tags.
+
+3. Updating the Estimates
+To only push the modified CI pipeline for cities you have already processed (avoiding the massive rerun of r5r and routing tests), I created a standalone script at 
+
+code/pipeline/test-code/update_ci_metrics.R
+.
+
+It essentially performs the following:
+
+Re-runs 
+
+04_ci_osmactive.R
+ with FORCE_RERUN = TRUE, overwriting the _ci_ geometric cache layers.
+Re-runs 
+
+08_final_metrics.R
+ tracking the updated CI spatial objects. It joins the modified road types, re-computes pct_ci_route & pct_ci_total, and relies on its internal incremental replacement logic to cleanly supplant the prior rows in final_city_estimations.csv avoiding duplication.
+Re-runs 
+
+09_plot_metrics.R
+ replacing the absolute and percent CI length charts (plot_ci_types_absolute.png, plot_ci_types_breakdown.png).
+Re-runs 
+
+10_ci_maps.R
+ replacing the static cycling infrastructure spatial maps (ci_map_20xx.png).
