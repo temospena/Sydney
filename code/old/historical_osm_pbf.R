@@ -56,3 +56,5 @@ mapview(paris_poly, color = "darkgreen", col.regions = "darkgreen", alpha.region
 # osmium extract -b 2.21,48.81,2.47,48.91 geofabrik_ile-de-france-160101.osm.pbf -o paris_city_16.pbf
 # osmium extract -b 2.21,48.81,2.47,48.91 geofabrik_ile-de-france-210101.osm.pbf -o paris_city_21.pbf
 # osmium extract -b 2.21,48.81,2.47,48.91 geofabrik_ile-de-france-260101.osm.pbf -o paris_city_26.pbf
+
+# osmium extract -b 11.48,48.06,11.67,48.19 geofabrik_oberbayern-260101.osm.pbf -o munich_city_26.pbf
