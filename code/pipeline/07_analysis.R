@@ -168,56 +168,80 @@ for (city in target_cities) {
         # 3. Spatial overline generation for segment volume
         cat("    Generating overline map (this may take a while)...\n")
 
-        # Pre-clean geometries to avoid segfaults in overline2 (common with GEOS version mismatches)
+        # Robust Pre-cleaning: Drop dimensions, fix validity, and SIMPLIFY early
+        # This prevents the "corrupted double-linked list" by reducing vertex density
         trips_overline <- trips_combined |>
             mutate(trips = 1) |>
-            st_zm(drop = TRUE, what = "ZM") |> # Explicitly drop Z/M dimensions early
-            st_make_valid() |> # Fix any topological errors
-            filter(!st_is_empty(geometry)) # Remove empty geometries
+            st_zm(drop = TRUE, what = "ZM") |>
+            st_make_valid() |>
+            st_simplify(dTolerance = 0.00002) |> # Approx 2 meters in WGS84
+            filter(!st_is_empty(geometry))
 
         map_data <- trips_overline |>
             group_split(year) |>
             map_dfr(function(year_data) {
                 if (nrow(year_data) > 0) {
-                    # Ensure we are working with LINESTRINGs (cast if necessary)
+                    # Ensure we are working with LINESTRINGs
                     year_data <- st_cast(year_data, "LINESTRING", warn = FALSE)
+                    yr_val <- unique(year_data$year)
 
                     tryCatch(
                         {
-                            overline2(year_data, attrib = "trips") |>
-                                mutate(year = unique(year_data$year))
+                            cat(paste0("      Running overline2 for ", yr_val, "...\n"))
+                            ov <- overline2(year_data, attrib = "trips")
+                            if (!is.null(ov) && nrow(ov) > 0) {
+                                ov |> mutate(year = yr_val)
+                            } else {
+                                NULL
+                            }
                         },
                         error = function(e) {
-                            cat(paste0("      [WARNING] overline2 failed for year ", unique(year_data$year), ": ", e$message, "\n"))
+                            cat(paste0("      [WARNING] overline2 failed for year ", yr_val, ": ", e$message, "\n"))
                             NULL
                         }
                     )
                 } else {
                     NULL
                 }
-            }) |>
-            filter(!is.null(geometry)) |>
-            filter(trips > 1) # Filter singlets for cleaner map
+            })
 
-        # Plot tmap
-        # tmap v4 format
-        tmap_mode("plot")
-        map_obj <- tm_shape(map_data) +
-            tm_lines(
-                col = "year",
-                col.scale = tm_scale_categorical(values = "Set1"),
-                lwd = "trips",
-                lwd.scale = tm_scale_continuous(values.scale = 5),
-                lwd.legend = tm_legend(title = paste0("Number of Trips\n(LTS", lts_level, ")"))
-            ) +
-            tm_facets(by = "year", sync = TRUE, free.coords = FALSE)
+        if (!is.null(map_data) && nrow(map_data) > 0) {
+            # Further simplify the aggregated output and remove low-volume noise
+            map_data <- map_data |>
+                filter(!st_is_empty(geometry)) |>
+                st_make_valid() |>
+                st_simplify(dTolerance = 0.00005) |> # Approx 5 meters
+                filter(trips > 1) # Filter singlets for cleaner map
 
-        tmap_save(map_obj, file.path(results_dir, paste0("overline_map_lts", lts_level, ".png")), width = 12, height = 8)
+            # Save overline data First (in case plotting crashes)
+            saveRDS(map_data, file.path(results_dir, paste0("overline_data_lts", lts_level, ".rds")))
 
-        # Save overline data for later reuse in global matrix plotting
-        saveRDS(map_data, file.path(results_dir, paste0("overline_data_lts", lts_level, ".rds")))
+            # Plot tmap with simplified settings
+            tmap_mode("plot")
+            map_obj <- tm_shape(map_data) +
+                tm_lines(
+                    col = "year",
+                    col.scale = tm_scale_categorical(values = "Set1"),
+                    lwd = "trips",
+                    lwd.scale = tm_scale_continuous(values.scale = 5),
+                    lwd.legend = tm_legend(title = paste0("Number of Trips\n(LTS", lts_level, ")"))
+                ) +
+                tm_facets(by = "year", sync = TRUE, free.coords = FALSE)
 
-        rm(trips_list, trips_combined, trips_df, trips_wide, trips_overline, map_data, map_obj, p1)
+            # Use try to prevent plot library crashes from stopping the whole city run
+            try(
+                {
+                    tmap_save(map_obj, file.path(results_dir, paste0("overline_map_lts", lts_level, ".png")), width = 12, height = 8)
+                },
+                silent = FALSE
+            )
+        } else {
+            cat("    [SKIP] map_data empty for LTS", lts_level, "\n")
+        }
+
+        # Aggressive memory cleanup for this LTS level
+        rm(trips_list, trips_combined, trips_df, trips_wide, trips_overline, map_data)
+        if (exists("map_obj")) rm(map_obj)
         gc()
     }
 }
