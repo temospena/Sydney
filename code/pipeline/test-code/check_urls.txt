@@ -1,0 +1,29 @@
+Buenos Aires: http://download.openstreetmap.fr/extracts/south-america/argentina/buenos_aires-latest.osm.pbf 
+Melbourne: https://download.bbbike.org/osm/bbbike/Melbourne/Melbourne.osm.pbf 
+Vienna: https://download.geofabrik.de/europe/austria-latest.osm.pbf 
+Antwerpen: https://download.bbbike.org/osm/bbbike/Antwerpen/Antwerpen.osm.pbf 
+Rio de Janeiro: http://download.openstreetmap.fr/extracts/south-america/brazil/southeast/rio-de-janeiro-latest.osm.pbf 
+Calgary: https://download.bbbike.org/osm/bbbike/Calgary/Calgary.osm.pbf 
+Victoria: https://download.bbbike.org/osm/bbbike/Victoria/Victoria.osm.pbf 
+Zagreb: https://download.bbbike.org/osm/bbbike/Zagreb/Zagreb.osm.pbf 
+Prague: https://download.geofabrik.de/europe/czech-republic-latest.osm.pbf 
+Lyon: https://download.bbbike.org/osm/bbbike/Lyon/Lyon.osm.pbf 
+Toulouse: https://download.bbbike.org/osm/bbbike/Toulouse/Toulouse.osm.pbf 
+Bordeaux: https://download.bbbike.org/osm/bbbike/Bordeaux/Bordeaux.osm.pbf 
+Bremen: https://download.geofabrik.de/europe/germany/bremen-latest.osm.pbf 
+Hannover: https://download.bbbike.org/osm/bbbike/Hannover/Hannover.osm.pbf 
+Budapest: https://download.bbbike.org/osm/bbbike/Budapest/Budapest.osm.pbf 
+Dublin: https://download.bbbike.org/osm/bbbike/Dublin/Dublin.osm.pbf 
+Turin: https://download.bbbike.org/osm/bbbike/Turin/Turin.osm.pbf 
+Bologna: https://download.geofabrik.de/europe/italy/nord-est-latest.osm.pbf 
+Auckland: https://download.bbbike.org/osm/bbbike/Auckland/Auckland.osm.pbf 
+Oslo: https://download.bbbike.org/osm/bbbike/Oslo/Oslo.osm.pbf 
+Warsaw: https://download.bbbike.org/osm/bbbike/Warsaw/Warsaw.osm.pbf 
+Cape Town: https://download.geofabrik.de/africa/south-africa-and-lesotho-latest.osm.pbf 
+Madrid: https://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf 
+Valencia: https://download.geofabrik.de/europe/spain/valencia-latest.osm.pbf 
+Edinburgh: https://download.bbbike.org/osm/bbbike/Edinburgh/Edinburgh.osm.pbf 
+Chicago: https://download.bbbike.org/osm/bbbike/Chicago/Chicago.osm.pbf 
+Boston: https://download.geofabrik.de/north-america/us/massachusetts-latest.osm.pbf 
+Seattle: https://download.bbbike.org/osm/bbbike/Seattle/Seattle.osm.pbf 
+San Francisco: http://download.openstreetmap.fr/extracts/north-america/us-west/california/san_francisco-latest.osm.pbf 

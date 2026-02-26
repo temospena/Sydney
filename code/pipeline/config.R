@@ -1,8 +1,6 @@
 # config.R
 # Centralized configuration for the CI pipeline
 
-# Base directory where all city data is stored
-# Using here() but ensuring we handle the media drive mount correctly
 if (requireNamespace("here", quietly = TRUE)) {
   # If we are running from the media drive, use the current working directory as the root
   proj_root <- here::here()
@@ -17,101 +15,83 @@ if (requireNamespace("here", quietly = TRUE)) {
 cat("[DEBUG] Working Directory:", getwd(), "\n")
 cat("[DEBUG] Data Directory:", data_dir, "\n")
 
-# List of cities to process
 if (!exists("target_cities") || length(target_cities) == 0) {
-  # New requested city batch: Geographically distributed with strong cycling culture
-  # target_cities <- c("Barcelona", "Berlin", "Bogota", "Brussels", "Christchurch",
-  #                    "Lisbon", "London", "Mexico City", "Milan", "Minneapolis", "Montréal",
-  #                    "Munich", "New York", "Paris", "Portland", "Santiago", "Sao Paulo",
-  #                    "Seville", "Sydney", "Tokyo", "Vancouver")
-  # target_cities = "Munich"
-  target_cities = c("Lyon", "Seoul", "Cairo", "Shangai", "Bologna", "Cape Town", "Madrid", "Melbourne", "Vienna",
-                    "Oslo", "Dublin", "Taipe", "Turin", "Montpellier", "Stockolm", "Buenos Aires", "Ljubljana",
-                    "Leeds",  "Zurich", "Warsaw", "Chicago", "Austin",  "Strasbourg", "Kyoto") #"Ankara" "Innsbruck" "Regensburg"
-  
+  # 24 newly selected cities + original 21 = 45 cities total
+  target_cities <- c(
+    "Sydney", "Lisbon", "Paris", "Barcelona", "Munich", "London", "New York", "Sao Paulo", "Portland", "Santiago",
+    "Brussels", "Vancouver", "Tokyo", "Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin",
+    "Seville", "Christchurch",
+    "Lyon", "Seoul", "Cairo", "Shanghai", "Bologna", "Cape Town", "Madrid", "Melbourne", "Vienna",
+    "Oslo", "Dublin", "Taipei", "Turin", "Montpellier", "Stockholm", "Buenos Aires", "Ljubljana",
+    "Leeds", "Zurich", "Warsaw", "Chicago", "Austin", "Strasbourg", "Kyoto"
+  )
 }
-
-# Map of cities to the Geofabrik region name
-# (No longer strictly needed since get_geofabrik_url explicitly handles them, but kept for legacy compat)
-region_map <- list(
-  Lisbon = "portugal",
-  Sydney = "australia",
-  Paris = "ile-de-france",
-  Barcelona = "cataluna",
-  Munich = "oberbayern",
-  London = "greater-london",
-  `New York` = "new-york",
-  `Sao Paulo` = "sudeste"
-)
 
 # Helper function to get exact Geofabrik URLs as specified by the user
 get_geofabrik_url <- function(city, year_short) {
   base_url <- "http://download.geofabrik.de/"
   postfix <- paste0("-", year_short, "0101.osm.pbf")
-
-  # Support lowercase matching
   city_lower <- tolower(city)
 
-  if (city_lower == "sydney") {
-    prefix <- "australia-oceania/australia"
-  } else if (city_lower == "lisbon") {
-    prefix <- "europe/portugal"
-  } else if (city_lower == "paris") {
-    prefix <- "europe/france/ile-de-france"
-  } else if (city_lower == "barcelona") {
-    if (as.numeric(year_short) >= 22) {
-      prefix <- "europe/spain/cataluna"
-    } else {
-      prefix <- "europe/spain"
-    }
-  } else if (city_lower == "munich") {
-    prefix <- "europe/germany/bayern/oberbayern"
-  } else if (city_lower == "london") {
-    prefix <- "europe/united-kingdom/england/greater-london"
-  } else if (city_lower == "new york") {
-    prefix <- "north-america/us/new-york"
-  } else if (city_lower == "sao paulo") {
-    if (year_short == "16") {
-      prefix <- "south-america/brazil"
-    } else {
-      prefix <- "south-america/brazil/sudeste"
-    }
-  } else if (city_lower == "portland") {
-    prefix <- "north-america/us/oregon"
-  } else if (city_lower == "santiago") {
-    prefix <- "south-america/chile"
-  } else if (city_lower == "brussels") {
-    prefix <- "europe/belgium"
-  } else if (city_lower == "vancouver") {
-    prefix <- "north-america/canada/british-columbia"
-  } else if (city_lower == "tokyo") {
-    if (year_short == "16") {
-      prefix <- "asia/japan"
-    } else {
-      prefix <- "asia/japan/kanto"
-    }
-  } else if (city_lower == "milan") {
-    prefix <- "europe/italy/nord-ovest"
-  } else if (city_lower == "mexico city") {
-    prefix <- "north-america/mexico"
-  } else if (city_lower == "bogota") {
-    prefix <- "south-america/colombia"
-  } else if (city_lower == "montréal") {
-    prefix <- "north-america/canada/quebec"
-  } else if (city_lower == "minneapolis") {
-    prefix <- "north-america/us/minnesota"
-  } else if (city_lower == "berlin") {
-    prefix <- "europe/germany/berlin"
+  # Complex mappings first
+  if (city_lower == "barcelona") {
+    prefix <- if (as.numeric(year_short) >= 22) "europe/spain/cataluna" else "europe/spain"
   } else if (city_lower == "seville") {
-    if (as.numeric(year_short) > 21) {
-      prefix <- "europe/spain/andalucia"
-    } else {
-      prefix <- "europe/spain"
-    }
-  } else if (city_lower == "christchurch") {
-    prefix <- "australia-oceania/new-zealand"
+    prefix <- if (as.numeric(year_short) >= 21) "europe/spain/andalucia" else "europe/spain"
+  } else if (city_lower == "madrid") {
+    prefix <- if (as.numeric(year_short) >= 22) "europe/spain/madrid" else "europe/spain"
+  } else if (city_lower == "tokyo") {
+    prefix <- if (year_short == "16") "asia/japan" else "asia/japan/kanto"
+  } else if (city_lower == "sao paulo") {
+    prefix <- if (year_short == "16") "south-america/brazil" else "south-america/brazil/sudeste"
   } else {
-    stop(paste("No URL mapping found for", city))
+    # Simple mapping dictionary
+    mapping <- list(
+      "sydney" = "australia-oceania/australia",
+      "lisbon" = "europe/portugal",
+      "paris" = "europe/france/ile-de-france",
+      "munich" = "europe/germany/bayern/oberbayern",
+      "london" = "europe/united-kingdom/england/greater-london",
+      "new york" = "north-america/us/new-york",
+      "portland" = "north-america/us/oregon",
+      "santiago" = "south-america/chile",
+      "brussels" = "europe/belgium",
+      "vancouver" = "north-america/canada/british-columbia",
+      "milan" = "europe/italy/nord-ovest",
+      "mexico city" = "north-america/mexico",
+      "bogota" = "south-america/colombia",
+      "montréal" = "north-america/canada/quebec",
+      "minneapolis" = "north-america/us/minnesota",
+      "berlin" = "europe/germany/berlin",
+      "christchurch" = "australia-oceania/new-zealand",
+
+      # New mapping
+      "lyon" = "europe/france/rhone-alpes",
+      "seoul" = "asia/south-korea",
+      "cairo" = "africa/egypt",
+      "shanghai" = "asia/china",
+      "bologna" = "europe/italy/nord-est",
+      "cape town" = "africa/south-africa-and-lesotho",
+      "melbourne" = "australia-oceania/australia",
+      "vienna" = "europe/austria",
+      "oslo" = "europe/norway",
+      "dublin" = "europe/ireland-and-northern-ireland",
+      "taipei" = "asia/taiwan",
+      "turin" = "europe/italy/nord-ovest",
+      "montpellier" = "europe/france/languedoc-roussillon",
+      "stockholm" = "europe/sweden",
+      "buenos aires" = "south-america/argentina",
+      "ljubljana" = "europe/slovenia",
+      "leeds" = "europe/united-kingdom/england/west-yorkshire",
+      "zurich" = "europe/switzerland",
+      "warsaw" = "europe/poland",
+      "chicago" = "north-america/us/illinois",
+      "austin" = "north-america/us/texas",
+      "strasbourg" = "europe/france/alsace",
+      "kyoto" = "asia/japan/kansai"
+    )
+    if (!city_lower %in% names(mapping)) stop(paste("No URL mapping found for", city))
+    prefix <- mapping[[city_lower]]
   }
 
   return(paste0(base_url, prefix, postfix))
