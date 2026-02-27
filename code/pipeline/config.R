@@ -6,8 +6,8 @@
 
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
-# target_cities <- c("Austin", "Chicago", "Kyoto", "Tokyo", "Seattle", "Shanghai", "Curitiba")
-target_cities <- "Chicago"
+target_cities <- c("Tokyo", "Seattle", "Shanghai", "Curitiba")
+# target_cities <- "Kyoto"
 
 # Years (2-digit) and full version strings — keep these in sync
 years <- c("16", "21", "26")
