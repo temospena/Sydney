@@ -29,12 +29,15 @@ for (city in target_cities) {
     downloaded_pbf_path <- NULL
 
     for (yr in years) {
-        # Determine the correct regional filename (e.g. spain for 2016, cataluna for 2026)
+        # get_geofabrik_region() returns the full path, e.g. "north-america/us/illinois".
+        # For filenames we only want the stem (last component), e.g. "illinois",
+        # because the files on disk are named geofabrik_illinois-160101.osm.pbf.
         dynamic_region <- get_geofabrik_region(city, yr)
+        dynamic_stem <- gsub(".*/", "", dynamic_region) # e.g. "illinois"
 
-        # Expected filename on disk: e.g. geofabrik_portugal-160101.osm.pbf
-        raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", dynamic_region, "-", yr, "0101.osm.pbf"))
-        local_cache_file <- file.path(city_dir, paste0("geofabrik_", dynamic_region, "-", yr, "0101.osm.pbf"))
+        # Expected filename on disk: e.g. geofabrik_illinois-160101.osm.pbf
+        raw_file <- file.path(raw_pbf_dir, paste0("geofabrik_", dynamic_stem, "-", yr, "0101.osm.pbf"))
+        local_cache_file <- file.path(city_dir, paste0("geofabrik_", dynamic_stem, "-", yr, "0101.osm.pbf"))
 
         if (!file.exists(raw_file) && file.exists(local_cache_file)) {
             raw_file <- local_cache_file
