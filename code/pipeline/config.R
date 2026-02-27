@@ -17,18 +17,18 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 
 if (!exists("target_cities") || length(target_cities) == 0) {
   # 24 newly selected cities + original 21 = 45 cities total
-  # target_cities <- 
-    # c(
-    # "Sydney", "Lisbon", "Paris", "Barcelona",
-    # "Munich", "London", "New York", "Sao Paulo", "Portland", "Santiago",
-    # "Brussels", "Vancouver", "Tokyo", "Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin",
-    # "Seville", "Christchurch",
-    # "Lyon", "Seoul", "Cairo", "Shanghai", "Bologna", "Cape Town", "Madrid", "Melbourne", "Vienna",
-    # "Oslo", "Dublin", "Taipei", "Turin", "Montpellier", "Stockholm", "Buenos Aires", "Ljubljana",
-    # "Leeds", "Zurich", "Warsaw", "Chicago", "Austin", "Strasbourg", "Kyoto"
+  # target_cities <-
+  # c(
+  # "Sydney", "Lisbon", "Paris", "Barcelona",
+  # "Munich", "London", "New York", "Sao Paulo", "Portland", "Santiago",
+  # "Brussels", "Vancouver", "Tokyo", "Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin",
+  # "Seville", "Christchurch",
+  # "Lyon", "Seoul", "Cairo", "Shanghai", "Bologna", "Cape Town", "Madrid", "Melbourne", "Vienna",
+  # "Oslo", "Dublin", "Taipei", "Turin", "Montpellier", "Stockholm", "Buenos Aires", "Ljubljana",
+  # "Leeds", "Zurich", "Warsaw", "Chicago", "Austin", "Strasbourg", "Kyoto"
   # )
   # target_cities = "Shanghai"
-  target_cities = c("Austin", "Chicago", "Kyoto", "Seattle")
+  target_cities <- c("Austin", "Chicago", "Kyoto", "Seattle")
 }
 
 # Helper function to get exact Geofabrik URLs as specified by the user
@@ -95,7 +95,7 @@ get_geofabrik_url <- function(city, year_short) {
       "chicago" = "north-america/us/illinois",
       "austin" = "north-america/us/texas",
       "strasbourg" = "europe/france/alsace",
-      "seattle" = "north-america/us/washington",
+      "seattle" = "north-america/us/washington"
     )
     if (!city_lower %in% names(mapping)) stop(paste("No URL mapping found for", city))
     prefix <- mapping[[city_lower]]
