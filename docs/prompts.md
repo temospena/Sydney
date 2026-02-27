@@ -1159,3 +1159,104 @@ Re-runs
 
 10_ci_maps.R
  replacing the static cycling infrastructure spatial maps (ci_map_20xx.png).
+
+ ---
+ ## Prompt 24
+Austin and Chicago did not provide good results, as if the network was always the same for the 3 years.
+I tried to run again.
+ It seems that it was dowloading the osm.pbf from another provider in script 04, while in script 03 it was already checking the right osm files.
+See here the terminal messages:
+
+------------------------------------------
+CITY: austin | STEP: code/pipeline/03_historical_routing_osm.R 
+------------------------------------------
+Data (c) OpenStreetMap contributors, ODbL 1.0. https://www.openstreetmap.org/copyright.
+Check the package website, https://docs.ropensci.org/osmextract/, for more details.
+[DEBUG] Working Directory: /media/rosa/Dados/GIS/Sydney 
+[DEBUG] Data Directory: /media/rosa/Dados/GIS/Sydney/data/pipeline 
+[CONFIG] FORCE_RERUN is currently: FALSE 
+Starting OSMIUM cropping for routing files...
+Running OSMIUM: osmium extract -b -97.832609888412,30.1893327768454,-97.6529468315881,30.3445052909838 "/media/rosa/Dados/GIS/Sydney/data/osm_pbf/geofabrik_texas-160101.osm.pbf" -o "/media/rosa/Dados/GIS/Sydney/data/pipeline/austin/austin_16.osm.pbf" 
+[======================================================================] 100% 
+Successfully cropped /media/rosa/Dados/GIS/Sydney/data/pipeline/austin/austin_16.osm.pbf 
+Running OSMIUM: osmium extract -b -97.832609888412,30.1893327768454,-97.6529468315881,30.3445052909838 "/media/rosa/Dados/GIS/Sydney/data/osm_pbf/geofabrik_texas-210101.osm.pbf" -o "/media/rosa/Dados/GIS/Sydney/data/pipeline/austin/austin_21.osm.pbf" 
+[======================================================================] 100% 
+Successfully cropped /media/rosa/Dados/GIS/Sydney/data/pipeline/austin/austin_21.osm.pbf 
+Running OSMIUM: osmium extract -b -97.832609888412,30.1893327768454,-97.6529468315881,30.3445052909838 "/media/rosa/Dados/GIS/Sydney/data/osm_pbf/geofabrik_texas-260101.osm.pbf" -o "/media/rosa/Dados/GIS/Sydney/data/pipeline/austin/austin_26.osm.pbf" 
+[======================================================================] 100% 
+Successfully cropped /media/rosa/Dados/GIS/Sydney/data/pipeline/austin/austin_26.osm.pbf 
+Historical routing OSM cropping logic finished.
+DONE STEP: code/pipeline/03_historical_routing_osm.R 
+
+------------------------------------------
+CITY: austin | STEP: code/pipeline/04_ci_osmactive.R 
+------------------------------------------
+Spherical geometry (s2) switched on
+[DEBUG] Working Directory: /media/rosa/Dados/GIS/Sydney 
+[DEBUG] Data Directory: /media/rosa/Dados/GIS/Sydney/data/pipeline 
+[CONFIG] FORCE_RERUN is currently: FALSE 
+Extracting CI for Austin version 160101 ...
+No exact match found for place = texas and provider = geofabrik. Best match is Henan. 
+Checking the other providers.
+An exact string match was found using provider = openstreetmap_fr.
+Downloading the OSM extract:
+  |======                                                                |   8%^C
+Warning message:
+version != 'latest' is only supported for 'geofabrik' provider. Overriding it to 'latest'. 
+
+Also, the processng_time is not being well recorded, at least in the final_city_estimations.csv file, altoough that information is in each data/pipeline/city/results/estimations_YYYYMMDD_HHMMSS.csv file.
+
+
+### Response
+I have updated 
+
+code/pipeline/04_ci_osmactive.R
+ to fix this issue. You can now re-run your scripts!
+
+What was happening?
+In script 03, the pipeline explicitly builds the expected file paths and checks for the cropped files (e.g., austin_16.osm.pbf). However, script 04 was originally calling osmactive::get_travel_network() using just the location name (place = "texas"). This command passes the location to the underlying osmextract package, which tries to do string matching across its known providers to find the file locally or download it. For "texas", it failed to exactly match the Geofabrik provider internally and fell back to downloading from OpenStreetMap FR instead.
+
+Because it didn't recognize it as a Geofabrik name, osmextract also threw the warning you saw: version != 'latest' is only supported for 'geofabrik' provider.
+
+What I fixed 🛠️
+Prioritized Local Cropped files: 
+
+04_ci_osmactive.R
+ now proactively locates the already cropped .osm.pbf files that were generated in step 03 (e.g., data/pipeline/austin/austin_16.osm.pbf).
+Bypassed Provider String Matching: By passing a direct file path into osmactive::get_travel_network(place = ...) instead of just "texas", the system completely bypasses the provider-search and just vectortranslates your existing file into a .gpkg locally.
+Removed Warnings & Handled Cleanup: I've stripped the version argument from being submitted alongside local files (since the version is implicit in the file) to rid your console of that warning. I've also made sure that the intermediate .gpkg files generated from vectortranslating the cropped .osm.pbf are properly cleaned up afterwards to save disk space.
+Since Austin's files were already cropped smoothly in script 03, script 04 should now fly through the data processing without trying to download anything new.
+
+Fix for the Processing Timer
+I've updated 
+
+code/pipeline/00_run_all.R
+ to fix the recording of the processing_time_minutes metric into the 
+
+final_city_estimations.csv
+ master file.
+
+What was causing the timestamp bug? ⏱️
+The issue was occurring inside the try( { ... } ) block at the end of the 
+
+00_run_all.R
+ script where it attempts to log the time. The script used a dplyr::if_else() approach to update only the specific rows generated during the current run:
+
+r
+mutate(processing_time_minutes = if_else(
+  city == city_name & run_timestamp == current_timestamp,
+  round(duration_mins, 2),
+  as.numeric(processing_time_minutes)
+))
+While this is valid dplyr syntax, when the initial 
+
+final_city_estimations.csv
+ is populated in script 08, the script saves all the processing_time_minutes values as strictly NA. When dplyr reads the whole column of NAs, it strongly interprets it as a logical vector, rather than numeric. This subtle type discrepancy, along with the way the variables were scoped securely inside the try block, caused the silent failure—while the individual test 
+
+.csv
+ scripts updated flawlessly using simple base R.
+
+The Fix 🛠️
+I rewrote that block to use standard, explicitly scoped Base R operations instead of dplyr, adding safety conditions like trimws() and tolower() to prevent any case mismatch (e.g., "Austin" vs "austin") and removing the silent error wrapper (tryCount). It now safely targets and overwrites the exact row indexes.
+
+I've also added a helpful console printout that will confirm exactly how many rows had their timers updated successfully at the end of every city's completion!

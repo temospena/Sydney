@@ -62,35 +62,42 @@ for (city_name in all_cities) {
   cat(sprintf("\n[TIMER] Finished %s in %.2f minutes.\n", city_name, duration_mins))
 
   # Update final_city_estimations.csv with the actual processing time
-  try(
+  tryCatch(
     {
-      if (requireNamespace("dplyr", quietly = TRUE)) {
-        library(dplyr)
-        csv_path <- file.path(data_dir, "final_city_estimations.csv")
-        if (file.exists(csv_path) && exists("current_timestamp")) {
-          cat("[TIMER] Updating final_city_estimations.csv with processing time...\n")
-          df <- read.csv(csv_path)
-          # Update only the rows from the current run
-          df <- df %>%
-            mutate(processing_time_minutes = if_else(
-              city == city_name & run_timestamp == current_timestamp,
-              round(duration_mins, 2),
-              as.numeric(processing_time_minutes)
-            ))
-          write.csv(df, csv_path, row.names = FALSE)
+      csv_path <- file.path(data_dir, "final_city_estimations.csv")
+      if (file.exists(csv_path) && exists("current_timestamp")) {
+        cat("[TIMER] Updating final_city_estimations.csv with processing time...\n")
+        df <- read.csv(csv_path, stringsAsFactors = FALSE)
 
-          # Also update the individual city results file (archived version)
-          city_results_dir <- file.path(data_dir, tolower(city_name), "results")
-          local_csv <- file.path(city_results_dir, paste0("estimations_", current_timestamp, ".csv"))
-          if (file.exists(local_csv)) {
-            local_df <- read.csv(local_csv) %>%
-              mutate(processing_time_minutes = round(duration_mins, 2))
-            write.csv(local_df, local_csv, row.names = FALSE)
-          }
+        # Base R approach for safety and guaranteed scoping
+        match_idx <- which(
+          tolower(trimws(df$city)) == tolower(trimws(city_name)) &
+            as.character(df$run_timestamp) == current_timestamp
+        )
+
+        if (length(match_idx) > 0) {
+          # Make sure the column is properly numeric
+          df$processing_time_minutes <- as.numeric(as.character(df$processing_time_minutes))
+          df$processing_time_minutes[match_idx] <- round(duration_mins, 2)
+          write.csv(df, csv_path, row.names = FALSE)
+          cat(sprintf("[TIMER] Updated internal timer for %d matching rows.\n", length(match_idx)))
+        } else {
+          cat("[TIMER] No matching rows found to update in the final CSV.\n")
+        }
+
+        # Also update the individual city results file (archived version)
+        city_results_dir <- file.path(data_dir, tolower(city_name), "results")
+        local_csv <- file.path(city_results_dir, paste0("estimations_", current_timestamp, ".csv"))
+        if (file.exists(local_csv)) {
+          local_df <- read.csv(local_csv, stringsAsFactors = FALSE)
+          local_df$processing_time_minutes <- round(duration_mins, 2)
+          write.csv(local_df, local_csv, row.names = FALSE)
         }
       }
     },
-    silent = TRUE
+    error = function(e) {
+      cat("[TIMER] Warning: Failed to write processing time:", e$message, "\n")
+    }
   )
 }
 
