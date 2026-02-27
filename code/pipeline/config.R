@@ -27,8 +27,8 @@ if (!exists("target_cities") || length(target_cities) == 0) {
     # "Oslo", "Dublin", "Taipei", "Turin", "Montpellier", "Stockholm", "Buenos Aires", "Ljubljana",
     # "Leeds", "Zurich", "Warsaw", "Chicago", "Austin", "Strasbourg", "Kyoto"
   # )
-  target_cities = "Austin"
-  # target_cities = c("Austin", "Chicago", "Kyoto")
+  # target_cities = "Shanghai"
+  target_cities = c("Austin", "Chicago", "Kyoto", "Seattle")
 }
 
 # Helper function to get exact Geofabrik URLs as specified by the user
@@ -46,8 +46,14 @@ get_geofabrik_url <- function(city, year_short) {
     prefix <- if (as.numeric(year_short) >= 22) "europe/spain/madrid" else "europe/spain"
   } else if (city_lower == "tokyo") {
     prefix <- if (year_short == "16") "asia/japan" else "asia/japan/kanto"
+  } else if (city_lower == "kyoto") {
+    prefix <- if (year_short == "16") "asia/japan" else "asia/japan/kansai"
+  } else if (city_lower == "shanghai") {
+    prefix <- if (year_short == "26") "asia/china/shanghai" else "asia/china"
   } else if (city_lower == "sao paulo") {
     prefix <- if (year_short == "16") "south-america/brazil" else "south-america/brazil/sudeste"
+  } else if (city_lower == "curitiba") {
+    prefix <- if (year_short == "16") "south-america/brazil" else "south-america/brazil/sul"
   } else {
     # Simple mapping dictionary
     mapping <- list(
@@ -68,12 +74,9 @@ get_geofabrik_url <- function(city, year_short) {
       "minneapolis" = "north-america/us/minnesota",
       "berlin" = "europe/germany/berlin",
       "christchurch" = "australia-oceania/new-zealand",
-
-      # New mapping
       "lyon" = "europe/france/rhone-alpes",
       "seoul" = "asia/south-korea",
       "cairo" = "africa/egypt",
-      "shanghai" = "asia/china",
       "bologna" = "europe/italy/nord-est",
       "cape town" = "africa/south-africa-and-lesotho",
       "melbourne" = "australia-oceania/australia",
@@ -92,7 +95,7 @@ get_geofabrik_url <- function(city, year_short) {
       "chicago" = "north-america/us/illinois",
       "austin" = "north-america/us/texas",
       "strasbourg" = "europe/france/alsace",
-      "kyoto" = "asia/japan/kansai"
+      "seattle" = "north-america/us/washington",
     )
     if (!city_lower %in% names(mapping)) stop(paste("No URL mapping found for", city))
     prefix <- mapping[[city_lower]]
