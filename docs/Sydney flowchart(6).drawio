@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0" version="29.5.3">
   <diagram name="CI Pipeline Methodology" id="heGVqvV5hEyHDKX2RoZH">
-    <mxGraphModel dx="1425" dy="1848" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="500" dy="1354" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -104,10 +104,10 @@
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="city_list.txt&#xa;(city, lat, lon, population)" vertex="1">
           <mxGeometry height="50" width="160" x="220" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Geofabrik OSM PBF&#xa;(Historical: 2016, 2021, 2026)" vertex="1">
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Geofabrik OSM.pbf&lt;br&gt;(Historical: 2016, 2021, 2026)" vertex="1">
           <mxGeometry height="50" width="170" x="580" y="80" as="geometry" />
         </mxCell>
-        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Global Building Atlas&#xa;(S3 Parquet — LOD1 heights)" vertex="1">
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Global Building Atlas&lt;br&gt;(LOD1 heights)" vertex="1">
           <mxGeometry height="50" width="170" x="900" y="80" as="geometry" />
         </mxCell>
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="01_city_buffers.R" vertex="1">
@@ -136,7 +136,7 @@
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="02_od_data.R" vertex="1">
           <mxGeometry height="50" width="200" x="820" y="234" as="geometry" />
         </mxCell>
-        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-19" parent="1" style="text;html=1;fontSize=9;align=left;" value="• Fetch buildings from S3 parquet (DuckDB)&lt;br&gt;• Clip to city polygon&lt;br&gt;• Sample 20k origins (uniform) &amp;amp; destinations&lt;br&gt;  (weighted by volume_m³)&lt;br&gt;• Export as gpkg" vertex="1">
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-19" parent="1" style="text;html=1;fontSize=9;align=left;" value="• Fetch buildings from S3 parquet (DuckDB)&lt;br&gt;• Clip to city polygon&lt;br&gt;• Sample 20k origins (uniform) &amp;amp; destinations&lt;br&gt;  (weighted by volume [m³])&lt;br&gt;• Export as .gpkg" vertex="1">
           <mxGeometry height="74" width="190" x="1040" y="222" as="geometry" />
         </mxCell>
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-21" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-10" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-18">
@@ -196,7 +196,7 @@
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-37" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="05_r5r_routing.R" vertex="1">
           <mxGeometry height="50" width="220" x="500" y="520" as="geometry" />
         </mxCell>
-        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-38" parent="1" style="text;html=1;fontSize=9;align=left;fontStyle=2;" value="• Build r5r network from cropped PBF&#xa;• Run detailed_itineraries() on 20k OD pairs&#xa;• Export LTS network edges (.gpkg)&#xa;• Log found_routes to routing_summary.csv&#xa;→ Loop: 3 years × 4 LTS levels per city" vertex="1">
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-38" parent="1" style="text;html=1;fontSize=9;align=left;fontStyle=2;" value="• Build r5r network from cropped .pbf&lt;br&gt;• Run detailed_itineraries() on 20k OD pairs&lt;br&gt;• Export LTS network edges (.gpkg)&lt;br&gt;• Log found_routes to routing_summary.csv&lt;br&gt;→ Loop: 3 years × 4 LTS levels per city" vertex="1">
           <mxGeometry height="70" width="280" x="877.5" y="515" as="geometry" />
         </mxCell>
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-39" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-30" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-37">
@@ -328,14 +328,14 @@
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-81" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="11_tidy_up.R" vertex="1">
           <mxGeometry height="50" width="220" x="500" y="1146" as="geometry" />
         </mxCell>
-        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-82" parent="1" style="text;html=1;fontSize=9;align=left;" value="• Remove large temporary files&#xa;  (cropped PBFs, mapdb caches)&#xa;• Optionally compress .rds outputs" vertex="1">
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-82" parent="1" style="text;html=1;fontSize=9;align=left;" value="• Remove large temporary files&lt;br&gt;  (cropped .pbf, mapdb caches)&lt;br&gt;• Compress .rds outputs" vertex="1">
           <mxGeometry height="50" width="200" x="740" y="1146" as="geometry" />
         </mxCell>
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-83" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-69" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-81">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-84" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" value="config.R&#xa;(cities, years, java_mem,&#xa;n_od_pairs, FORCE_RERUN)" vertex="1">
-          <mxGeometry height="60" width="180" x="420" y="10" as="geometry" />
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-84" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" value="config.R&lt;br&gt;(cities, years, n_od_pairs)" vertex="1">
+          <mxGeometry height="50" width="180" x="420" y="20" as="geometry" />
         </mxCell>
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-86" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-84" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" target="0VaDE9SKtsz2Nzm1nW1J-18">
           <mxGeometry relative="1" as="geometry">
@@ -352,7 +352,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-27" parent="1" style="text;html=1;fontSize=9;align=left;labelBackgroundColor=default;" value="• For each city × year:&#xa;• Download historical Geofabrik PBF (if missing)&#xa;• Crop to city bbox via osmium&#xa;→ Loop: 3 years per city" vertex="1">
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-27" parent="1" style="text;html=1;fontSize=9;align=left;labelBackgroundColor=default;" value="• For each city × year:&lt;br&gt;• Download historical Geofabrik .pbf (if missing)&lt;br&gt;• Crop to city bbox via osmium&lt;br&gt;→ Loop: 3 years per city" vertex="1">
           <mxGeometry height="60" width="260" x="287" y="345" as="geometry" />
         </mxCell>
         <mxCell id="0VaDE9SKtsz2Nzm1nW1J-12" parent="1" style="text;html=1;fontSize=9;align=left;fillColor=default;" value="• Read city coords from city_list.txt&#xa;• Create 10 km buffer polygon (EPSG:3857)&#xa;• Export bounding box (.txt)" vertex="1">
