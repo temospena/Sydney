@@ -17,15 +17,18 @@ cat("[DEBUG] Data Directory:", data_dir, "\n")
 
 if (!exists("target_cities") || length(target_cities) == 0) {
   # 24 newly selected cities + original 21 = 45 cities total
-  target_cities <- c(
+  # target_cities <- 
+    # c(
     # "Sydney", "Lisbon", "Paris", "Barcelona",
     # "Munich", "London", "New York", "Sao Paulo", "Portland", "Santiago",
     # "Brussels", "Vancouver", "Tokyo", "Milan", "Mexico City", "Bogota", "Montréal", "Minneapolis", "Berlin",
     # "Seville", "Christchurch",
-    "Lyon", "Seoul", "Cairo", "Shanghai", "Bologna", "Cape Town", "Madrid", "Melbourne", "Vienna",
-    "Oslo", "Dublin", "Taipei", "Turin", "Montpellier", "Stockholm", "Buenos Aires", "Ljubljana",
-    "Leeds", "Zurich", "Warsaw", "Chicago", "Austin", "Strasbourg", "Kyoto"
-  )
+    # "Lyon", "Seoul", "Cairo", "Shanghai", "Bologna", "Cape Town", "Madrid", "Melbourne", "Vienna",
+    # "Oslo", "Dublin", "Taipei", "Turin", "Montpellier", "Stockholm", "Buenos Aires", "Ljubljana",
+    # "Leeds", "Zurich", "Warsaw", "Chicago", "Austin", "Strasbourg", "Kyoto"
+  # )
+  target_cities = "Austin"
+  # target_cities = c("Austin", "Chicago", "Kyoto")
 }
 
 # Helper function to get exact Geofabrik URLs as specified by the user
