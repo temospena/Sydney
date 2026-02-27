@@ -122,13 +122,24 @@ for (city in target_cities) {
 
         cat(paste("Extracting CI for", city, "version", v, "...\n"))
 
+        # Prioritize the locally cropped PBF from step 03, fallback to raw or URL
+        cropped_pbf <- file.path(city_dir, paste0(city_lower, "_", v_short, ".osm.pbf"))
+        raw_pbf <- file.path(osm_raw_dir, paste0("geofabrik_", infra_region, "-", v, ".osm.pbf"))
+
+        if (file.exists(cropped_pbf)) {
+            place_arg <- cropped_pbf
+        } else if (file.exists(raw_pbf)) {
+            place_arg <- raw_pbf
+        } else {
+            place_arg <- get_geofabrik_url(city, v_short)
+        }
+
         tryCatch(
             {
                 osm <- osmactive::get_travel_network(
-                    place = infra_region,
+                    place = place_arg,
                     boundary = perim,
                     boundary_type = "clipsrc",
-                    version = v,
                     extra_tags = c(osmactive::et_active(), "bicycle_road"),
                     download_directory = osm_raw_dir,
                     quiet = FALSE
@@ -160,6 +171,17 @@ for (city in target_cities) {
         cached_gpkg <- file.path(osm_raw_dir, paste0("geofabrik_", infra_file_base, "-", v, ".gpkg"))
         if (file.exists(cached_gpkg)) {
             file.remove(cached_gpkg)
+        }
+
+        # Cleanup the GPKG generated from cropped_pbf if it exists
+        cached_cropped_gpkg <- file.path(osm_raw_dir, paste0(city_lower, "_", v_short, ".gpkg"))
+        if (file.exists(cached_cropped_gpkg)) {
+            file.remove(cached_cropped_gpkg)
+        }
+
+        cached_cropped_gpkg_local <- file.path(city_dir, paste0(city_lower, "_", v_short, ".gpkg"))
+        if (file.exists(cached_cropped_gpkg_local)) {
+            file.remove(cached_cropped_gpkg_local)
         }
     }
 }
