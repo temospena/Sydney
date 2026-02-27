@@ -28,7 +28,7 @@ if (!exists("target_cities") || length(target_cities) == 0) {
   # "Leeds", "Zurich", "Warsaw", "Chicago", "Austin", "Strasbourg", "Kyoto"
   # )
   # target_cities = "Shanghai"
-  target_cities <- c("Austin", "Chicago", "Kyoto", "Seattle")
+  target_cities = c("Austin", "Chicago", "Kyoto", "Tokyo", "Seattle", "Shanghai", "Curitiba")
 }
 
 # Helper function to get exact Geofabrik URLs as specified by the user
