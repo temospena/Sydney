@@ -1161,6 +1161,7 @@ Re-runs
  replacing the static cycling infrastructure spatial maps (ci_map_20xx.png).
 
  ---
+
  ## Prompt 24
 Austin and Chicago did not provide good results, as if the network was always the same for the 3 years.
 I tried to run again.
@@ -1260,3 +1261,81 @@ The Fix 🛠️
 I rewrote that block to use standard, explicitly scoped Base R operations instead of dplyr, adding safety conditions like trimws() and tolower() to prevent any case mismatch (e.g., "Austin" vs "austin") and removing the silent error wrapper (tryCount). It now safely targets and overwrites the exact row indexes.
 
 I've also added a helpful console printout that will confirm exactly how many rows had their timers updated successfully at the end of every city's completion!
+
+
+---
+
+## Prompt 25
+I'm having a problem with the scripts 04_ci_osmactive the 10_ci_maps and everything related to the CI metrics.  
+It seems that it is not using the osm.pbf files that were downloaded and cropped in the previous steps.
+For instance, see the example of Chicago. Routing is estimated, accessibility, and LTS, but the CI metrics are empty.
+The files cropedd, that live in data/pipeline/chicago/*osm.pbf for each year are there and seem to be all-rigth. I tryed to open them in another platform, and the data is really from chicago illinois.
+So I don't know what is the problem for not finding any cycling infrastructure.
+The list of original osm.pbf files in my server in the folder data/osm_pbf/geofabrik_texas-YYYYMMDD.osm.pbf is:
+geofabrik_texas-160101.osm.pbf
+geofabrik_texas-210101.osm.pbf
+geofabrik_texas-260101.osm.pbf
+
+This problem is occurring in all the new cities that I am (still) running:
+austin, chicago, kyoto (you wont find kyoto files here, they are still in the server.)
+
+Maybe it would be worth to create a data table with the city name, and for each yeaar, the geofabrick (short) address that is now by hand in config, so that config would read that file, and the other scripts would also know the file name that they are looking for. because for some years, osm.pbf are not avaliable in the same address (sometimes only in a larger or smaller scale)
+
+
+
+### Response
+
+Root Cause Found ✅
+When 
+
+04_ci_osmactive.R
+ passes a local 
+
+.osm.pbf
+ file path like /path/chicago_16.osm.pbf to osmactive::get_travel_network() → osmextract::oe_get(), the library ignores the file path and tries to match it as a city name against the Geofabrik database. "chicago_16.osm.pbf" doesn't match anything, so it either fails silently (caught by tryCatch) or uses the wrong data entirely.
+
+Proof: oe_match("/path/chicago_16.osm.pbf") → "No exact match found... Best match is Województwo śląskie (Silesian Voivodeship). Error: does not intersect any area."
+
+The fix: Use osmextract::oe_read() directly when we have a local file path (it works!), instead of routing through oe_get().
+
+Your idea about a lookup CSV is a great architectural improvement. It solves two things at once:
+
+Makes the Geofabrik region/filename per city/year explicit and auditable
+Makes it easy to handle the cases where regions change across years (barcelona: spain → cataluna, etc.)
+Here's my plan: create data/geofabrik_regions.csv, update 
+
+config.R
+ to read from it (keeping get_geofabrik_url/region as wrappers), and fix the oe_read() bug in 
+
+04_ci_osmactive.R
+.
+
+Summary of Changes
+🐛 Root Cause
+osmextract::oe_get() (called inside osmactive::get_travel_network()) treats its place= argument as a city name to search in the Geofabrik database, even when you pass a local file path. Giving it /path/to/chicago_16.osm.pbf caused it to try to match that string against region names (best match: Silesian Voivodeship, Poland 😅), fail, and throw an error that got silently swallowed by tryCatch.
+
+✅ Fixes Applied
+1. 
+
+04_ci_osmactive.R
+ (core bug fix)
+
+When a local cropped or raw PBF exists → calls osmextract::oe_read() directly (which correctly handles file paths)
+When no local file exists → falls back to get_travel_network() with a URL (original behaviour, unchanged)
+Applies the same highway/service filters that get_travel_network() would have applied
+2. 
+
+data/geofabrik_regions.csv
+ (new)
+
+Explicit lookup table: city × year → Geofabrik region path
+Easy to edit when a region changes across years (e.g. Barcelona spain → spain/cataluna)
+Add a new city by appending 3 rows
+3. 
+
+config.R
+ (refactored)
+
+get_geofabrik_region() now reads from the CSV first, falls back to hardcoded logic only if no entry is found
+get_geofabrik_url() and new get_geofabrik_stem() are thin wrappers on top
+The hardcoded logic stays as a safety net for any city not yet in the CSV

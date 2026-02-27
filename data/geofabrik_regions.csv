@@ -1,0 +1,142 @@
+city,year,geofabrik_region
+Austin,16,north-america/us/texas
+Austin,21,north-america/us/texas
+Austin,26,north-america/us/texas
+Barcelona,16,europe/spain
+Barcelona,21,europe/spain/cataluna
+Barcelona,26,europe/spain/cataluna
+Berlin,16,europe/germany/berlin
+Berlin,21,europe/germany/berlin
+Berlin,26,europe/germany/berlin
+Bogota,16,south-america/colombia
+Bogota,21,south-america/colombia
+Bogota,26,south-america/colombia
+Bologna,16,europe/italy/nord-est
+Bologna,21,europe/italy/nord-est
+Bologna,26,europe/italy/nord-est
+Brussels,16,europe/belgium
+Brussels,21,europe/belgium
+Brussels,26,europe/belgium
+Buenos Aires,16,south-america/argentina
+Buenos Aires,21,south-america/argentina
+Buenos Aires,26,south-america/argentina
+Cairo,16,africa/egypt
+Cairo,21,africa/egypt
+Cairo,26,africa/egypt
+Cape Town,16,africa/south-africa-and-lesotho
+Cape Town,21,africa/south-africa-and-lesotho
+Cape Town,26,africa/south-africa-and-lesotho
+Chicago,16,north-america/us/illinois
+Chicago,21,north-america/us/illinois
+Chicago,26,north-america/us/illinois
+Christchurch,16,australia-oceania/new-zealand
+Christchurch,21,australia-oceania/new-zealand
+Christchurch,26,australia-oceania/new-zealand
+Curitiba,16,south-america/brazil
+Curitiba,21,south-america/brazil/sul
+Curitiba,26,south-america/brazil/sul
+Dublin,16,europe/ireland-and-northern-ireland
+Dublin,21,europe/ireland-and-northern-ireland
+Dublin,26,europe/ireland-and-northern-ireland
+Kyoto,16,asia/japan
+Kyoto,21,asia/japan/kansai
+Kyoto,26,asia/japan/kansai
+Leeds,16,europe/united-kingdom/england/west-yorkshire
+Leeds,21,europe/united-kingdom/england/west-yorkshire
+Leeds,26,europe/united-kingdom/england/west-yorkshire
+Lisbon,16,europe/portugal
+Lisbon,21,europe/portugal
+Lisbon,26,europe/portugal
+Ljubljana,16,europe/slovenia
+Ljubljana,21,europe/slovenia
+Ljubljana,26,europe/slovenia
+London,16,europe/united-kingdom/england/greater-london
+London,21,europe/united-kingdom/england/greater-london
+London,26,europe/united-kingdom/england/greater-london
+Lyon,16,europe/france/rhone-alpes
+Lyon,21,europe/france/rhone-alpes
+Lyon,26,europe/france/rhone-alpes
+Madrid,16,europe/spain
+Madrid,21,europe/spain
+Madrid,26,europe/spain/madrid
+Melbourne,16,australia-oceania/australia
+Melbourne,21,australia-oceania/australia
+Melbourne,26,australia-oceania/australia
+Mexico City,16,north-america/mexico
+Mexico City,21,north-america/mexico
+Mexico City,26,north-america/mexico
+Milan,16,europe/italy/nord-ovest
+Milan,21,europe/italy/nord-ovest
+Milan,26,europe/italy/nord-ovest
+Minneapolis,16,north-america/us/minnesota
+Minneapolis,21,north-america/us/minnesota
+Minneapolis,26,north-america/us/minnesota
+Montpellier,16,europe/france/languedoc-roussillon
+Montpellier,21,europe/france/languedoc-roussillon
+Montpellier,26,europe/france/languedoc-roussillon
+Montréal,16,north-america/canada/quebec
+Montréal,21,north-america/canada/quebec
+Montréal,26,north-america/canada/quebec
+Munich,16,europe/germany/bayern/oberbayern
+Munich,21,europe/germany/bayern/oberbayern
+Munich,26,europe/germany/bayern/oberbayern
+New York,16,north-america/us/new-york
+New York,21,north-america/us/new-york
+New York,26,north-america/us/new-york
+Oslo,16,europe/norway
+Oslo,21,europe/norway
+Oslo,26,europe/norway
+Paris,16,europe/france/ile-de-france
+Paris,21,europe/france/ile-de-france
+Paris,26,europe/france/ile-de-france
+Portland,16,north-america/us/oregon
+Portland,21,north-america/us/oregon
+Portland,26,north-america/us/oregon
+Santiago,16,south-america/chile
+Santiago,21,south-america/chile
+Santiago,26,south-america/chile
+Sao Paulo,16,south-america/brazil
+Sao Paulo,21,south-america/brazil/sudeste
+Sao Paulo,26,south-america/brazil/sudeste
+Seattle,16,north-america/us/washington
+Seattle,21,north-america/us/washington
+Seattle,26,north-america/us/washington
+Seoul,16,asia/south-korea
+Seoul,21,asia/south-korea
+Seoul,26,asia/south-korea
+Seville,16,europe/spain
+Seville,21,europe/spain/andalucia
+Seville,26,europe/spain/andalucia
+Shanghai,16,asia/china
+Shanghai,21,asia/china
+Shanghai,26,asia/china/shanghai
+Stockholm,16,europe/sweden
+Stockholm,21,europe/sweden
+Stockholm,26,europe/sweden
+Strasbourg,16,europe/france/alsace
+Strasbourg,21,europe/france/alsace
+Strasbourg,26,europe/france/alsace
+Sydney,16,australia-oceania/australia
+Sydney,21,australia-oceania/australia
+Sydney,26,australia-oceania/australia
+Taipei,16,asia/taiwan
+Taipei,21,asia/taiwan
+Taipei,26,asia/taiwan
+Tokyo,16,asia/japan
+Tokyo,21,asia/japan/kanto
+Tokyo,26,asia/japan/kanto
+Turin,16,europe/italy/nord-ovest
+Turin,21,europe/italy/nord-ovest
+Turin,26,europe/italy/nord-ovest
+Vancouver,16,north-america/canada/british-columbia
+Vancouver,21,north-america/canada/british-columbia
+Vancouver,26,north-america/canada/british-columbia
+Vienna,16,europe/austria
+Vienna,21,europe/austria
+Vienna,26,europe/austria
+Warsaw,16,europe/poland
+Warsaw,21,europe/poland
+Warsaw,26,europe/poland
+Zurich,16,europe/switzerland
+Zurich,21,europe/switzerland
+Zurich,26,europe/switzerland
