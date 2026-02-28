@@ -6,8 +6,10 @@ final_city_estimations <- read_csv("data/pipeline/final_city_estimations.csv")
 
 unique(final_city_estimations$city)
 length(unique(final_city_estimations$city)) - 5 #cairo, cape town, lisbon, munich, hong kong
-mean(final_city_estimations$processing_time_minutes[final_city_estimations$processing_time_minutes > 10], na.rm = TRUE) # 19.6 min
 
+summary(final_city_estimations$processing_time_minutes[final_city_estimations$processing_time_minutes > 10], na.rm = TRUE)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#   10.53   15.29   18.17   19.64   22.67   37.81     204 
 summary(final_city_estimations$total_ci_m)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 # 0  179087  280806  302886  398848  838957 
