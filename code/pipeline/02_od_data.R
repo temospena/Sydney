@@ -1,5 +1,5 @@
 # 02_od_data.R
-# Generate 1000 origins and destinations per city weighted by building volume
+# Generate 20000 origins and destinations per city weighted by building volume
 
 library(duckdb)
 library(sf)
