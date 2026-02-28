@@ -1,0 +1,81 @@
+#### The plan nr 2 #####
+
+# Intro
+
+I already run the pipeline for more than 50 cities.
+But I found some issues, that I would like to describe below, and consider other approaches.
+
+Because this is a plan that diverges a from the original one, I am not sure if the following changes should be made in a separated branch, have a separated pipeline folder (such as pipeline2), or create a release to make sure everything I have so far is saved, or a combination of the 3.
+Some of the already produced outputs will not change, such as the cycling infrasstructure or road metrics and plots, bit everything related with routing may change.
+I would like some reccomendation on this matter, after you analyse the following coments and instructions.
+
+I would like to create another pipeline, this time without plots, only the overline facet map (~year).
+Another final_estimations file should be created, but the previous preserved, since we can still use much of that information.
+
+The things that change will be only related with ODs and routing - and their relative results.
+
+
+
+## Use other od sampling method
+
+I am selecting a very simplistic way to sample 20k OD pairs for a city center, based on the buildings' volume weighted on the destinations, as described on the code/pipeline/02_od_data.R.
+But the problem that I am facing is that the commulative trip distance distrbution does not follow a typpical urban bike trip distance distribution, with 80% trips between 2 and 5 km.
+
+I have a draft of the od sample data with a distance decay function in code/old/data_od_ddecay.R .
+
+I thought that we can use the same destinations and lookup for their unweighed origins, that in the end the trip distance should follow the trip distribution defined in the literature (lognormal). The μ and σ parameters should be adjustable.
+
+But, there is something that should be added to this complexity, wich is the circuity. For Chicago, we know that the average circuity of the routes is about 1.4 (may be confimed in routing data in chicago folder), which means that the linear distance of the OD should take this into consudetarion, so that when the routed distances are estimated, they follow somehow the defined urban cycling distance decay function.
+
+
+### Using a grid for this or for all the estimates?
+
+Using a grid may also have advantages to re-estimate accessibility as the accumulative sum of building volumes, without requiring to run again with r5r.«, if we have new OD pairs and time travels.
+That would also require using a different travel time matrix, with the estimations of travel duration, distance between the OD cells.
+This would be a simplification of a reality, expecting that less routes would need to be routed (because they "fall" to the same OD grids(?). I also started to draft the logic of that, but it is not quite there yet (see code/old/od_grid.R )
+This also would mean that the circuity would need to be re-estimated, once it would not assume anymore the building point as O or D, but the grid cell centroid, so the linear distance would be between these centroids.
+
+
+
+## Use other routing algorithm
+
+LTS levels are not convincing me. A resedential street and a high quality cycling separated track are both the same LTS 1, which does not add anything to the aim of the research I am doing.
+I explored other options, but some I cant have a custum pbf file, and some are very expensive in time.
+BRouter seemed like a good compromise, that I would like to test.
+
+
+I would like to setting up a BRouter environment in Docker to perform batch routing (20,000 routes per city, ~50 cities) across three historical snapshots (2016, 2021, and 2026 .osm.pbf files). I need:
+
+- A Docker-Compose file to spin up three BRouter instances, each pointing to a different year's RD5 segment data.
+- A script or method to convert my three specific .osm.pbf files into the RD5 format compatible with BRouter.
+- A R or Python snippet to query these instances via API to extract Shapes and OSM IDs for a CSV export.
+
+I am not sure if the best way is to setup a docker instance or just run it directly in the server somehow.
+
+I could hit the API with many threads at once?
+I nstead of converting 150 individual PBFs (50 cities × 3 years), I would:
+
+- Group by Year: For each year, use a tool like osmium to merge the 50 city PBFs into one "Year-Master" PBF.
+- Convert once per year: Run the BRouter Segment Creator on the Year-Master. This produces a clean set of .rd5 tiles for that entire year.
+- Route: Run your 1,000,000 routes for that year against the single BRouter instance.
+
+The routes results, (json? any other lightweight format?) should contain the osm_id sl we can later estimate the % of different ci types it uses (and lts levels).
+
+### Regarding the routing costs and weights
+
+As far as I can tell, BRouter has very complex custum costs. I would rather use very simplistic costs, so anywone could easily inderstand my cost structure.
+I have a draft of a simple cost function based on the osm tags (lower the better - more attractive for routing) in code/old/od2net-osm-costs
+This does not consider elevation, and for now I think it shouldn't (that would require an extra step to fetch the srtm files, crop, and add them, with another cost function).
+But I would like that the costs would prioritizes the defined cycling infrasstructure classification (see code/pipeline/04_ci_osmactive.R), such as the "strong_ci" segments would be slightly more attractive than the "moderate_ci", more attractive than "weak_ci", more attractive than "shared_foot", and all much more attractive than the remaining highway types (in order), defined in the draft od2net-osm-costs .
+
+
+# Some guidelines
+
+- The described files and folder paths are relative to the working directory.
+- Locally I am only running some tests, due ram limitations (16GB) and processing capacity (i7). In the remote server, that I access with ssh (rosa@rosa-ist), I run the pipelines.
+- Some files may be only available on the server side, such as all the geofabrik osm.pbf original files. But I assume only the already cropped .pbf files for each city and year are required to build a large rd5 for each year.
+- Only Chicago and Lisbon have the cropped osm.pbf files in this local laptop, under /data/pipeline/CITY_NAME . Please use those 2 cities to run the necessary tests locally, I can later run all the ciries on the server.
+- Check the .gitignore file. Maybe you will be looking for some file that does not live here in this laptop because of those rules, but they exist. If needed, I can run some terminal comands at the server and past here the resposes.
+- I am ok with creating new folders.
+- To run in the server, an initial script to move or copy files around may be nedded or not.
+

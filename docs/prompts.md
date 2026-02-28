@@ -1339,3 +1339,8 @@ config.R
 get_geofabrik_region() now reads from the CSV first, falls back to hardcoded logic only if no entry is found
 get_geofabrik_url() and new get_geofabrik_stem() are thin wrappers on top
 The hardcoded logic stays as a safety net for any city not yet in the CSV
+
+
+## Prompt 26
+
+Please read carefully my plan number 2, that lives in docs/plan2.txt
