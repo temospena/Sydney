@@ -1,0 +1,25 @@
+"cost": {
+    "OsmHighwayType": {
+        "cycleway": 1,
+        "footway": 20,
+        "living_street": 10,
+        "motorway": 30,
+        "motorway_link": 30,
+        "path": 10,
+        "pedestrian": 10,
+        "primary": 15,
+        "primary_link": 15,
+        "residential": 10,
+        "secondary": 12,
+        "secondary_link": 12,
+        "service": 10,
+        "steps": 40,
+        "tertiary": 11,
+        "tertiary_link": 11,
+        "track": 10,
+        "trunk": 30,
+        "trunk_link": 30,
+        "unclassified": 10
+    }
+}
+# lower the better
