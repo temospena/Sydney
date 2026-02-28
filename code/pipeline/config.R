@@ -6,7 +6,8 @@
 
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
-target_cities <- c("Tokyo", "Seattle", "Shanghai", "Curitiba")
+target_cities <- c("San Francisco", "Hong Kong", "Nantes", "Beijing", "Gent",
+                   "Hamburg", "Glasgow", "Graz", "Amsterdam", "Helsinki")
 # target_cities <- "Kyoto"
 
 # Years (2-digit) and full version strings — keep these in sync
