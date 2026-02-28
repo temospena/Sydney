@@ -140,3 +140,33 @@ Warsaw,26,europe/poland
 Zurich,16,europe/switzerland
 Zurich,21,europe/switzerland
 Zurich,26,europe/switzerland
+San Francisco,16,north-america/us/california
+San Francisco,21,north-america/us/california
+San Francisco,26,north-america/us/california
+Hong Kong,16,asia/china
+Hong Kong,21,asia/china
+Hong Kong,26,asia/china/hong-kong
+Nantes,16,europe/france/pays-de-la-loire
+Nantes,21,europe/france/pays-de-la-loire
+Nantes,26,europe/france/pays-de-la-loire
+Beijing,16,asia/china
+Beijing,21,asia/china
+Beijing,26,asia/china/beijing
+Gent,16,europe/belgium
+Gent,21,europe/belgium
+Gent,26,europe/belgium
+Hamburg,16,europe/germany/hamburg
+Hamburg,21,europe/germany/hamburg
+Hamburg,26,europe/germany/hamburg
+Glasgow,16,europe/united-kingdom/scotland
+Glasgow,21,europe/united-kingdom/scotland
+Glasgow,26,europe/united-kingdom/scotland
+Graz,16,europe/austria
+Graz,21,europe/austria
+Graz,26,europe/austria
+Amsterdam,16,europe/netherlands
+Amsterdam,21,europe/netherlands
+Amsterdam,26,europe/netherlands
+Helsinki,16,europe/finland
+Helsinki,21,europe/finland
+Helsinki,26,europe/finland
