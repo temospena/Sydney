@@ -1,0 +1,13 @@
+services:
+  valhalla-2026:
+    image: ghcr.io/valhalla/valhalla:latest
+    container_name: valhalla-2026
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./custom_files:/custom_files
+    environment:
+      - build_elevation=False
+      - build_admins=True
+      - build_timezones=True
+      - server_threads=4
