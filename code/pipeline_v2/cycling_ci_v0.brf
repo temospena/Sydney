@@ -1,0 +1,71 @@
+---context:global
+
+assign validForBikes = true
+assign validForCars  = false
+assign validForFoot  = false
+
+assign isbike = true
+
+---context:node
+assign initialcost = 0
+assign turncost    = 0
+
+---context:way
+
+assign switchpoint = false
+
+# Baseline costs by highway type
+assign hm =
+  if ( highway=cycleway ) then 1.0
+  else if ( highway=residential|living_street|pedestrian|path|service|track|unclassified ) then 10.0
+  else if ( highway=tertiary|tertiary_link ) then 11.0
+  else if ( highway=secondary|secondary_link ) then 12.0
+  else if ( highway=primary|primary_link ) then 15.0
+  else if ( highway=footway ) then 20.0
+  else if ( highway=steps ) then 30.0
+  else if ( highway=motorway|motorway_link|trunk|trunk_link ) then 40.0
+  else 1000.0
+
+# Protected / separated cycleway (strong_ci)
+# highway=cycleway, cycleway=track or opposite_track,
+# cycleway:right=track, cycleway:left=track
+assign has_track =
+  or highway=cycleway
+     or cycleway=track
+        or cycleway=opposite_track
+           or cycleway:right=track
+              cycleway:left=track
+
+# Painted cycle lane (moderate_ci)
+# cycleway=lane or opposite_lane,
+# cycleway:right=lane, cycleway:left=lane, cycleway:left=opposite_lane, cycleway:right=opposite_lane
+assign has_lane =
+  or cycleway=lane
+     or cycleway=opposite_lane
+        or cycleway:right=lane
+           or cycleway:left=lane
+              or cycleway:right=opposite_lane
+                 cycleway:left=opposite_lane
+
+# Shared / weak infra (weak_ci)
+# cycleway=shared_lane, share_busway
+assign has_weak =
+  or cycleway=shared_lane
+     cycleway=share_busway
+
+# Cycling on pedestrian infrastructure (shared_foot)
+# path/footway/pedestrian tagged with bicycle=yes or designated
+assign has_foot =
+  and highway=path|footway|pedestrian
+      bicycle=yes|designated
+
+# Final cost factor
+assign hw =
+  if ( has_track ) then 1.0
+  else if ( has_lane  ) then 1.5
+  else if ( has_weak  ) then 3.0
+  else if ( has_foot  ) then 4.0
+  else hm
+
+assign costfactor = hw
+

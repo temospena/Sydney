@@ -8,13 +8,9 @@ library(purrr)
 library(h3jsr)
 sf_use_s2(FALSE)
 
-# Load global configuration
-source("code/pipeline/config.R")
-if (exists("city_to_run")) target_cities <- city_to_run
+# Load v2 configuration (server/local flag, Lisbon-only target, n_od_pairs, etc.)
+source("code/pipeline_v2/config_v2.R")
 
-h3_res <- 9
-mu_log <- 0.33
-sd_log <- 0.66
 miles_to_meters <- 1609.34
 
 if (requireNamespace("here", quietly = TRUE)) {
@@ -136,28 +132,25 @@ for (city in target_cities) {
     rm(buildings)
     gc()
 
-    # Map buildings to H3 cells
+    # 1. Map buildings to H3 cells FIRST
     buildings_city <- buildings_city |>
-        mutate(h3_addr = point_to_cell(geometry, res = h3_res))
+        mutate(h3_addr = point_to_cell(geometry, res = h3_res)) |>
+        filter(volume_m3 > 0) # ensure volume is > 0 for weighting
 
-    # Group by H3 cell and calculate total volume
-    h3_cells <- buildings_city |>
-        st_drop_geometry() |>
-        group_by(h3_addr) |>
-        summarise(volume = sum(volume_m3, na.rm = TRUE), n_buildings = n()) |>
-        filter(volume > 0)
+    # We only sample in the grids WITH buildings
+    valid_h3_pool <- unique(buildings_city$h3_addr)
 
     cat("Sampling destinations and generating origin targets...\n")
-    # 1. Sample destinations weighted by volume
-    dest_samples <- h3_cells |>
-        slice_sample(n = n_od_pairs, weight_by = volume, replace = TRUE) |>
+    # 2. Sample DESTINATION buildings weighted by volume
+    dest_samples <- buildings_city |>
+        slice_sample(n = n_od_pairs, weight_by = volume_m3, replace = TRUE) |>
+        st_drop_geometry() |>
         mutate(
             trip_id = row_number(),
             target_dist_m = rlnorm(n(), meanlog = mu_log, sdlog = sd_log) * miles_to_meters
         )
 
-    # 2. Find origins based on target distance
-    valid_h3_pool <- h3_cells$h3_addr
+    # 3. Find ORIGIN H3 cells based on target distance from Destination H3 cell
     # An H3 Res 9 edge length is ~174m, diameter is ~400m
     avg_spacing <- 400
 
@@ -167,7 +160,7 @@ for (city in target_cities) {
         candidates <- pool[pool %in% potential_cells]
 
         if (length(candidates) == 0) {
-            # Fallback
+            # Fallback to a random cell if none exist at exact ring
             return(sample(pool, 1))
         }
         sample(candidates, 1)

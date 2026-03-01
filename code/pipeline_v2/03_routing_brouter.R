@@ -1,25 +1,23 @@
 # 03_routing_brouter.R
 # Query local BRouter instances for historical paths
-# Note: Requires docker-compose to be running!
+# Note: Requires docker-compose to be running (docker compose up -d)
 
 library(sf)
 library(dplyr)
 library(purrr)
 library(httr)
 library(parallel)
-library(parallel)
 
 sf_use_s2(FALSE)
 
-source("code/pipeline/config.R")
-if (exists("city_to_run")) target_cities <- city_to_run
+# Load v2 configuration (server/local flag, ports, target cities, n_od_pairs)
+source("code/pipeline_v2/config_v2.R")
 
-YEARS <- c("16", "21", "26")
+YEARS <- names(BROUTER_PORTS) # c("16", "21", "26")
 V_YEARS <- c("2016", "2021", "2026")
-PORTS <- c("17771", "17772", "17773")
 
-# Map 2-digit years to BRouter API endpoints
-port_map <- setNames(PORTS, YEARS)
+# port_map is BROUTER_PORTS from config_v2.R
+port_map <- BROUTER_PORTS
 
 for (city in target_cities) {
     city_lower <- tolower(city)
@@ -59,7 +57,7 @@ for (city in target_cities) {
     od_pairs <- od_pairs |> left_join(unique_pairs, by = c("o_lon", "o_lat", "d_lon", "d_lat"))
 
     for (yr in YEARS) {
-        port <- port_map[[yr]]
+        port <- port_map[yr]
         out_path <- file.path(city_dir, paste0("routes_v2_", yr, ".gpkg"))
 
         if (file.exists(out_path) && !FORCE_RERUN) {
@@ -133,7 +131,7 @@ for (city in target_cities) {
         valid_results <- compact(results)
 
         if (length(valid_results) > 0) {
-            unique_routes <- do.call(rbind, valid_results)
+            unique_routes <- dplyr::bind_rows(valid_results)
             unique_routes_sf <- st_as_sf(unique_routes)
             if (st_crs(unique_routes_sf)$epsg != 4326) st_crs(unique_routes_sf) <- 4326
 

@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   brouter-2016:
     build:
@@ -9,10 +7,13 @@ services:
       - "17771:17777"
     volumes:
       - ./data/brouter/segments_2016:/brouter/segments4
-      - ./code/pipeline_v2:/brouter/custom_profiles
+      - ./data/brouter/brouter_bin:/brouter/bin
+      - ./data/brouter/brouter_bin/profiles2:/brouter/profiles2
+      - ./code/pipeline_v2/cycling_ci.brf:/brouter/profiles2/cycling_ci.brf
     environment:
       - JAVA_OPTS=-Xmx8G
-    command: ["/brouter/segments4", "/brouter/profiles2", "/brouter/custom_profiles", "17777", "8", "0.0.0.0"]
+      - BROUTER_JAR=/brouter/bin/brouter-server-1.7.8-all.jar
+    command: [ "/brouter/segments4", "/brouter/profiles2", "/brouter/profiles2", "17777", "8", "0.0.0.0" ]
 
   brouter-2021:
     build:
@@ -22,10 +23,13 @@ services:
       - "17772:17777"
     volumes:
       - ./data/brouter/segments_2021:/brouter/segments4
-      - ./code/pipeline_v2:/brouter/custom_profiles
+      - ./data/brouter/brouter_bin:/brouter/bin
+      - ./data/brouter/brouter_bin/profiles2:/brouter/profiles2
+      - ./code/pipeline_v2/cycling_ci.brf:/brouter/profiles2/cycling_ci.brf
     environment:
       - JAVA_OPTS=-Xmx8G
-    command: ["/brouter/segments4", "/brouter/profiles2", "/brouter/custom_profiles", "17777", "8", "0.0.0.0"]
+      - BROUTER_JAR=/brouter/bin/brouter-server-1.7.8-all.jar
+    command: [ "/brouter/segments4", "/brouter/profiles2", "/brouter/profiles2", "17777", "8", "0.0.0.0" ]
 
   brouter-2026:
     build:
@@ -35,7 +39,10 @@ services:
       - "17773:17777"
     volumes:
       - ./data/brouter/segments_2026:/brouter/segments4
-      - ./code/pipeline_v2:/brouter/custom_profiles
+      - ./data/brouter/brouter_bin:/brouter/bin
+      - ./data/brouter/brouter_bin/profiles2:/brouter/profiles2
+      - ./code/pipeline_v2/cycling_ci.brf:/brouter/profiles2/cycling_ci.brf
     environment:
       - JAVA_OPTS=-Xmx8G
-    command: ["/brouter/segments4", "/brouter/profiles2", "/brouter/custom_profiles", "17777", "8", "0.0.0.0"]
+      - BROUTER_JAR=/brouter/bin/brouter-server-1.7.8-all.jar
+    command: [ "/brouter/segments4", "/brouter/profiles2", "/brouter/profiles2", "17777", "8", "0.0.0.0" ]

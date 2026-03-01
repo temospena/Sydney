@@ -6,10 +6,10 @@ library(dplyr)
 library(tidyr)
 sf_use_s2(FALSE)
 
-source("code/pipeline/config.R")
-if (exists("city_to_run")) target_cities <- city_to_run
+# Load v2 configuration (server/local flag, target cities, paths, etc.)
+source("code/pipeline_v2/config_v2.R")
 
-YEARS <- c("16", "21", "26")
+YEARS <- names(BROUTER_PORTS) # c("16", "21", "26")
 V_YEARS <- c("2016", "2021", "2026")
 
 out_csv <- file.path(data_dir, "final_city_estimations_v2.csv")

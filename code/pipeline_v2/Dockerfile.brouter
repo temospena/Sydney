@@ -1,16 +1,12 @@
 FROM eclipse-temurin:21-jre
 
 WORKDIR /brouter
-RUN apt update && apt install -y wget unzip && rm -rf /var/lib/apt/lists/*
 
-ENV BROUTER_VERSION=1.7.8
-RUN wget -q https://github.com/abrensch/brouter/releases/download/v${BROUTER_VERSION}/brouter-${BROUTER_VERSION}.zip && \
-    unzip -q brouter-${BROUTER_VERSION}.zip && \
-    rm brouter-${BROUTER_VERSION}.zip && \
-    mv brouter*/* . || true
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 17777
 
-# Usage:
-# RouteServer <segmentdir> <profiledir> <customprofiledir> <port> <maxthreads> [bindaddress]
-ENTRYPOINT ["java", "-cp", "brouter-1.7.8-all.jar", "btools.server.RouteServer"]
+# BRouter jar and segments are mounted via docker-compose volumes.
+# Usage: RouteServer <segmentdir> <profiledir> <customprofiledir> <port> <maxthreads> [bindaddress]
+ENTRYPOINT ["/entrypoint.sh"]
