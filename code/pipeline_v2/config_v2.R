@@ -31,7 +31,7 @@ versions <- c("160101", "210101", "260101")
 BROUTER_PORTS <- c("16" = "17771", "21" = "17772", "26" = "17773")
 
 # Set TRUE to re-run all steps even if output files already exist
-FORCE_RERUN <- FALSE
+FORCE_RERUN <- TRUE
 
 # H3 resolution for OD grid
 h3_res <- 9

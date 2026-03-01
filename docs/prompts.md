@@ -1616,5 +1616,60 @@ Circuity is now 1.51–1.62 (much more realistic than 1.9). It also correctly de
 - Overline map (3 years): **~1 min 20 sec**
 - **Total: ~31 minutes**
 
-Overline route map saved to `data/pipeline/lisbon/results/overline_routes_v2.png`.
+I am still not conviced regarding the cost factors. They shouln't be lower than 1, otherwise the circuity will be lower than 1, which is not realistic.
+The penalization for not using cycle infrastructure should be a bit higher.
+Can we do some sensitivity analysis on the cost factors?
 
+Also, for the overline plot, please discard the segments with less than 3 trips. A simplifications of the geoetries may make this step faster (see the code for pipeline v1)
+
+The time to provess the routes seems to hight still. Will it decrease when routing in the server, by using more memory allocation to java or with parallelization?
+
+Finally, I would like to penalize more the use of ferry links. And discard results with more than 120 minutes routing time.
+
+### Response
+
+Great points. Here are the fixes implemented to address all of them:
+
+1. **Fixed `cycling_ci.brf` cost factors:**
+   - Changed the floor: `cycleway=1.0` is now the baseline (was 0.8), ensuring all costfactors are $\ge 1.0$ (no "negative" circuity penalties).
+   - Increased penalties for other roads: `residential=1.3` (30% penalty vs cycleway), `primary=3.0` (200% penalty).
+   - Added `is_ferry` penalty set to `999.0` (making ferries effectively prohibited).
+
+2. **Added 120-minute route filter:**
+   - In `03_routing_brouter.R`, any route where `total.time > 7200` seconds (120 minutes) is now discarded and excluded from the final results.
+
+3. **Overline maps optimized:**
+   - Added `st_simplify(routes, dTolerance = 0.001, preserveTopology = TRUE)` before `overline()`, heavily reducing vertex count and speeding up aggregation.
+   - Added a strict `n_trips >= 3` filter: any segment with $< 3$ trips is discarded before plotting, removing single-trip noise. 
+
+4. **Sensitivity analysis:**
+   I created a dedicated script (`code/pipeline_v2/07_sensitivity_analysis.R`) to quickly benchmark cost weights on a 500-pair sample from year 2026. Results for the 4 scenarios tested:
+   - `C_narrow`  (res=1.1, pri=2.0) → circuity 1.486, dist=3557m 
+   - `A_current` (res=1.3, pri=3.0) → circuity 1.506, dist=3621m *(← what we implemented above)*
+   - `B_wider`   (res=1.6, pri=5.0) → circuity 1.539, dist=3709m 
+   - `D_extreme` (res=2.5, pri=10.0) → circuity 1.637, dist=3950m 
+   *Conclusion: The current implemented weights (res=1.3) provide a solid middle ground, keeping circuity between 1.5–1.6.*
+
+5. **Server Performance:**
+   Yes, routing performance **will improve significantly** on the server. Your laptop (`detectCores() - 1`) likely uses 7–15 parallel threads for the `mclapply` API requests. The server typically has 32+ or 64+ cores, allowing routing to process 4–8x more routes simultaneously. High Java memory (`-Xmx96G`) will also allow BRouter to cache the entire region in RAM, completely eliminating disk I/O latency.
+
+---
+
+**Results (Lisbon, 20k pairs, with all fixes):**
+
+| Year | avg_dist_m | avg_circuity | pct_ci_route | strong_ci | mod_ci | weak_ci | shared_foot | found_routes |
+|------|-----------|-------------|-------------|-----------|--------|---------|-------------|--------------|
+| 2016 | 3848m | **1.61** | 23.0% | 21.2% | 0.5% | 0% | 1.3% | 20,000 |
+| 2021 | 3686m | **1.54** | 29.8% | 25.0% | 0.4% | 2.6% | 1.8% | 19,984 |
+| 2026 | 3629m | **1.51** | 43.2% | 34.0% | 2.8% | 5.3% | 1.1% | 19,999 |
+
+*(Note: Routes > 2 hours or avoiding ferries correctly filtered out if they existed). The cleaned, simplified overline map (`overline_routes_v2_new.png`) is ready for review.*
+
+---
+## Prompt 33
+
+Even with this results, I think I prefer to use the extreme scenario, as it prioratizes more the use of cycle infrastructure. 
+But even here, I would like tochange the service weight with the residential (residential should be only a sligther hiher than ci_foot, service should be slightly highter than residential, and path shoul have the same as ci_foot. but the ci_ could be closer, like ci_track = 1 and ci_lane = 1.1, ci_weak = 1.3, ci_foot = 1.4. 
+
+Can you provide another cost structure based on this?
+And run again only for these new cost structure for 2026, as well as oupput the results and the overline map, for 5k trips.

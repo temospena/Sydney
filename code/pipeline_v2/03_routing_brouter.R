@@ -118,6 +118,12 @@ for (city in target_cities) {
                     if ("total.time" %in% names(props)) props$total.time <- as.numeric(props$total.time)
                     if ("cost" %in% names(props)) props$cost <- as.numeric(props$cost)
 
+                    # Discard routes with unrealistic duration (> 120 min = 7200 sec)
+                    max_sec <- 120 * 60
+                    if (!is.na(props$total.time) && props$total.time > max_sec) {
+                        return(NULL)
+                    }
+
                     props$pair_id <- pid
                     return(props)
                 }

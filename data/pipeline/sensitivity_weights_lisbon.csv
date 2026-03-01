@@ -1,0 +1,5 @@
+"scenario","residential","primary","ci_track","ci_lane","avg_dist_m","avg_circuity","n_routed"
+"A_current",1.3,3,1,1.1,3621,1.506,500
+"B_wider",1.6,5,1,1.15,3709,1.539,500
+"C_narrow",1.1,2,1,1.05,3557,1.486,500
+"D_extreme",2.5,10,1,1.2,3950,1.637,500

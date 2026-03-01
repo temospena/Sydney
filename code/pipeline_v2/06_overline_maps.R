@@ -44,11 +44,13 @@ for (city in target_cities) {
 
         # Keep only LINESTRING geometries (drop MULTILINESTRING if any)
         routes <- routes[st_geometry_type(routes) %in% c("LINESTRING", "MULTILINESTRING"), ]
+        routes <- routes |> mutate(attrib = 1)
 
         cat(paste("  Overline for year", v_yr, "\n"))
 
+
         ol <- tryCatch(
-            overline(routes, attrib = "trip_id"),
+            overline(routes, attrib = "attrib"),
             error = function(e) {
                 cat(paste("  overline error:", e$message, "\n"))
                 NULL
@@ -57,8 +59,16 @@ for (city in target_cities) {
 
         if (is.null(ol) || nrow(ol) == 0) next
 
-        # Normalize volume to trips per segment per km for comparability
-        ol <- ol |> mutate(year = v_yr, n_trips = .data[["trip_id"]])
+        ol <- ol |> mutate(year = v_yr, n_trips = .data[["attrib"]])
+
+        # Discard low-volume segments (noise / single trips)
+        ol <- ol |> filter(n_trips >= 3)
+
+        # Simplify geometries AFTER overline to speed up plotting
+        # dTolerance = 0.001 degrees ≈ ~100m
+        ol <- st_simplify(ol, dTolerance = 0.001, preserveTopology = TRUE)
+
+        if (nrow(ol) == 0) next
         all_ols[[v_yr]] <- ol
     }
 
@@ -67,7 +77,7 @@ for (city in target_cities) {
         next
     }
 
-    routes_combined <- bind_rows(all_ols)
+    routes_combined <- bind_rows(all_ols) |> arrange(desc(n_trips))
 
     # ---- Build the 3-panel ggplot map ----
     # Define a common colour scale range
