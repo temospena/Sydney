@@ -1673,3 +1673,23 @@ But even here, I would like tochange the service weight with the residential (re
 
 Can you provide another cost structure based on this?
 And run again only for these new cost structure for 2026, as well as oupput the results and the overline map, for 5k trips.
+
+### Response
+(It was messing around with overline and changing my code, providing ridiculous results, so I stopped)
+
+---
+## Prompt 34
+
+I am not enjoying how slot the routing process is, and the results are not that different. 
+
+Please close this branch and open a new one, to change the routing engine.
+
+I was reading that Valhalla is a very fast engine. 
+If I need to install anything here on the laptop, let me know, don't proceed without asking me to do anything that requires sudo.
+If it is possible to use the pbfs for the different years, and test with their cycling routing profile (without any modification), I would like to give it a try and see how much it takes to run 20k OD pairs, that are already estimated.
+So, please organize the files and scripts as v3, use thes code not in the pipeline but in pipeline_v3/test-code, and run the analysis for 20k OD pairs for 2026, for Lisbon.
+Then we may consider changing the cost weights, but first show me the estimations and the overline map. 
+
+(don't forget to add your response to the prompts.md file)
+
+### Response
