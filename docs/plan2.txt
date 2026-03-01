@@ -72,7 +72,7 @@ But I would like that the costs would prioritizes the defined cycling infrasstru
 # Some guidelines
 
 - The described files and folder paths are relative to the working directory.
-- Locally I am only running some tests, due ram limitations (16GB) and processing capacity (i7). In the remote server, that I access with ssh (rosa@rosa-ist), I run the pipelines.
+- Locally I am only running some tests, due ram limitations (16GB) and processing capacity (i7). In the remote server (i9, 128GB RAM, 2TB mvme), that I access with ssh (rosa@rosa-ist), I run the pipelines.
 - Some files may be only available on the server side, such as all the geofabrik osm.pbf original files. But I assume only the already cropped .pbf files for each city and year are required to build a large rd5 for each year.
 - Only Chicago and Lisbon have the cropped osm.pbf files in this local laptop, under /data/pipeline/CITY_NAME . Please use those 2 cities to run the necessary tests locally, I can later run all the ciries on the server.
 - Check the .gitignore file. Maybe you will be looking for some file that does not live here in this laptop because of those rules, but they exist. If needed, I can run some terminal comands at the server and past here the resposes.

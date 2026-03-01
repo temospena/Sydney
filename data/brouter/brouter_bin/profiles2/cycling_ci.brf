@@ -1,0 +1,37 @@
+---context:global
+
+assign validForBikes = true
+assign validForCars = false
+assign validForFoot = false
+
+assign isbike = true
+
+---context:node
+assign initialcost = 0
+assign turncost = 0
+
+---context:way
+
+assign switchpoint = false
+
+# Baseline costs mapped from user data
+assign hm = 
+  if ( highway=cycleway ) then 1.0
+  else if ( highway=residential|living_street|pedestrian|path|service|track|unclassified ) then 10.0
+  else if ( highway=tertiary|tertiary_link ) then 11.0
+  else if ( highway=secondary|secondary_link ) then 12.0
+  else if ( highway=primary|primary_link ) then 15.0
+  else if ( highway=footway ) then 20.0
+  else if ( highway=motorway|motorway_link|trunk|trunk_link ) then 30.0
+  else if ( highway=steps ) then 40.0
+  else 1000.0
+
+# CI classifications override the baseline
+assign hw = 
+  if ( or highway=cycleway or cycleway=track cycleway=opposite_track ) then 1.0
+  else if ( or cycleway=lane cycleway=opposite_lane ) then 1.5
+  else if ( or cycleway=shared_lane or cycleway=share_busway and highway=residential bicycle_road=yes ) then 2.0
+  else if ( and highway=path|footway|pedestrian bicycle=yes|designated ) then 3.0
+  else hm
+
+assign costfactor = hw

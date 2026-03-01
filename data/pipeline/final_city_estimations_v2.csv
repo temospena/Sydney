@@ -1,0 +1,7 @@
+"city","year","run_timestamp","avg_distance_m","avg_circuity","avg_dist_change_pct","pct_ci_route","pct_ci_route_type_strong_ci","pct_ci_route_type_moderate_ci","pct_ci_route_type_weak_ci","pct_ci_route_type_shared_foot","avg_duration_min","access_15min_vol","found_routes","processing_time_minutes"
+"Chicago","2016","20260228_182205",3775.57,1.51,0,13.39,5.11,8.27,0,0.02,10.57,NA,100,0
+"Chicago","2021","20260228_182205",3876.14,1.53,2.66,27.5,7.84,8.21,9.93,1.52,10.85,NA,100,0
+"Chicago","2026","20260228_182206",4276.41,1.62,13.27,43.58,5.78,26.58,11.1,0.11,11.97,NA,100,0.01
+"Lisbon","2016","20260228_182206",4531,1.88,0,41.25,38.65,0.41,0,2.19,12.69,NA,100,0.01
+"Lisbon","2021","20260228_182207",4234.29,1.81,-6.55,52.76,46.27,0.12,4.07,2.3,11.86,NA,100,0.01
+"Lisbon","2026","20260228_182207",4388.65,1.88,-3.14,72.92,59.7,0.59,9.99,2.64,12.29,NA,100,0.01

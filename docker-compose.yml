@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  brouter-2016:
+    build:
+      context: ./code/pipeline_v2
+      dockerfile: Dockerfile.brouter
+    ports:
+      - "17771:17777"
+    volumes:
+      - ./data/brouter/segments_2016:/brouter/segments4
+      - ./code/pipeline_v2:/brouter/custom_profiles
+    environment:
+      - JAVA_OPTS=-Xmx8G
+    command: ["/brouter/segments4", "/brouter/profiles2", "/brouter/custom_profiles", "17777", "8", "0.0.0.0"]
+
+  brouter-2021:
+    build:
+      context: ./code/pipeline_v2
+      dockerfile: Dockerfile.brouter
+    ports:
+      - "17772:17777"
+    volumes:
+      - ./data/brouter/segments_2021:/brouter/segments4
+      - ./code/pipeline_v2:/brouter/custom_profiles
+    environment:
+      - JAVA_OPTS=-Xmx8G
+    command: ["/brouter/segments4", "/brouter/profiles2", "/brouter/custom_profiles", "17777", "8", "0.0.0.0"]
+
+  brouter-2026:
+    build:
+      context: ./code/pipeline_v2
+      dockerfile: Dockerfile.brouter
+    ports:
+      - "17773:17777"
+    volumes:
+      - ./data/brouter/segments_2026:/brouter/segments4
+      - ./code/pipeline_v2:/brouter/custom_profiles
+    environment:
+      - JAVA_OPTS=-Xmx8G
+    command: ["/brouter/segments4", "/brouter/profiles2", "/brouter/custom_profiles", "17777", "8", "0.0.0.0"]
