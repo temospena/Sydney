@@ -32,6 +32,12 @@ for (city in target_cities) {
         lon = st_coordinates(origins)[, 1],
         lat = st_coordinates(origins)[, 2]
     )
+    dests_df <- data.frame(
+        id = as.character(destinations$id),
+        lon = st_coordinates(destinations)[, 1],
+        lat = st_coordinates(destinations)[, 2],
+        volume = destinations$volume
+    )
 
     # Prepare opportunities data for accessibility (must match dest_id)
     dest_land_use <- data.frame(
