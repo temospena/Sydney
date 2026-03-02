@@ -65,3 +65,6 @@ data/pipeline/paris/paris_metro_buildings_height.geojson
 data/pipeline/lisbon/lisbon_metro_buildings_height.geojson
 data/pipeline/lisbon/lisbon_city_buildings.geojson
 data/pipeline/sydney/sydney_metro_buildings_height.geojson
+
+# Backup directory for old pipeline results
+data/pipeline_backup/

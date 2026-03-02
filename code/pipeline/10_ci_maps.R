@@ -41,6 +41,8 @@ for (city in target_cities) {
         mutate(year = factor(year, levels = years_labels)) |>
         arrange(year, infra5)
 
+    n_years <- length(unique(all_ci$year))
+
     # Static plot mode
     tmap_mode("plot")
 
@@ -59,7 +61,7 @@ for (city in target_cities) {
             lwd = 1.5,
             col.legend = tm_legend(title = "Infrastructure Type")
         ) +
-        tm_facets(by = "year", ncol = 3, sync = TRUE, free.coords = FALSE) +
+        tm_facets(by = "year", ncol = min(n_years, 5), sync = TRUE, free.coords = FALSE) +
         tm_title(paste(city, "- Cycling Infrastructure Evolution")) +
         tm_layout(
             legend.outside = TRUE,
@@ -110,17 +112,17 @@ for (city in target_cities) {
             mutate(
                 year = factor(year, levels = years_labels),
                 bicycle_lts = as.factor(bicycle_lts)
-            ) |> 
-          arrange(year, bicycle_lts)
+            ) |>
+            arrange(year, bicycle_lts)
 
         lts_map_obj <- tm_shape(all_lts) +
             tm_lines(
                 col = "bicycle_lts",
                 col.scale = tm_scale_categorical(values = c("#26a65b", "#f9bf3b", "#d60700ff", "#502e89ff")),
-                lwd = c(0.6,0.8,1.1,1.4),
+                lwd = c(0.6, 0.8, 1.1, 1.4),
                 col.legend = tm_legend(title = "LTS Level")
             ) +
-            tm_facets(by = "year", ncol = 3, sync = TRUE, free.coords = FALSE) +
+            tm_facets(by = "year", ncol = min(n_years, 5), sync = TRUE, free.coords = FALSE) +
             tm_title(paste(city, "- Network LTS Level Evolution")) +
             tm_layout(
                 legend.outside = TRUE,

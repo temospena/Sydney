@@ -3,6 +3,7 @@
 
 library(tidyverse)
 library(sf)
+library(accessibility)
 # Allocate memory securely without overflowing the 16GB RAM laptop limitations
 # Load global configuration
 source("code/pipeline/config.R")
@@ -37,6 +38,46 @@ for (city in target_cities) {
         lat = st_coordinates(destinations)[, 2],
         volume = destinations$volume
     )
+
+    # --- Unique OD pair optimization ---
+    # Since OD data uses H3 cell centroids, many trips share the same O-D pair.
+    # We build a lookup of unique coordinate pairs, route only those, and rejoin.
+    all_pairs <- data.frame(
+        orig_lon = origins_df$lon,
+        orig_lat = origins_df$lat,
+        dest_lon = dests_df$lon,
+        dest_lat = dests_df$lat,
+        trip_id  = origins_df$id
+    )
+    # Create a pair key for deduplication
+    all_pairs$pair_key <- paste(all_pairs$orig_lon, all_pairs$orig_lat,
+        all_pairs$dest_lon, all_pairs$dest_lat,
+        sep = "_"
+    )
+    unique_pairs <- all_pairs[!duplicated(all_pairs$pair_key), ]
+
+    # Create unique origins/destinations for r5r
+    unique_origins_df <- data.frame(
+        id  = as.character(seq_len(nrow(unique_pairs))),
+        lon = unique_pairs$orig_lon,
+        lat = unique_pairs$orig_lat
+    )
+    unique_dests_df <- data.frame(
+        id = as.character(seq_len(nrow(unique_pairs))),
+        lon = unique_pairs$dest_lon,
+        lat = unique_pairs$dest_lat,
+        volume = 1L # each unique destination counts as 1 opportunity
+    )
+
+    cat(sprintf(
+        "  [OD OPTIMIZATION] %d total trips -> %d unique OD pairs (%.0f%% reduction)\n",
+        nrow(all_pairs), nrow(unique_pairs),
+        (1 - nrow(unique_pairs) / nrow(all_pairs)) * 100
+    ))
+
+    # Build lookup to map unique pair results back to all trip IDs
+    pair_key_to_uid <- setNames(unique_origins_df$id, unique_pairs$pair_key)
+    all_pairs$unique_id <- pair_key_to_uid[all_pairs$pair_key]
 
     for (yr in years) {
         pbf_file <- file.path(city_dir, paste0(city_lower, "_", yr, ".osm.pbf"))
@@ -106,8 +147,8 @@ for (city in target_cities) {
                 }
 
                 print(paste("Entering LTS loop for Year", yr))
-                # Calculate routing for LTS 1 to 4
-                for (lts_level in 1:4) {
+                # Calculate routing for LTS levels defined in config
+                for (lts_level in lts_levels) {
                     res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
                     res_file_long <- file.path(city_dir, paste0("trips_", city_lower, "_20", yr, "_lts", lts_level, ".rds"))
 
@@ -146,20 +187,68 @@ for (city in target_cities) {
                         if (file.exists(check_file)) file.remove(check_file)
                     }
 
-                    print(paste("  Calculating itineraries for Year", yr, "LTS", lts_level))
-                    trips <- detailed_itineraries(
+                    print(paste(
+                        "  Calculating itineraries for Year", yr, "LTS", lts_level,
+                        "(", nrow(unique_origins_df), "unique pairs )"
+                    ))
+                    unique_trips <- detailed_itineraries(
                         r5r_network = r5_engine,
-                        origins = origins_df,
-                        destinations = dests_df,
+                        origins = unique_origins_df,
+                        destinations = unique_dests_df,
                         mode = "BICYCLE",
                         shortest_path = TRUE,
                         max_lts = lts_level,
-                        progress = TRUE, # know when it is done and how many routes are found
-                        # verbose = FALSE, # hide warning messages
+                        progress = TRUE,
                         osm_link_ids = TRUE
                     )
+
+                    # Expand unique routes back to all original trip IDs
+                    # Map from unique_id (from_id/to_id) back to original trip_ids
+                    uid_to_pair_key <- setNames(unique_pairs$pair_key, as.character(seq_len(nrow(unique_pairs))))
+                    expansion_map <- all_pairs[, c("trip_id", "unique_id")]
+
+                    if (nrow(unique_trips) > 0) {
+                        # unique_trips has from_id/to_id matching unique_origins_df/unique_dests_df ids
+                        trips <- unique_trips |>
+                            inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") |>
+                            mutate(
+                                from_id = trip_id,
+                                to_id = trip_id
+                            ) |>
+                            select(-trip_id)
+                    } else {
+                        trips <- unique_trips
+                    }
+
                     saveRDS(trips, res_file)
 
+
+                    # --- Accessibility (using detailed_itineraries output) ---
+                    avg_acc <- NA
+                    if (nrow(unique_trips) > 0) {
+                        travel_matrix <- sf::st_drop_geometry(unique_trips)[, c("from_id", "to_id", "total_duration")]
+                        dest_land_use <- data.frame(
+                            id = unique_dests_df$id,
+                            volume = unique_dests_df$volume
+                        )
+                        tryCatch(
+                            {
+                                acc <- accessibility::cumulative_cutoff(
+                                    travel_matrix = travel_matrix,
+                                    land_use_data = dest_land_use,
+                                    opportunity = "volume",
+                                    travel_cost = "total_duration",
+                                    cutoff = 15
+                                )
+                                if (nrow(acc) > 0) {
+                                    avg_acc <- round(sum(acc$volume, na.rm = TRUE))
+                                }
+                            },
+                            error = function(e) {
+                                cat(paste("    [WARN] Accessibility failed:", e$message, "\n"))
+                            }
+                        )
+                    }
 
                     # Export route finding metrics tracking how many successfully found a route
                     found_routes <- nrow(trips)
@@ -169,7 +258,8 @@ for (city in target_cities) {
                         city = city_lower,
                         year = as.integer(yr),
                         lts = lts_level,
-                        found_routes = found_routes
+                        found_routes = found_routes,
+                        access_15min_vol = avg_acc
                     )
 
                     if (!file.exists(summary_file)) {
@@ -189,6 +279,7 @@ for (city in target_cities) {
                     rm(trips)
                     gc()
                 }
+
 
                 # Stop engine to free JVM limits
                 stop_r5()

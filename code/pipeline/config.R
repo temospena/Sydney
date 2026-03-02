@@ -6,13 +6,15 @@
 
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
-target_cities <- c("San Francisco", "Hong Kong", "Nantes", "Beijing", "Gent",
-                   "Hamburg", "Glasgow", "Graz", "Amsterdam", "Helsinki")
+target_cities <- c(
+  "San Francisco", "Hong Kong", "Nantes", "Beijing", "Gent",
+  "Hamburg", "Glasgow", "Graz", "Amsterdam", "Helsinki"
+)
 # target_cities <- "Kyoto"
 
 # Years (2-digit) and full version strings — keep these in sync
-years <- c("16", "21", "26")
-versions <- c("160101", "210101", "260101")
+years <- c("16", "19", "21", "24", "26")
+versions <- c("160101", "190101", "210101", "240101", "260101")
 
 # Set TRUE to re-run all steps even if output files already exist
 FORCE_RERUN <- FALSE
@@ -20,6 +22,12 @@ FORCE_RERUN <- FALSE
 # Routing settings
 n_od_pairs <- 20000
 java_mem <- "-Xmx96G"
+lts_levels <- c(1, 2, 3, 4) # Select which LTS thresholds to route (1 to 4)
+
+# H3 resolution and lognormal distance decay for OD sampling (v2 approach)
+h3_res <- 9
+mu_log <- 0.33 # mean (log scale) for lognormal trip distance decay
+sd_log <- 0.66 # sd (log scale) for lognormal trip distance decay
 
 # Color scheme for CI categories (shared across plots and maps)
 ci_colors <- c(

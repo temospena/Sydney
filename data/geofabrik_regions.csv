@@ -170,3 +170,117 @@ Amsterdam,26,europe/netherlands
 Helsinki,16,europe/finland
 Helsinki,21,europe/finland
 Helsinki,26,europe/finland
+Austin,19,north-america/us/texas
+Austin,24,north-america/us/texas
+Barcelona,19,europe/spain
+Barcelona,24,europe/spain/cataluna
+Berlin,19,europe/germany/berlin
+Berlin,24,europe/germany/berlin
+Bogota,19,south-america/colombia
+Bogota,24,south-america/colombia
+Bologna,19,europe/italy/nord-est
+Bologna,24,europe/italy/nord-est
+Brussels,19,europe/belgium
+Brussels,24,europe/belgium
+Buenos Aires,19,south-america/argentina
+Buenos Aires,24,south-america/argentina
+Cairo,19,africa/egypt
+Cairo,24,africa/egypt
+Cape Town,19,africa/south-africa-and-lesotho
+Cape Town,24,africa/south-africa-and-lesotho
+Chicago,19,north-america/us/illinois
+Chicago,24,north-america/us/illinois
+Christchurch,19,australia-oceania/new-zealand
+Christchurch,24,australia-oceania/new-zealand
+Curitiba,19,south-america/brazil
+Curitiba,24,south-america/brazil/sul
+Dublin,19,europe/ireland-and-northern-ireland
+Dublin,24,europe/ireland-and-northern-ireland
+Kyoto,19,asia/japan
+Kyoto,24,asia/japan/kansai
+Leeds,19,europe/united-kingdom/england/west-yorkshire
+Leeds,24,europe/united-kingdom/england/west-yorkshire
+Lisbon,19,europe/portugal
+Lisbon,24,europe/portugal
+Ljubljana,19,europe/slovenia
+Ljubljana,24,europe/slovenia
+London,19,europe/united-kingdom/england/greater-london
+London,24,europe/united-kingdom/england/greater-london
+Lyon,19,europe/france/rhone-alpes
+Lyon,24,europe/france/rhone-alpes
+Madrid,19,europe/spain
+Madrid,24,europe/spain
+Melbourne,19,australia-oceania/australia
+Melbourne,24,australia-oceania/australia
+Mexico City,19,north-america/mexico
+Mexico City,24,north-america/mexico
+Milan,19,europe/italy/nord-ovest
+Milan,24,europe/italy/nord-ovest
+Minneapolis,19,north-america/us/minnesota
+Minneapolis,24,north-america/us/minnesota
+Montpellier,19,europe/france/languedoc-roussillon
+Montpellier,24,europe/france/languedoc-roussillon
+Montréal,19,north-america/canada/quebec
+Montréal,24,north-america/canada/quebec
+Munich,19,europe/germany/bayern/oberbayern
+Munich,24,europe/germany/bayern/oberbayern
+New York,19,north-america/us/new-york
+New York,24,north-america/us/new-york
+Oslo,19,europe/norway
+Oslo,24,europe/norway
+Paris,19,europe/france/ile-de-france
+Paris,24,europe/france/ile-de-france
+Portland,19,north-america/us/oregon
+Portland,24,north-america/us/oregon
+Santiago,19,south-america/chile
+Santiago,24,south-america/chile
+Sao Paulo,19,south-america/brazil
+Sao Paulo,24,south-america/brazil/sudeste
+Seattle,19,north-america/us/washington
+Seattle,24,north-america/us/washington
+Seoul,19,asia/south-korea
+Seoul,24,asia/south-korea
+Seville,19,europe/spain
+Seville,24,europe/spain/andalucia
+Shanghai,19,asia/china
+Shanghai,24,asia/china
+Stockholm,19,europe/sweden
+Stockholm,24,europe/sweden
+Strasbourg,19,europe/france/alsace
+Strasbourg,24,europe/france/alsace
+Sydney,19,australia-oceania/australia
+Sydney,24,australia-oceania/australia
+Taipei,19,asia/taiwan
+Taipei,24,asia/taiwan
+Tokyo,19,asia/japan
+Tokyo,24,asia/japan/kanto
+Turin,19,europe/italy/nord-ovest
+Turin,24,europe/italy/nord-ovest
+Vancouver,19,north-america/canada/british-columbia
+Vancouver,24,north-america/canada/british-columbia
+Vienna,19,europe/austria
+Vienna,24,europe/austria
+Warsaw,19,europe/poland
+Warsaw,24,europe/poland
+Zurich,19,europe/switzerland
+Zurich,24,europe/switzerland
+San Francisco,19,north-america/us/california
+San Francisco,24,north-america/us/california
+Hong Kong,19,asia/china
+Hong Kong,24,asia/china
+Nantes,19,europe/france/pays-de-la-loire
+Nantes,24,europe/france/pays-de-la-loire
+Beijing,19,asia/china
+Beijing,24,asia/china
+Gent,19,europe/belgium
+Gent,24,europe/belgium
+Hamburg,19,europe/germany/hamburg
+Hamburg,24,europe/germany/hamburg
+Glasgow,19,europe/united-kingdom/scotland
+Glasgow,24,europe/united-kingdom/scotland
+Graz,19,europe/austria
+Graz,24,europe/austria
+Amsterdam,19,europe/netherlands
+Amsterdam,24,europe/netherlands
+Helsinki,19,europe/finland
+Helsinki,24,europe/finland

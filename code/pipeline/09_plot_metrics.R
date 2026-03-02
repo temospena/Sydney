@@ -132,7 +132,7 @@ for (current_city in unique(final_df$city)) {
     all_overlines <- bind_rows(overlines_list) |>
       filter(trips > 1) |> # Basic filtering to keep it readable
       mutate(
-        year = factor(year, levels = c("2016", "2021", "2026")),
+        year = factor(year, levels = paste0("20", years)),
         lts = factor(lts, levels = c("LTS 1", "LTS 2", "LTS 3", "LTS 4"))
       )
 
