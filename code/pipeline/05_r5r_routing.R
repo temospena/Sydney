@@ -32,12 +32,14 @@ for (city in target_cities) {
         lon = st_coordinates(origins)[, 1],
         lat = st_coordinates(origins)[, 2]
     )
-    dests_df <- data.frame(
-        id = as.character(destinations$id),
-        lon = st_coordinates(destinations)[, 1],
-        lat = st_coordinates(destinations)[, 2],
-        volume = destinations$volume
+
+    # Prepare opportunities data for accessibility (must match dest_id)
+    dest_land_use <- data.frame(
+        id = dests_df$id,
+        volume = dests_df$volume
     )
+    # Filter to unique IDs to satisfy accessibility package requirements
+    dest_land_use <- dest_land_use[!duplicated(dest_land_use$id), ]
 
     # --- Unique OD pair optimization ---
     # Since OD data uses H3 cell centroids, many trips share the same O-D pair.
@@ -223,14 +225,12 @@ for (city in target_cities) {
                     saveRDS(trips, res_file)
 
 
-                    # --- Accessibility (using detailed_itineraries output) ---
+                    # --- Accessibility (using full travel matrix to ensure correct volume sum) ---
                     avg_acc <- NA
-                    if (nrow(unique_trips) > 0) {
-                        travel_matrix <- sf::st_drop_geometry(unique_trips)[, c("from_id", "to_id", "total_duration")]
-                        dest_land_use <- data.frame(
-                            id = unique_dests_df$id,
-                            volume = unique_dests_df$volume
-                        )
+                    if (nrow(trips) > 0) {
+                        cat("    Calculating 15-min volume accessibility sum (Full Matrix)...\n")
+                        travel_matrix <- sf::st_drop_geometry(trips)[, c("from_id", "to_id", "total_duration")]
+
                         tryCatch(
                             {
                                 acc <- accessibility::cumulative_cutoff(
@@ -241,6 +241,7 @@ for (city in target_cities) {
                                     cutoff = 15
                                 )
                                 if (nrow(acc) > 0) {
+                                    # User requested the SUM across all 20k trips
                                     avg_acc <- round(sum(acc$volume, na.rm = TRUE))
                                 }
                             },

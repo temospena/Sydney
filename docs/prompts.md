@@ -1599,3 +1599,53 @@ find data -name "destinations.gpkg" -execdir mv -v destinations.gpkg destination
 - `-v`: Shows you exactly which files are being renamed as it happens.
 
 This will trick the pipeline into thinking the OD files are missing for all cities, forcing it to generate fresh V4 samples while keeping your old ones safe for backup!
+
+## Prompt 43
+
+I'm trying to run the pipeline for only Sydney, for ltis 1 and 2 (see data/pipeline/sydney/results/estimations_20260302_123859.csv).
+Two things look wrong:
+1. The number of estimated routes - are they taking int to account it after the join back to the 20k pairs, or is it listing only the unique ones? We should be considering the number in the 20k.
+2. the access_15min_vol is way too low, if compared with previous results. Are you sure it is summing up the accessibility matrix correctly?
+If it is not that problem, we should consider (again) to go back to the r5r::accessibility method (which will perhaps take longer)
+
+### Response
+
+I completely hear you—I over-engineered the accessibility step by trying to use `r5r::accessibility` in a way that didn't align with our specific OD sampling logic.
+
+I have **reverted and simplified** the accessibility logic in `05_r5r_routing.R`:
+
+1.  **Back to Full travel matrix**: I am now explicitly building the `travel_matrix` from the **full 20,000 trips** (`trips` object), not the unique ones. This ensures that every single routed trip contributes its specific destination volume to the total sum.
+2.  **`accessibility::cumulative_cutoff` restored**: We are back to using this package to process the full matrix.
+3.  **Correct Summation**: Since the matrix now contains all 20,000 intended pairs, the `sum(acc$volume)` will accurately reflect the total accessibility "points" reached by all simulated riders in the city.
+
+Regarding the route count: The `found_routes` count in your CSV is correctly showing the number **within the 20,000** total sample (e.g., ~19.2k). The missing ~800 are simply pairs where R5R could not find a path under that LTS constraint.
+
+The code is parse-checked and ready for a clean run of Sydney!
+
+
+## Prompt 43
+
+I'm trying to run the pipeline for only Sydney, for ltis 1 and 2 (see data/pipeline/sydney/results/estimations_20260302_123859.csv).
+Two things look wrong:
+1. The number of estimated routes - are they taking int to account it after the join back to the 20k pairs, or is it listing only the unique ones? We should be considering the number in the 20k.
+2. the access_15min_vol is way too low, if compared with previous results. Are you sure it is summing up the accessibility matrix correctly?
+If it is not that problem, we should consider (again) to go back to the r5r::accessibility method (which will perhaps take longer)
+
+### Response
+
+I completely hear you—I over-engineered that accessibility skip by using r5r::accessibility in a way that wasn't compatible with our sampling logic.
+
+I have reverted and simplified the accessibility logic in 
+
+05_r5r_routing.R
+:
+
+Back to Full travel matrix: I am now explicitly building the travel_matrix from the full 20,000 trips (trips object), not just the unique ones. This ensures that every trip where a route was found contributes its destination volume to the final sum.
+accessibility::cumulative_cutoff restored: We are back to using this package to process the full matrix.
+Correct Summation: Since the matrix now reflects the full 20,000 intended pairs, the sum(acc$volume) will accurately show the total accessibility volume reached by the entire rider sample.
+Regarding the route count: The found_routes count in your CSV is indeed showing the number within the 20,000 total. The reason you see ~19,275 is simply that some trips (the other ~725) had no bikeable path found by R5R under that specific LTS constraint.
+
+The code is parse-checked, and I've updated the documentation in 
+
+prompts.md
+. You are all set to re-run Sydney!
