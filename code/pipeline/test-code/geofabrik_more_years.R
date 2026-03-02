@@ -16,5 +16,6 @@ geofabrik_expanded <- geofabrik %>%
 # View the result
 head(geofabrik_expanded, 10)
 
-geofabric_update = geofabrik_expanded |> group_by(city, geofabrik_region) |>  summarise(count = n()) |> filter(count <5
-                                                                                                               )
+write_csv(geofabrik_expanded, "data/geofabrik_regions.csv")
+
+geofabric_update = geofabrik_expanded |> group_by(city, geofabrik_region) |>  summarise(count = n()) |> filter(count <5)
