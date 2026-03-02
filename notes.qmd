@@ -26,9 +26,11 @@ header-includes:
   - \usepackage{apacite}
     
 abstract: |
-    Despite growing investments in cycling infrastructure, many networks remain fragmented, limiting their effectiveness. Current planning approaches lack systematic methods to identify and prioritize missing links based on empirical evidence. This research addresses this gap by integrating geospatial analysis, network science, and accessibility modeling to develop a replicable methodology for evaluating and improving cycling networks.
-    While studies have assessed cycling network performance, few have quantified its impact on ridership or provided structured prioritization methods. This research aims to develop a systematic methodology to identify and prioritize missing links in urban cycling networks, quantify the impact of network characteristics on cycling adoption. The cities of Lisbon and Sydney serve as case study due to their fragmented network, high-quality cycling data, and policy commitments to expand infrastructure and make it more consistent.
-    Findings...
+    Despite growing investments in cycling infrastructure, current planning approaches lack systematic methods to assess or simulate the potential impacts on cycling safety, trip performance and accessibility, besides the typical ex-ante and ex-post cycling volume comparison at each place. The network performance itself is often not assessed.
+  This research addresses this gap by integrating geospatial and accessibility analysis to develop a replicable methodology for evaluating cycling networks at different stages.
+  A systematic and reproducible methodology was developed to assess changes in safety, trip performance and accessibility in 3 different years, and across 50 cities, based on their existing OpenStreetMap data for each period. 20 thousand OD pairs were generated based on the recently available Global Building Atlas LoD1.
+  A panel data modeling was conducted to estimate the elasticities between the investments in different types of cycling infrastructure and trip performances for each city and year, quantifying the impacts of network improvements on potential cycling benefits.
+  Findings suggest that … 
 ---
 
 ```{r setup, include=FALSE}
@@ -538,19 +540,19 @@ There is also analysis from bike sharing data from 7 cities in the US [@kou2019]
 | Standard deviation            | 0.74             | 0.50        | 0.53     | 0.79         | 1.02   | 1.14           | 1.14    | 1.21     |
 +-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
 
-<table style="width:98%;">
+<table style="width:88%;">
 <colgroup>
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
-<col style="width: 8%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
 </colgroup>
 <tbody>
 <tr>
