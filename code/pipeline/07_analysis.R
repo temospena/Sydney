@@ -74,6 +74,12 @@ for (city in target_cities) {
         trips_df <- trips_df |> inner_join(valid_ods |> select(from_id, to_id), by = c("from_id", "to_id"))
         cat("    Filtered to", nrow(valid_ods), "OD pairs successfully routed across all years.\n")
 
+        # Prepare distance comparisons table
+        trips_wide <- trips_df |>
+            select(from_id, to_id, total_distance, year) |>
+            pivot_wider(values_from = total_distance, names_from = year, names_prefix = "dist_")
+
+        available_years <- sort(unique(trips_df$year))
 
         # Dynamic distance change processing
         first_yr <- available_years[1]
