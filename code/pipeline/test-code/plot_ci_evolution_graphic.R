@@ -16,6 +16,7 @@ summary(final_city_estimations$total_ci_m)
 
 # 1. Prepare the data
 plot_data <- final_city_estimations %>%
+  filter(lts %in% c(1,2)) |> 
   # Group by city and year to handle the multiple LTS rows
   group_by(city, year) %>%
   # Take the first value of total_ci_m (or max/mean, since it's likely duplicated) 
@@ -35,7 +36,7 @@ ggplot(plot_data, aes(x = year, y = total_ci_km, color = city, group = city)) +
     # fontface = "bold"
   ) +
   # Force the X-axis to only show the specific years in your dataset
-  scale_x_continuous(breaks = c(2016, 2021, 2026),
+  scale_x_continuous(breaks = c(2016, 2019, 2021, 2024, 2026),
                      limits = c(2016, 2027)) + 
   theme_minimal() +
   labs(

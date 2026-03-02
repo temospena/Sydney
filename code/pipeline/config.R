@@ -15,7 +15,7 @@ target_cities <- c("Amsterdam", "Austin", "Barcelona", "Beijing", "Berlin", "Bog
                   "Munich", "Nantes", "New York", "Oslo", "Paris", "Portland",
                   "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
                   "Seville", "Shanghai", "Stockholm", "Strasbourg", "Sydney", "Taipei",
-                  "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich") #cairo, cape town,  hong kong
+                  "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich") #cairo, cape town,  hong kong (> 100km in 2026)
 # target_cities <- "Sydney"
 
 # Years (2-digit) and full version strings — keep these in sync

@@ -8,7 +8,7 @@ library(dplyr)
 # infra_protected_km, infra_painted_km
 
 bike_data = read.csv("data/pipeline/final_city_estimations.csv")
-city_discard = c("Lisbon", "Cairo", "Cape Town", "Munich", "Hong Kong")
+city_discard = c("Lisbon", "Cairo", "Cape Town", "Munich", "Hong Kong") #Ljubliana? Amsterdam?
 bike_data = bike_data |> filter(!city %in% city_discard)
 
 
@@ -59,9 +59,11 @@ print(summary_stats)
 
 # To get elasticities, we create log transformations. 
 bike_data_model <- bike_data %>%
+  filter(lts %in% c(1,2)) |> 
   mutate(
     log_circuity = log(avg_circuity),
     log_distance = log(avg_distance_m),
+    lig_duration = log(avg_duration_min),
     log_lts1 = log(pct_lts1 + 1), # Adding a small constant to avoid log(0)
     log_lts2 = log(pct_lts2 + 1),
     log_lts3 = log(pct_lts3 + 1),
