@@ -1,13 +1,17 @@
 "city","year","lts","found_routes","access_15min_vol"
-"mexico city",16,1,12414,10669452
-"mexico city",16,2,12494,10776274
 "mexico city",16,3,16257,23478087
 "mexico city",16,4,19999,56584700
-"mexico city",21,1,14169,11768742
-"mexico city",21,2,17347,25716851
 "mexico city",21,3,17966,27880047
 "mexico city",21,4,19998,59775809
-"mexico city",26,1,14948,13025864
-"mexico city",26,2,18312,29757952
 "mexico city",26,3,18970,35584944
 "mexico city",26,4,20000,60110112
+"mexico city",16,1,19748,348056226
+"mexico city",16,2,19750,351860787
+"mexico city",19,1,19729,375868865
+"mexico city",19,2,19731,382272663
+"mexico city",21,1,19881,363907271
+"mexico city",21,2,19959,590370518
+"mexico city",24,1,19849,391969363
+"mexico city",24,2,19940,680126903
+"mexico city",26,1,19825,406408126
+"mexico city",26,2,19914,693134336

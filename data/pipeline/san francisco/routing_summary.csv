@@ -1,13 +1,17 @@
 "city","year","lts","found_routes","access_15min_vol"
-"san francisco",16,1,19545,22230269
-"san francisco",16,2,19728,25854102
 "san francisco",16,3,19998,51512718
 "san francisco",16,4,20000,101604144
-"san francisco",21,1,19889,32796430
-"san francisco",21,2,19954,48824167
 "san francisco",21,3,19958,65882366
 "san francisco",21,4,19960,98122926
-"san francisco",26,1,19874,31320304
-"san francisco",26,2,19949,48034857
 "san francisco",26,3,19966,61136927
 "san francisco",26,4,19988,91756917
+"san francisco",16,1,19973,180681679
+"san francisco",16,2,19979,223867389
+"san francisco",19,1,19992,247876419
+"san francisco",19,2,19999,400802374
+"san francisco",21,1,19994,353472699
+"san francisco",21,2,20000,529473860
+"san francisco",24,1,19948,372084487
+"san francisco",24,2,19954,543950131
+"san francisco",26,1,19919,371203376
+"san francisco",26,2,19925,539932899
