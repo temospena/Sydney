@@ -6,11 +6,17 @@
 
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
-target_cities <- c(
-  "San Francisco", "Hong Kong", "Nantes", "Beijing", "Gent",
-  "Hamburg", "Glasgow", "Graz", "Amsterdam", "Helsinki"
-)
-# target_cities <- "Kyoto"
+# target_cities <- c("Amsterdam", "Austin", "Barcelona", "Beijing", "Berlin", "Bogota", 
+#                   "Bologna", "Brussels", "Buenos Aires",  
+#                   "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow", 
+#                   "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds", 
+#                   "Lisbon", "Ljubljana", "London", "Lyon", "Madrid", "Melbourne", 
+#                   "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal", 
+#                   "Munich", "Nantes", "New York", "Oslo", "Paris", "Portland", 
+#                   "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul", 
+#                   "Seville", "Shanghai", "Stockholm", "Strasbourg", "Sydney", "Taipei", 
+#                   "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich") #cairo, cape town,  hong kong
+target_cities <- "Sydney"
 
 # Years (2-digit) and full version strings — keep these in sync
 years <- c("16", "19", "21", "24", "26")
@@ -22,7 +28,7 @@ FORCE_RERUN <- FALSE
 # Routing settings
 n_od_pairs <- 20000
 java_mem <- "-Xmx96G"
-lts_levels <- c(1, 2, 3, 4) # Select which LTS thresholds to route (1 to 4)
+lts_levels <- c(1, 2) # Select which LTS thresholds to route (1 to 4)  ## NOT RUN 3, 4 FOR NOW
 
 # H3 resolution and lognormal distance decay for OD sampling (v2 approach)
 h3_res <- 9
