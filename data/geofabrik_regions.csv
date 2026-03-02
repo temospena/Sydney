@@ -11,7 +11,7 @@ Austin,24,north-america/us/texas
 Austin,26,north-america/us/texas
 Barcelona,16,europe/spain
 Barcelona,19,europe/spain
-Barcelona,21,europe/spain/cataluna
+Barcelona,21,europe/spain
 Barcelona,24,europe/spain/cataluna
 Barcelona,26,europe/spain/cataluna
 Beijing,16,asia/china
@@ -105,7 +105,7 @@ Hong Kong,21,asia/china
 Hong Kong,24,asia/china
 Hong Kong,26,asia/china/hong-kong
 Kyoto,16,asia/japan
-Kyoto,19,asia/japan
+Kyoto,19,asia/japan/kansai
 Kyoto,21,asia/japan/kansai
 Kyoto,24,asia/japan/kansai
 Kyoto,26,asia/japan/kansai
@@ -137,7 +137,7 @@ Lyon,26,europe/france/rhone-alpes
 Madrid,16,europe/spain
 Madrid,19,europe/spain
 Madrid,21,europe/spain
-Madrid,24,europe/spain
+Madrid,24,europe/spain/madrid
 Madrid,26,europe/spain/madrid
 Melbourne,16,australia-oceania/australia
 Melbourne,19,australia-oceania/australia
@@ -226,7 +226,7 @@ Seoul,24,asia/south-korea
 Seoul,26,asia/south-korea
 Seville,16,europe/spain
 Seville,19,europe/spain
-Seville,21,europe/spain/andalucia
+Seville,21,europe/spain
 Seville,24,europe/spain/andalucia
 Seville,26,europe/spain/andalucia
 Shanghai,16,asia/china
@@ -255,7 +255,7 @@ Taipei,21,asia/taiwan
 Taipei,24,asia/taiwan
 Taipei,26,asia/taiwan
 Tokyo,16,asia/japan
-Tokyo,19,asia/japan
+Tokyo,19,asia/japan/kanto
 Tokyo,21,asia/japan/kanto
 Tokyo,24,asia/japan/kanto
 Tokyo,26,asia/japan/kanto
