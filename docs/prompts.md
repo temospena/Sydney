@@ -1812,3 +1812,30 @@ I have also cleaned up
 
 11_tidy_up.R
  to ensure it correctly preserves these new columns during aggregation.
+
+  have fixed the issue causing the data to be wiped during enrichment.
+
+What went wrong:
+In my previous logic, I had a branch that skipped the routing part for cities you already ran. However, that branch accidentally set the routing results to an empty table, which then "shrank" your 20,000 trips down to zero before saving. This is why 
+
+07_analysis.R
+ couldn't find the geometry column (it was looking at an empty table) and why 
+
+08_final_metrics.R
+ reported "No new data rows".
+
+The Fix:
+I have overhauled 
+
+05_r5r_routing.R
+ with a much more robust "Enrichment Mode":
+
+Data Preservation: It now correctly loads your existing 20,000 trips and preserves them.
+Safety First: I added specific logic to back up the geometry before any data manipulation and re-attribute it afterward. This ensures the files saved to disk are 100% valid sf objects that the subsequent scripts (analysis and plots) can read.
+Smart Join: It now maps trip_id back to the unique_id used for accessibility and exposure metrics more carefully, ensuring no data loss during the join.
+Consistency: Whether you are starting a city from scratch or enriching an old one, the code now follows the same calculation path for exposure metrics.
+Next Steps:
+You can now re-run the pipeline. The "Enrichment Mode" will detect your existing Amsterdam and Austin files, quickly add the missing access_15min_vol and route_ci_... columns, and save them correctly. Following that, 
+
+07_analysis.R
+ and the rest of the steps should run without errors.

@@ -247,11 +247,13 @@ for (city in target_cities) {
                         "  Calculating itineraries for Year", yr, "LTS", lts_level,
                         "(", nrow(unique_origins_df), "unique pairs )"
                     ))
+                    enriching <- FALSE
                     if (exists("trips_already_loaded") && !is.null(trips_already_loaded)) {
-                        cat("    Skipping detailed_itineraries (already have routes), re-calculating true accessibility...\n")
-                        unique_trips <- data.frame() # will not be used
+                        cat("    Enrichment Mode: Re-processing metadata for existing routes...\n")
                         trips <- trips_already_loaded
+                        enriching <- TRUE
                         rm(trips_already_loaded)
+                        unique_trips <- data.frame()
                     } else {
                         unique_trips <- detailed_itineraries(
                             r5r_network = r5_engine,
@@ -265,10 +267,29 @@ for (city in target_cities) {
                         )
                     }
 
-                    if (nrow(unique_trips) > 0) {
-                        cat("    Calculating route-level exposure metrics for unique pairs...\n")
-                        # 1. Euclidean distance
-                        unique_trips <- unique_trips %>%
+                    # --- Metadata Processing (Exposure Metrics) ---
+                    # If we have new unique_trips or if trips is missing exposure columns
+                    needs_exposure <- FALSE
+                    if (nrow(unique_trips) > 0) needs_exposure <- TRUE
+                    if (enriching && !"route_ci_strong_m" %in% names(trips)) needs_exposure <- TRUE
+
+                    if (needs_exposure) {
+                        cat("    Calculating route-level exposure metrics (CI, LTS, circuity)...\n")
+
+                        # Target for metrics calculation: unique_trips if new, otherwise trips (deduplicated for speed if possible)
+                        target_for_metrics <- if (nrow(unique_trips) > 0) {
+                            unique_trips
+                        } else {
+                            # In enrichment, trips might have 20k rows.
+                            # We filter to unique from_id/to_id to speed up processing
+                            trips %>%
+                                group_by(from_id, to_id) %>%
+                                slice(1) %>%
+                                ungroup()
+                        }
+
+                        # Calculate Euclidean distance
+                        target_for_metrics <- target_for_metrics %>%
                             mutate(
                                 euclidean_distance = as.numeric(st_distance(
                                     lwgeom::st_startpoint(geometry),
@@ -277,10 +298,11 @@ for (city in target_cities) {
                                 ))
                             )
 
-                        # 2. Exposure & LTS metrics (joined by edge index to the year's network)
-                        edge_list <- strsplit(as.character(unique_trips$edge_id_list), ",")
+                        edge_list_str <- as.character(target_for_metrics$edge_id_list)
+                        edge_list <- strsplit(edge_list_str, ",")
+
                         route_edges_mapping <- data.frame(
-                            row_idx = rep(1:nrow(unique_trips), lengths(edge_list)),
+                            row_idx = rep(1:nrow(target_for_metrics), lengths(edge_list)),
                             edge_index = as.numeric(unlist(edge_list))
                         )
 
@@ -315,11 +337,8 @@ for (city in target_cities) {
                                         non_ci_accum <- 0
                                         was_on_ci <- FALSE
                                         for (k in seq_len(n)) {
-                                            if (is.na(ci_flag[k])) next
-                                            if (ci_flag[k]) {
-                                                if (was_on_ci && non_ci_accum > 100) {
-                                                    interruptions <- interruptions + 1L
-                                                }
+                                            if (is_any_ci[k]) {
+                                                if (was_on_ci && non_ci_accum > 100) interruptions <- interruptions + 1L
                                                 non_ci_accum <- 0
                                                 was_on_ci <- TRUE
                                             } else {
@@ -339,30 +358,24 @@ for (city in target_cities) {
                             ) %>%
                             select(-lts1_m, -lts2_m, -lts3_m, -lts4_m, -total_edge_len)
 
-                        # Join back to unique_trips and replace NAs
-                        unique_trips <- unique_trips %>%
+                        target_for_metrics <- target_for_metrics %>%
                             mutate(row_idx = row_number()) %>%
                             left_join(route_stats, by = "row_idx") %>%
                             select(-row_idx) %>%
                             mutate(across(starts_with("route_"), ~ replace_na(., 0)))
-                    }
 
-                    # Expand unique routes back to all original trip IDs
-                    # Map from unique_id (from_id/to_id) back to original trip_ids
-                    uid_to_pair_key <- setNames(unique_pairs$pair_key, as.character(seq_len(nrow(unique_pairs))))
-                    expansion_map <- all_pairs[, c("trip_id", "unique_id")]
-
-                    if (nrow(unique_trips) > 0) {
-                        # unique_trips has from_id/to_id matching unique_origins_df/unique_dests_df ids
-                        trips <- unique_trips |>
-                            inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") |>
-                            mutate(
-                                from_id = trip_id,
-                                to_id = trip_id
-                            ) |>
-                            select(-trip_id)
-                    } else {
-                        trips <- unique_trips
+                        if (!enriching) {
+                            # Expand unique_trips to 20k rows
+                            trips <- target_for_metrics %>%
+                                inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") %>%
+                                mutate(from_id = trip_id, to_id = trip_id) %>%
+                                select(-trip_id)
+                        } else {
+                            # Re-join metrics to existing 20k rows
+                            trips <- trips %>%
+                                left_join(st_drop_geometry(target_for_metrics) %>% select(from_id, to_id, starts_with("route_"), euclidean_distance), by = c("from_id", "to_id")) %>%
+                                mutate(across(starts_with("route_"), ~ replace_na(., 0)))
+                        }
                     }
 
 
@@ -393,21 +406,30 @@ for (city in target_cities) {
                                 )
 
                                 if (nrow(acc) > 0) {
-                                    # 1. Update the 'trips' object (which uses original trip_ids)
-                                    # Map unique_id back to access data
+                                    # Handle expansion carefully to not lose sf class
                                     acc_to_join <- acc %>%
                                         select(unique_id = id, access_15min_vol = volume) %>%
                                         mutate(unique_id = as.character(unique_id))
 
-                                    # We need to handle the expansion from unique_id to trip_id
-                                    # all_pairs mapping is: trip_id <-> unique_id
-                                    trips <- trips %>%
-                                        left_join(expansion_map %>% select(trip_id, unique_id), by = c("from_id" = "trip_id")) %>%
+                                    # we join to 'trips' (which is the full 20k rows)
+                                    # mapping back: trip_id is in from_id.
+                                    trips_meta <- all_pairs %>%
+                                        select(trip_id, unique_id) %>%
+                                        mutate(trip_id = as.character(trip_id))
+
+                                    trips_enriched <- trips %>%
+                                        st_drop_geometry() %>%
+                                        mutate(from_id = as.character(from_id)) %>%
+                                        left_join(trips_meta, by = c("from_id" = "trip_id")) %>%
                                         left_join(acc_to_join, by = "unique_id") %>%
                                         mutate(access_15min_vol = replace_na(access_15min_vol, 0)) %>%
                                         select(-unique_id)
 
-                                    # 2. Summary stats for the routing_summary.csv (Average accessibility across sampled trips)
+                                    # Re-attribute geometry
+                                    geom_backup <- st_geometry(trips)
+                                    trips <- trips_enriched
+                                    st_geometry(trips) <- geom_backup
+
                                     avg_acc <- round(mean(trips$access_15min_vol, na.rm = TRUE))
                                 }
                                 rm(ttm, acc)
