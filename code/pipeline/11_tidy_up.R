@@ -25,6 +25,7 @@ for (city in target_cities) {
     dest_land_use <- st_read(dests_path, quiet = TRUE) %>%
       st_drop_geometry() %>%
       select(id, volume) %>%
+      mutate(id = as.character(id)) %>%
       filter(!duplicated(id))
   }
 
@@ -43,6 +44,7 @@ for (city in target_cities) {
           # We take the first row per OD pair since total_duration/total_distance are route-level constants in r5r output
           stats <- trips %>%
             st_drop_geometry() %>%
+            mutate(from_id = as.character(from_id), to_id = as.character(to_id)) %>%
             group_by(from_id, to_id) %>%
             summarise(
               total_duration = first(total_duration),
