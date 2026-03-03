@@ -35,11 +35,20 @@ for (city in target_cities) {
       if (file.exists(res_file)) {
         cat("  Extracting stats from:", basename(res_file), "\n")
 
-        # Read the heavy file
-        trips <- readRDS(res_file)
+        # Read the heavy file safely
+        trips <- tryCatch(
+          readRDS(res_file),
+          error = function(e) {
+            cat("    [WARN] Failed to read", basename(res_file), "- file may be corrupted. Skipping...\n")
+            return(NULL)
+          }
+        )
+
+        if (is.null(trips)) next
 
         if (nrow(trips) > 0) {
           # Drop geometries and keep identifiers + Requested metrics
+
           # detailed_itineraries can return multiple rows per OD pair (segments)
           # We take the first row per OD pair since total_duration/total_distance are route-level constants in r5r output
           stats <- trips %>%

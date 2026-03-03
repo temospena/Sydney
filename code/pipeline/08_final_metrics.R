@@ -235,127 +235,135 @@ for (city in target_cities) {
       }
 
       if (!is.null(trips_to_read)) {
-        trips <- readRDS(trips_to_read)
-        if (nrow(trips) > 0) {
-          cat("    Processing", nrow(trips), "trips (optimized lookup mode)...\n")
-
-          # Drop geometry immediately
-          trips <- trips |> st_drop_geometry()
-
-          # Join pre-calculated linear distances for speed and consistency
-          trips <- trips |>
-            left_join(od_pairs_lookup, by = c("from_id", "to_id")) |>
-            mutate(
-              circuity = total_distance / pmax(linear_distance, 1)
-            )
-
-          row_data$avg_distance_m <- round(mean(trips$total_distance, na.rm = TRUE), 2)
-          row_data$avg_circuity <- round(mean(trips$circuity, na.rm = TRUE), 2)
-
-          # Average duration in minutes (r5r returns total_duration in minutes)
-          if ("total_duration" %in% names(trips)) {
-            row_data$avg_duration_min <- round(mean(trips$total_duration, na.rm = TRUE), 2)
+        trips <- tryCatch(
+          readRDS(trips_to_read),
+          error = function(e) {
+            cat("    [WARN] Failed to read", basename(trips_to_read), "- file may be corrupted. Skipping...\n")
+            return(NULL)
           }
+        )
+        if (!is.null(trips)) {
+          if (nrow(trips) > 0) {
+            cat("    Processing", nrow(trips), "trips (optimized lookup mode)...\n")
 
-          # 8: Percentage CI and LTS lengths per route
-          if (!is.null(edges)) {
-            # Use faster strsplit and unnesting instead of regex
-            edge_list <- strsplit(as.character(trips$edge_id_list), ",")
+            # Drop geometry immediately
+            trips <- trips |> st_drop_geometry()
 
-            route_edges <- data.frame(
-              row_idx = rep(1:nrow(trips), lengths(edge_list)),
-              edge_index = as.numeric(unlist(edge_list))
-            )
-
-            # Left join edges (edges is already st_drop_geometry)
-            # Use only necessary columns to keep join light
-            route_stats <- route_edges |>
-              left_join(edges, by = "edge_index") |>
-              group_by(row_idx) |>
-              summarise(
-                total_edge_len = sum(length, na.rm = TRUE),
-                ci_len = sum(length[osm_id %in% ci_osm_ids], na.rm = TRUE),
-                ci_sep_len = sum(length[osm_id %in% ci_osm_ids_sep], na.rm = TRUE),
-                ci_paint_len = sum(length[osm_id %in% ci_osm_ids_paint], na.rm = TRUE),
-                ci_mixed_len = sum(length[osm_id %in% ci_osm_ids_mixed], na.rm = TRUE),
-                ci_foot_len = sum(length[osm_id %in% ci_osm_ids_foot], na.rm = TRUE),
-                lts1_len = sum(length[bicycle_lts == 1], na.rm = TRUE),
-                lts2_len = sum(length[bicycle_lts == 2], na.rm = TRUE),
-                lts3_len = sum(length[bicycle_lts == 3], na.rm = TRUE),
-                lts4_len = sum(length[bicycle_lts == 4], na.rm = TRUE),
-                .groups = "drop"
-              )
-
-            final_trips <- trips |>
-              mutate(row_idx = row_number()) |>
-              left_join(route_stats, by = "row_idx") |>
+            # Join pre-calculated linear distances for speed and consistency
+            trips <- trips |>
+              left_join(od_pairs_lookup, by = c("from_id", "to_id")) |>
               mutate(
-                pct_ci = ci_len / pmax(total_edge_len, 1),
-                pct_ci_sep = ci_sep_len / pmax(total_edge_len, 1),
-                pct_ci_paint = ci_paint_len / pmax(total_edge_len, 1),
-                pct_ci_mixed = ci_mixed_len / pmax(total_edge_len, 1),
-                pct_ci_foot = ci_foot_len / pmax(total_edge_len, 1),
-                pct_lts1 = lts1_len / pmax(total_edge_len, 1),
-                pct_lts2 = lts2_len / pmax(total_edge_len, 1),
-                pct_lts3 = lts3_len / pmax(total_edge_len, 1),
-                pct_lts4 = lts4_len / pmax(total_edge_len, 1)
+                circuity = total_distance / pmax(linear_distance, 1)
               )
 
-            row_data$pct_ci_route <- round(mean(final_trips$pct_ci, na.rm = TRUE) * 100, 2)
-            row_data$pct_ci_route_sep <- round(mean(final_trips$pct_ci_sep, na.rm = TRUE) * 100, 2)
-            row_data$pct_ci_route_paint <- round(mean(final_trips$pct_ci_paint, na.rm = TRUE) * 100, 2)
-            row_data$pct_ci_route_mixed <- round(mean(final_trips$pct_ci_mixed, na.rm = TRUE) * 100, 2)
-            row_data$pct_ci_route_foot <- round(mean(final_trips$pct_ci_foot, na.rm = TRUE) * 100, 2)
-            row_data$pct_lts1 <- round(mean(final_trips$pct_lts1, na.rm = TRUE) * 100, 2)
-            row_data$pct_lts2 <- round(mean(final_trips$pct_lts2, na.rm = TRUE) * 100, 2)
-            row_data$pct_lts3 <- round(mean(final_trips$pct_lts3, na.rm = TRUE) * 100, 2)
-            row_data$pct_lts4 <- round(mean(final_trips$pct_lts4, na.rm = TRUE) * 100, 2)
+            row_data$avg_distance_m <- round(mean(trips$total_distance, na.rm = TRUE), 2)
+            row_data$avg_circuity <- round(mean(trips$circuity, na.rm = TRUE), 2)
 
-            # CI Interruptions: count non-CI gaps > 100m per route
-            # For each route, walk edges in order. When consecutive non-CI edges
-            # accumulate > 100m and are followed by CI, that's 1 interruption.
-            route_edges_ci <- route_edges |>
-              left_join(edges, by = "edge_index") |>
-              mutate(is_ci = osm_id %in% ci_osm_ids)
+            # Average duration in minutes (r5r returns total_duration in minutes)
+            if ("total_duration" %in% names(trips)) {
+              row_data$avg_duration_min <- round(mean(trips$total_duration, na.rm = TRUE), 2)
+            }
 
-            ci_interruptions_per_route <- route_edges_ci |>
-              arrange(row_idx, edge_index) |>
-              group_by(row_idx) |>
-              summarise(
-                n_interruptions = {
-                  ci_flag <- is_ci
-                  edge_len <- length
-                  n <- length(ci_flag)
-                  if (n == 0 || all(is.na(ci_flag))) {
-                    0L
-                  } else {
-                    interruptions <- 0L
-                    non_ci_accum <- 0
-                    was_on_ci <- FALSE
-                    for (k in seq_len(n)) {
-                      if (is.na(ci_flag[k])) next
-                      if (ci_flag[k]) {
-                        # Entering CI: if we had accumulated > 100m of non-CI, count it
-                        if (was_on_ci && non_ci_accum > 100) {
-                          interruptions <- interruptions + 1L
+            # 8: Percentage CI and LTS lengths per route
+            if (!is.null(edges)) {
+              # Use faster strsplit and unnesting instead of regex
+              edge_list <- strsplit(as.character(trips$edge_id_list), ",")
+
+              route_edges <- data.frame(
+                row_idx = rep(1:nrow(trips), lengths(edge_list)),
+                edge_index = as.numeric(unlist(edge_list))
+              )
+
+              # Left join edges (edges is already st_drop_geometry)
+              # Use only necessary columns to keep join light
+              route_stats <- route_edges |>
+                left_join(edges, by = "edge_index") |>
+                group_by(row_idx) |>
+                summarise(
+                  total_edge_len = sum(length, na.rm = TRUE),
+                  ci_len = sum(length[osm_id %in% ci_osm_ids], na.rm = TRUE),
+                  ci_sep_len = sum(length[osm_id %in% ci_osm_ids_sep], na.rm = TRUE),
+                  ci_paint_len = sum(length[osm_id %in% ci_osm_ids_paint], na.rm = TRUE),
+                  ci_mixed_len = sum(length[osm_id %in% ci_osm_ids_mixed], na.rm = TRUE),
+                  ci_foot_len = sum(length[osm_id %in% ci_osm_ids_foot], na.rm = TRUE),
+                  lts1_len = sum(length[bicycle_lts == 1], na.rm = TRUE),
+                  lts2_len = sum(length[bicycle_lts == 2], na.rm = TRUE),
+                  lts3_len = sum(length[bicycle_lts == 3], na.rm = TRUE),
+                  lts4_len = sum(length[bicycle_lts == 4], na.rm = TRUE),
+                  .groups = "drop"
+                )
+
+              final_trips <- trips |>
+                mutate(row_idx = row_number()) |>
+                left_join(route_stats, by = "row_idx") |>
+                mutate(
+                  pct_ci = ci_len / pmax(total_edge_len, 1),
+                  pct_ci_sep = ci_sep_len / pmax(total_edge_len, 1),
+                  pct_ci_paint = ci_paint_len / pmax(total_edge_len, 1),
+                  pct_ci_mixed = ci_mixed_len / pmax(total_edge_len, 1),
+                  pct_ci_foot = ci_foot_len / pmax(total_edge_len, 1),
+                  pct_lts1 = lts1_len / pmax(total_edge_len, 1),
+                  pct_lts2 = lts2_len / pmax(total_edge_len, 1),
+                  pct_lts3 = lts3_len / pmax(total_edge_len, 1),
+                  pct_lts4 = lts4_len / pmax(total_edge_len, 1)
+                )
+
+              row_data$pct_ci_route <- round(mean(final_trips$pct_ci, na.rm = TRUE) * 100, 2)
+              row_data$pct_ci_route_sep <- round(mean(final_trips$pct_ci_sep, na.rm = TRUE) * 100, 2)
+              row_data$pct_ci_route_paint <- round(mean(final_trips$pct_ci_paint, na.rm = TRUE) * 100, 2)
+              row_data$pct_ci_route_mixed <- round(mean(final_trips$pct_ci_mixed, na.rm = TRUE) * 100, 2)
+              row_data$pct_ci_route_foot <- round(mean(final_trips$pct_ci_foot, na.rm = TRUE) * 100, 2)
+              row_data$pct_lts1 <- round(mean(final_trips$pct_lts1, na.rm = TRUE) * 100, 2)
+              row_data$pct_lts2 <- round(mean(final_trips$pct_lts2, na.rm = TRUE) * 100, 2)
+              row_data$pct_lts3 <- round(mean(final_trips$pct_lts3, na.rm = TRUE) * 100, 2)
+              row_data$pct_lts4 <- round(mean(final_trips$pct_lts4, na.rm = TRUE) * 100, 2)
+
+              # CI Interruptions: count non-CI gaps > 100m per route
+              # For each route, walk edges in order. When consecutive non-CI edges
+              # accumulate > 100m and are followed by CI, that's 1 interruption.
+              route_edges_ci <- route_edges |>
+                left_join(edges, by = "edge_index") |>
+                mutate(is_ci = osm_id %in% ci_osm_ids)
+
+              ci_interruptions_per_route <- route_edges_ci |>
+                arrange(row_idx, edge_index) |>
+                group_by(row_idx) |>
+                summarise(
+                  n_interruptions = {
+                    ci_flag <- is_ci
+                    edge_len <- length
+                    n <- length(ci_flag)
+                    if (n == 0 || all(is.na(ci_flag))) {
+                      0L
+                    } else {
+                      interruptions <- 0L
+                      non_ci_accum <- 0
+                      was_on_ci <- FALSE
+                      for (k in seq_len(n)) {
+                        if (is.na(ci_flag[k])) next
+                        if (ci_flag[k]) {
+                          # Entering CI: if we had accumulated > 100m of non-CI, count it
+                          if (was_on_ci && non_ci_accum > 100) {
+                            interruptions <- interruptions + 1L
+                          }
+                          non_ci_accum <- 0
+                          was_on_ci <- TRUE
+                        } else {
+                          # On non-CI road
+                          non_ci_accum <- non_ci_accum + ifelse(is.na(edge_len[k]), 0, edge_len[k])
                         }
-                        non_ci_accum <- 0
-                        was_on_ci <- TRUE
-                      } else {
-                        # On non-CI road
-                        non_ci_accum <- non_ci_accum + ifelse(is.na(edge_len[k]), 0, edge_len[k])
                       }
+                      interruptions
                     }
-                    interruptions
-                  }
-                },
-                .groups = "drop"
-              )
+                  },
+                  .groups = "drop"
+                )
 
-            row_data$avg_ci_interruptions <- round(mean(ci_interruptions_per_route$n_interruptions, na.rm = TRUE), 2)
+              row_data$avg_ci_interruptions <- round(mean(ci_interruptions_per_route$n_interruptions, na.rm = TRUE), 2)
+            }
+
+            final_dataset[[length(final_dataset) + 1]] <- row_data
           }
-
-          final_dataset[[length(final_dataset) + 1]] <- row_data
         }
       } else {
         cat("    [MISSING] No itinerary file found for Year", yr, "(LTS", lts_level, "). Checked path:", res_file, ". Skipping to avoid overwriting with NAs.\n")

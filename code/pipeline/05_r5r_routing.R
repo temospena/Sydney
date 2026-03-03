@@ -227,9 +227,20 @@ for (city in target_cities) {
                             cat("  Existing results are older than updated/missing Street Network. Re-running...\n")
                         } else {
                             # Check if existing file needs enriching with access_15min_vol
-                            existing_trips <- readRDS(check_file)
-                            if (!"access_15min_vol" %in% names(existing_trips)) {
-                                cat(paste("  Valid results exist but MISSING access_15min_vol. Re-processing enrichment for:", check_file, "\n"))
+                            existing_trips <- tryCatch(
+                                readRDS(check_file),
+                                error = function(e) {
+                                    cat("  [WARN] Corrupted RDS file detected:", check_file, "Deleting and forcing re-computation...\n")
+                                    return(NULL)
+                                }
+                            )
+
+                            if (is.null(existing_trips)) {
+                                # Corrupted file detected, force re-run by removing it
+                                file.remove(check_file)
+                                cat("  Re-running due to corrupted existing file...\n")
+                            } else if (!"access_15min_vol" %in% names(existing_trips) || !"route_ci_strong_m" %in% names(existing_trips)) {
+                                cat(paste("  Valid results exist but MISSING routing metadata. Re-processing enrichment for:", check_file, "\n"))
                                 # Carry on with this LTS level loop but signal to skip detailed_itineraries
                                 trips_already_loaded <- existing_trips
                             } else {
@@ -238,6 +249,7 @@ for (city in target_cities) {
                                 next
                             }
                         }
+
 
                         # Triggered a re-run: don't delete yet, overwrite at the end of the loop
                         # if (file.exists(check_file)) file.remove(check_file)
@@ -472,9 +484,8 @@ for (city in target_cities) {
 
                                     # Re-attribute geometry if it was sf
                                     if (is_sf) {
-                                        # Use standard geometry name 'geometry'
-                                        trips <- st_as_sf(trips_enriched, geometry = geom_backup)
-                                        st_geometry(trips) <- "geometry"
+                                        trips <- trips_enriched
+                                        st_geometry(trips) <- geom_backup
                                     } else {
                                         trips <- trips_enriched
                                     }

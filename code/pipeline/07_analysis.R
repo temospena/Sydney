@@ -38,7 +38,16 @@ for (city in target_cities) {
             }
 
             if (!is.null(trips_to_read)) {
-                trips_list[[yr]] <- readRDS(trips_to_read) |> mutate(year = paste0("20", yr))
+                loaded_trips <- tryCatch(
+                    readRDS(trips_to_read),
+                    error = function(e) {
+                        cat("    [WARN] Failed to read", basename(trips_to_read), "- file may be corrupted. Skipping...\n")
+                        return(NULL)
+                    }
+                )
+                if (!is.null(loaded_trips)) {
+                    trips_list[[yr]] <- loaded_trips |> mutate(year = paste0("20", yr))
+                }
             } else {
                 cat("    [MISSING] No results found for Year", yr, "(LTS", lts_level, ")\n")
             }
