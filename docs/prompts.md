@@ -1649,3 +1649,73 @@ The code is parse-checked, and I've updated the documentation in
 
 prompts.md
 . You are all set to re-run Sydney!
+
+## Prompt 43
+
+I run for all cities with the new od method and using r5r.
+Now I am starting to model the results.
+
+Context:
+I am building a Route-Level Panel Data Econometric Model. I already have a base dataset in long format (cityX_routing_stats_all.rds) that contains 20,000 Origin-Destination (OD) pairs with the following columns: from_id, to_id, total_duration, total_distance, year, and lts.
+
+To solve the "dilution effect" in my model, I need to enrich this exact table with exposure metrics—meaning I need to know exactly how much infrastructure each specific route physically touches in its respective year.
+
+Task:
+Please update the routing pipeline to extract the physical path geometry for each routed trip (may be needed to route again? remove the deletion of the routes of the tidy_up script  - coment them for now), join by osm_id with the street network for that specific year, and append the following new columns to my existing long-format dataframe:
+
+1. Baseline Spatial Metric:
+
+    euclidean_distance: The straight-line distance (in meters) between the from_id and to_id. (I need this to calculate the route's circuity).
+
+2. Route Infrastructure Exposure (Meters driven on specific CI):
+
+    route_ci_strong_m: Total meters of this specific route ridden on physically separated/protected cycling infrastructure.
+
+    route_ci_medium_m: Total meters ridden on painted lanes.
+
+    route_ci_weak_m: Total meters ridden on mixed-traffic/sharrow CI.
+
+    route_ci_foot_m: Total meters ridden on pedestrian/dismount paths.
+
+3. Route Quality & Safety Metrics:
+
+    route_pct_lts1: Percentage of the route's total distance ridden on strictly LTS 1 segments.
+
+    route_pct_lts2: Percentage of the route's total distance ridden on LTS 2 segments.
+    route_pct_lts3: Percentage of the route's total distance ridden on LTS 3 segments.
+    route_pct_lts4: Percentage of the route's total distance ridden on LTS 4 segments.
+
+    route_interruptions_count: The number of times this specific route drops out of any cycling infrastructure into mixed traffic for a gap longer than 100 meters, and from mixed traffic into any cycling infrastructure.
+
+Constraints & Notes for the Join:
+
+    Please ensure these new columns merge perfectly onto the existing composite key: c("from_id", "to_id", "year", "lts").
+
+    If a route has 0 exposure to a specific infrastructure type, please return 0 instead of NA.
+
+    I know this metrics are being already assessed at city level, and probaly start with route level and then do the average, but I would like to save them also at route level on the  cityX_routing_stats_all.rds
+
+### Response
+
+I have updated the routing pipeline to incorporate the route-level exposure metrics you requested.
+
+Key Changes Implemented:
+Updated 
+
+05_r5r_routing.R
+:
+
+Enriched Routing Results: For every unique OD pair routed, the script now calculates:
+euclidean_distance: Straight-line distance between snapped start and end points.
+Exposure Metrics: Total meters ridden on strong, medium, weak, and foot infrastructure (mapped from your OSM categories).
+LTS Distribution: Percentage of the route's total distance belonging to each LTS level (1–4).
+CI Interruptions: A count of "gaps" (non-CI segments > 100m) encountered after riding on infrastructure.
+Performance Optimization: These metrics are calculated once per unique OD pair and then expanded back to the full 20,000 trips, ensuring the process remains fast.
+Robustness: Using replace_na(0) for all new metrics to ensure the dataset is clean for modeling.
+Modified 
+
+11_tidy_up.R
+:
+
+Data Preservation: I commented out the line that deletes the heavy trips_...rds files, so you can keep the physical path geometries as requested.
+Aggregation: Updated the summarise block to preserve these new route-level columns when generating the consolidated cityX_routing_stats_all.rds file.

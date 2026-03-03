@@ -4,6 +4,7 @@
 library(tidyverse)
 library(sf)
 library(accessibility)
+library(lwgeom)
 # Allocate memory securely without overflowing the 16GB RAM laptop limitations
 # Load global configuration
 source("code/pipeline/config.R")
@@ -149,9 +150,28 @@ for (city in target_cities) {
                         cat("  Detected corrupt or unreadable LTS file. Re-generating...\n")
                         file.remove(lts_gpkg)
                     }
-                    edges <- street_network_to_sf(r5_engine) |> purrr::pluck("edges")
-                    st_write(edges, lts_gpkg, append = FALSE, delete_dsn = TRUE, quiet = TRUE)
-                    rm(edges)
+                    edges_sf <- street_network_to_sf(r5_engine) |> purrr::pluck("edges")
+                    st_write(edges_sf, lts_gpkg, append = FALSE, delete_dsn = TRUE, quiet = TRUE)
+                    rm(edges_sf)
+                }
+
+                # Load edges and CI once per year to enrich routed trips with exposure metrics
+                edges <- st_read(lts_gpkg, quiet = TRUE) |> st_drop_geometry()
+
+                v_ext <- versions[which(years == yr)]
+                ci_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", v_ext, ".gpkg"))
+
+                ci_ids <- list(strong = c(), medium = c(), weak = c(), foot = c())
+                if (file.exists(ci_path)) {
+                    ci <- st_read(ci_path, quiet = TRUE)
+                    if ("infra5" %in% names(ci)) {
+                        # Map internal labels to the categories requested by user
+                        ci_ids$strong <- ci$osm_id[ci$infra5 == "Separated cycling infrastructure"]
+                        ci_ids$medium <- ci$osm_id[ci$infra5 == "Painted on-road cycle lane"]
+                        ci_ids$weak <- ci$osm_id[ci$infra5 == "Mixed traffic (motor vehicles with light infra)"]
+                        ci_ids$foot <- ci$osm_id[ci$infra5 == "Cycling on pedestrian infrastructure"]
+                    }
+                    rm(ci)
                 }
 
                 print(paste("Entering LTS loop for Year", yr))
@@ -209,6 +229,88 @@ for (city in target_cities) {
                         progress = TRUE,
                         osm_link_ids = TRUE
                     )
+
+                    if (nrow(unique_trips) > 0) {
+                        cat("    Calculating route-level exposure metrics for unique pairs...\n")
+                        # 1. Euclidean distance
+                        unique_trips <- unique_trips %>%
+                            mutate(
+                                euclidean_distance = as.numeric(st_distance(
+                                    lwgeom::st_startpoint(geometry),
+                                    lwgeom::st_endpoint(geometry),
+                                    by_element = TRUE
+                                ))
+                            )
+
+                        # 2. Exposure & LTS metrics (joined by edge index to the year's network)
+                        edge_list <- strsplit(as.character(unique_trips$edge_id_list), ",")
+                        route_edges_mapping <- data.frame(
+                            row_idx = rep(1:nrow(unique_trips), lengths(edge_list)),
+                            edge_index = as.numeric(unlist(edge_list))
+                        )
+
+                        route_stats <- route_edges_mapping %>%
+                            left_join(edges, by = "edge_index") %>%
+                            mutate(
+                                is_strong = osm_id %in% ci_ids$strong,
+                                is_medium = osm_id %in% ci_ids$medium,
+                                is_weak   = osm_id %in% ci_ids$weak,
+                                is_foot   = osm_id %in% ci_ids$foot,
+                                is_any_ci = is_strong | is_medium | is_weak | is_foot
+                            ) %>%
+                            group_by(row_idx) %>%
+                            summarise(
+                                route_ci_strong_m = sum(length[is_strong], na.rm = TRUE),
+                                route_ci_medium_m = sum(length[is_medium], na.rm = TRUE),
+                                route_ci_weak_m = sum(length[is_weak], na.rm = TRUE),
+                                route_ci_foot_m = sum(length[is_foot], na.rm = TRUE),
+                                lts1_m = sum(length[bicycle_lts == 1], na.rm = TRUE),
+                                lts2_m = sum(length[bicycle_lts == 2], na.rm = TRUE),
+                                lts3_m = sum(length[bicycle_lts == 3], na.rm = TRUE),
+                                lts4_m = sum(length[bicycle_lts == 4], na.rm = TRUE),
+                                total_edge_len = sum(length, na.rm = TRUE),
+                                route_interruptions_count = {
+                                    ci_flag <- is_any_ci
+                                    edge_len <- length
+                                    n <- length(ci_flag)
+                                    if (n <= 1) {
+                                        0L
+                                    } else {
+                                        interruptions <- 0L
+                                        non_ci_accum <- 0
+                                        was_on_ci <- FALSE
+                                        for (k in seq_len(n)) {
+                                            if (is.na(ci_flag[k])) next
+                                            if (ci_flag[k]) {
+                                                if (was_on_ci && non_ci_accum > 100) {
+                                                    interruptions <- interruptions + 1L
+                                                }
+                                                non_ci_accum <- 0
+                                                was_on_ci <- TRUE
+                                            } else {
+                                                non_ci_accum <- non_ci_accum + ifelse(is.na(edge_len[k]), 0, edge_len[k])
+                                            }
+                                        }
+                                        interruptions
+                                    }
+                                },
+                                .groups = "drop"
+                            ) %>%
+                            mutate(
+                                route_pct_lts1 = round(lts1_m / pmax(total_edge_len, 1) * 100, 2),
+                                route_pct_lts2 = round(lts2_m / pmax(total_edge_len, 1) * 100, 2),
+                                route_pct_lts3 = round(lts3_m / pmax(total_edge_len, 1) * 100, 2),
+                                route_pct_lts4 = round(lts4_m / pmax(total_edge_len, 1) * 100, 2)
+                            ) %>%
+                            select(-lts1_m, -lts2_m, -lts3_m, -lts4_m, -total_edge_len)
+
+                        # Join back to unique_trips and replace NAs
+                        unique_trips <- unique_trips %>%
+                            mutate(row_idx = row_number()) %>%
+                            left_join(route_stats, by = "row_idx") %>%
+                            select(-row_idx) %>%
+                            mutate(across(starts_with("route_"), ~ replace_na(., 0)))
+                    }
 
                     # Expand unique routes back to all original trip IDs
                     # Map from unique_id (from_id/to_id) back to original trip_ids

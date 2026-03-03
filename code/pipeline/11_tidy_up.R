@@ -36,6 +36,17 @@ for (city in target_cities) {
             summarise(
               total_duration = first(total_duration),
               total_distance = first(total_distance),
+              # New route-level enriched columns
+              euclidean_distance = first(euclidean_distance),
+              route_ci_strong_m = first(route_ci_strong_m),
+              route_ci_medium_m = first(route_ci_medium_m),
+              route_ci_weak_m = first(route_ci_weak_m),
+              route_ci_foot_m = first(route_ci_foot_m),
+              route_pct_lts1 = first(route_pct_lts1),
+              route_pct_lts2 = first(route_pct_lts2),
+              route_pct_lts3 = first(route_pct_lts3),
+              route_pct_lts4 = first(route_pct_lts4),
+              route_interruptions_count = first(route_interruptions_count),
               .groups = "drop"
             ) %>%
             mutate(year = yr, lts = lts_level)
@@ -43,8 +54,8 @@ for (city in target_cities) {
           all_stats[[paste0(yr, "_", lts_level)]] <- stats
         }
 
-        # Remove heavy file
-        file.remove(res_file)
+        # Preserve heavy file (per user request)
+        # file.remove(res_file)
       }
     }
   }
