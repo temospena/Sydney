@@ -19,8 +19,8 @@
                   # "Seville", "Shanghai", "Stockholm", "Strasbourg", "Sydney", "Taipei",
                   # "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
                   # ) #cairo, cape town,  hong kong (> 100km in 2026)
-# target_cities <- c("Sydney", "Paris", "New York", "Lisbon")
-target_cities <- "Lisbon"
+target_cities <- c("Sydney", "Paris", "New York", "Barcelona")
+# target_cities <- "Lisbon"
 
 # Years (2-digit) and full version strings — keep these in sync
 years <- c("16", "19", "21", "24", "26")
