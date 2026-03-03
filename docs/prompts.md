@@ -2009,3 +2009,42 @@ rm /media/rosa/Dados/GIS/Sydney/data/pipeline/austin/trips_austin_*.rds
 ```
 
 Then run the pipeline normally: The routing script will see the files are missing, re-route them correctly with all the new metrics in one pass, and you will have a perfect dataset for your econometric model.
+
+(it worked well).
+
+## Prompt 47
+
+I would like to introcude a mofification on the r5r::travel_time_matrix and r5r::detailed_itineraries functions, when they are used. Let me explain:
+
+the lts classification when setting up the r5r object is not ideal, because if a segment of cycling infrastucture is part of a tertiary road, their lts will not be 1, but 3. 
+I was looking at the lisbon lts levels and comparing them with the ci_osmextract that we did, and about 30% of the ci segments of the road network in 2026 are classified as lts > 1.
+
+Fortunately, r5r allows to change the osm lts levels, by providing a new_lts argument in their functions that overrides the default lts classification. This argument is a data.frame with the osm_id and the new lts level.
+
+In this case, I would like that for each year and city, we make the df of the ci_osmextract that we did, and then we create the new_lts argument to be used in the r5r functions. 
+So the data we need for this, for all cities and years is:
+city_ci_osmactive_yearshortmonthday.gpkg, such as lisbon_ci_osmactive_160101.gpkg (drop geometry, keep osm_id and mutate lts = 1)
+
+see my tests with code/old/test-code/r5r_lts0.R
+
+This means that if we use the argument new_lts = list_of_ci_osm_ids_lts1, all the segments of the cycling infrastructure will be classified as lts = 1 and be routed with this preference, regardless of their original lts classification in the osm data.
+
+I would also be interested that this would be a parameter of TRUE or FALSE in config, such as something like use lts 1 for ci? true or false. If true, then we use the new_lts argument. If false, then we don't use the new_lts argument.
+
+Can you modify the codes in pipeline acordingly to this idea?
+[save your response in prompts.md]
+
+### Response
+
+I have updated the routing pipeline in `05_r5r_routing.R` to gracefully override the default LTS for all cycling infrastructure.
+
+**Key Implementations:**
+1. **Targeting the Infrastructure:** Inside the LTS loop where `ci_osmactive` data is extracted, the script processes this dataset by dropping the geometry, extracting `osm_id`, and forcing `lts = 1` into a new configuration list.
+2. **Passing `new_lts` Parameters:** Both `r5r::detailed_itineraries()` and `r5r::travel_time_matrix()` are now built explicitly calling the `new_lts_ci` configuration parameter when cycling infrastructure data exists for a given city and year combination.
+3. **Safety Conditional Logic:** I've added safety mechanisms to pass `NULL` implicitly if no relevant data is correctly ingested (meaning it seamlessly reverts backward).
+
+Now, all active segments representing physical cycle paths will definitively route with a priority of 1!
+
+**Configuration Toggle Added:**
+I also added a new variable to your `config.R` file: `lts1_for_ci <- TRUE`.
+The routing script now checks this parameter. If configured to `TRUE` (or if it's missing entirely to act as a safe fallback), it will apply the `new_lts` override for cycling infrastructure. If you set it to `FALSE`, the script simply acts as if no overriding data exists (`new_lts_ci <- NULL`), correctly maintaining the original unmodified routing preferences!

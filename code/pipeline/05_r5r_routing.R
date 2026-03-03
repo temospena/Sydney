@@ -181,6 +181,7 @@ for (city in target_cities) {
                 ci_path <- file.path(city_dir, paste0(city_lower, "_ci_osmactive_", v_ext, ".gpkg"))
 
                 ci_ids <- list(strong = c(), medium = c(), weak = c(), foot = c())
+                new_lts_ci <- NULL
                 if (file.exists(ci_path)) {
                     ci <- st_read(ci_path, quiet = TRUE)
                     if ("infra5" %in% names(ci)) {
@@ -189,6 +190,13 @@ for (city in target_cities) {
                         ci_ids$medium <- ci$osm_id[ci$infra5 == "Painted on-road cycle lane"]
                         ci_ids$weak <- ci$osm_id[ci$infra5 == "Mixed traffic (motor vehicles with light infra)"]
                         ci_ids$foot <- ci$osm_id[ci$infra5 == "Cycling on pedestrian infrastructure"]
+                    }
+                    # Check config for lts override, default to TRUE if not defined
+                    use_lts_1 <- if (exists("lts1_for_ci")) lts1_for_ci else TRUE
+                    if ("osm_id" %in% names(ci) && use_lts_1) {
+                        new_lts_ci <- st_drop_geometry(ci) %>%
+                            select(osm_id) %>%
+                            mutate(lts = 1)
                     }
                     rm(ci)
                 }
@@ -279,16 +287,30 @@ for (city in target_cities) {
                         rm(trips_already_loaded)
                         unique_trips <- data.frame()
                     } else {
-                        unique_trips <- detailed_itineraries(
-                            r5r_network = r5_engine,
-                            origins = unique_origins_df,
-                            destinations = unique_dests_df,
-                            mode = "BICYCLE",
-                            shortest_path = TRUE,
-                            max_lts = lts_level,
-                            progress = TRUE,
-                            osm_link_ids = TRUE
-                        )
+                        if (!is.null(new_lts_ci)) {
+                            unique_trips <- detailed_itineraries(
+                                r5r_network = r5_engine,
+                                origins = unique_origins_df,
+                                destinations = unique_dests_df,
+                                mode = "BICYCLE",
+                                shortest_path = TRUE,
+                                max_lts = lts_level,
+                                new_lts = new_lts_ci,
+                                progress = TRUE,
+                                osm_link_ids = TRUE
+                            )
+                        } else {
+                            unique_trips <- detailed_itineraries(
+                                r5r_network = r5_engine,
+                                origins = unique_origins_df,
+                                destinations = unique_dests_df,
+                                mode = "BICYCLE",
+                                shortest_path = TRUE,
+                                max_lts = lts_level,
+                                progress = TRUE,
+                                osm_link_ids = TRUE
+                            )
+                        }
                     }
 
                     # --- Metadata Processing (Exposure Metrics) ---
@@ -434,15 +456,28 @@ for (city in target_cities) {
                         tryCatch(
                             {
                                 # We need travel times from UNIQUE origins to ALL land use cells
-                                ttm <- travel_time_matrix(
-                                    r5r_network = r5_engine,
-                                    origins = unique_origins_df,
-                                    destinations = land_use_r5,
-                                    mode = "BICYCLE",
-                                    max_trip_duration = 15,
-                                    max_lts = lts_level,
-                                    verbose = FALSE
-                                )
+                                if (!is.null(new_lts_ci)) {
+                                    ttm <- travel_time_matrix(
+                                        r5r_network = r5_engine,
+                                        origins = unique_origins_df,
+                                        destinations = land_use_r5,
+                                        mode = "BICYCLE",
+                                        max_trip_duration = 15,
+                                        max_lts = lts_level,
+                                        new_lts = new_lts_ci,
+                                        verbose = FALSE
+                                    )
+                                } else {
+                                    ttm <- travel_time_matrix(
+                                        r5r_network = r5_engine,
+                                        origins = unique_origins_df,
+                                        destinations = land_use_r5,
+                                        mode = "BICYCLE",
+                                        max_trip_duration = 15,
+                                        max_lts = lts_level,
+                                        verbose = FALSE
+                                    )
+                                }
 
                                 # r5r returns travel_time_p50 by default, but accessibility::cumulative_cutoff
                                 # checks for the string passed to travel_cost, which is "travel_time"
