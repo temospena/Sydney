@@ -432,6 +432,12 @@ for (city in target_cities) {
                                     verbose = FALSE
                                 )
 
+                                # r5r returns travel_time_p50 by default, but accessibility::cumulative_cutoff
+                                # checks for the string passed to travel_cost, which is "travel_time"
+                                if ("travel_time_p50" %in% names(ttm)) {
+                                    ttm <- ttm %>% rename(travel_time = travel_time_p50)
+                                }
+
                                 acc <- accessibility::cumulative_cutoff(
                                     travel_matrix = ttm,
                                     land_use_data = dest_land_use,
