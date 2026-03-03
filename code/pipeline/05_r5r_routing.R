@@ -227,8 +227,11 @@ for (city in target_cities) {
                             if (!file.exists(network_dat)) pbf_updated <- TRUE
                         }
 
+                        reroute_only_check <- exists("REROUTE_ONLY") && REROUTE_ONLY
                         if (FORCE_RERUN) {
                             cat("  FORCE_RERUN is TRUE. Ignoring existing results and re-running...\n")
+                        } else if (reroute_only_check) {
+                            cat("  REROUTE_ONLY is TRUE. Ignoring existing routing results and re-running...\n")
                         } else if (od_updated) {
                             cat("  Existing results are older than updated OD matrix. Re-running...\n")
                         } else if (pbf_updated) {

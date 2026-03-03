@@ -2048,3 +2048,37 @@ Now, all active segments representing physical cycle paths will definitively rou
 **Configuration Toggle Added:**
 I also added a new variable to your `config.R` file: `lts1_for_ci <- TRUE`.
 The routing script now checks this parameter. If configured to `TRUE` (or if it's missing entirely to act as a safe fallback), it will apply the `new_lts` override for cycling infrastructure. If you set it to `FALSE`, the script simply acts as if no overriding data exists (`new_lts_ci <- NULL`), correctly maintaining the original unmodified routing preferences!
+
+---
+
+## Prompt 48
+
+thanks, i will try on the server side, for lisbon. Do I previous need to delete any file to make that routing will re-run?
+
+### Response
+
+Yes! Because the script detects if the `trips_lisbon_<year>_lts<lts_level>.rds` files already exist (and skips the routing step if they do to save time), you will need to delete those specific files. 
+
+Since `new_lts` is passed dynamically into the `r5r` routing queries, you do **not** need to rebuild the street networks (`osm.pbf` or `network.dat`) or the origin/destination files. You only need to delete the routing results!
+
+You can easily clear them out and force a re-run by running this command in your server's terminal:
+
+```bash
+rm data/pipeline/lisbon/trips_lisbon_*.rds
+```
+
+*(Alternatively, you could temporarily set `FORCE_RERUN <- TRUE` in your `config.R`, but deleting the specific `trips_lisbon_*.rds` files is safer so you don't accidentally wipe out other cities or steps!)*
+
+## Prompt 49
+
+can we add then another parameter to config such as reroute = true/false to delete the trips_lisbon_*.rds files? I am not interested in fetching the osm again, or the od pairs, but to use routing with this new argument
+
+### Response
+
+Done! I have added a new `REROUTE_ONLY <- FALSE` parameter to your `config.R` file immediately below the standard `FORCE_RERUN` variable.
+
+When you set `REROUTE_ONLY <- TRUE` and run the pipeline:
+1. It **preserves** the existing PBF data, OD grids, and r5r network (`network.dat`), so you skip the most time-consuming initialization steps. 
+2. It **forces** the itinerary routing step for every year/LTS combination exactly as if you had manually deleted the local `trips_<city>_<year>_lts<X>.rds` files.
+
+You can now use `REROUTE_ONLY = TRUE` in the server to smoothly re-run your dynamic `<lts=1>` cycling infrastructure parameters without losing your base data setup.

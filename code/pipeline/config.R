@@ -29,6 +29,9 @@ versions <- c("160101", "190101", "210101", "240101", "260101")
 # Set TRUE to re-run all steps even if output files already exist
 FORCE_RERUN <- FALSE
 
+# Set TRUE to re-run only the routing step (and delete existing trips_*.rds) without rebuilding networks
+REROUTE_ONLY <- FALSE
+
 # Routing settings
 n_od_pairs <- 20000
 java_mem <- "-Xmx96G"
