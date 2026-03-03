@@ -59,6 +59,7 @@ data/old/barcelona/barcelona_city_buildings.geojson
 *_lts3.rds
 *_lts4.rds
 *r5r-log.log
+*_routing_stats_wide.csv
 
 data/pipeline/barcelona/barcelona_metro_buildings_height.geojson
 data/pipeline/paris/paris_metro_buildings_height.geojson

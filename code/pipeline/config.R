@@ -7,7 +7,8 @@
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
 target_cities <- c("Amsterdam", "Austin", "Beijing", "Berlin", "Bogota", # Barcelona
-                  "Bologna", "Brussels", "Buenos Aires"
+                  "Bologna", "Brussels", "Buenos Aires",
+                  "Sydney", "Paris", "Barcelona", "New York", "Lisbon"
                   # "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
                   # "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds",
                   # "Lisbon", "Ljubljana", "London", "Lyon", "Madrid", "Melbourne",
