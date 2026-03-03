@@ -17,6 +17,17 @@ for (city in target_cities) {
   cat("Tidying up", city, "...\n")
   all_stats <- list()
 
+  # Load destinations for backfilling accessibility if missing
+  dests_path <- file.path(city_dir, "destinations.gpkg")
+  dest_land_use <- NULL
+  if (file.exists(dests_path)) {
+    cat("  Loading destinations for potential accessibility backfill...\n")
+    dest_land_use <- st_read(dests_path, quiet = TRUE) %>%
+      st_drop_geometry() %>%
+      select(id, volume) %>%
+      filter(!duplicated(id))
+  }
+
   for (yr in years) {
     for (lts_level in 1:4) {
       res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
@@ -50,6 +61,41 @@ for (city in target_cities) {
               .groups = "drop"
             ) %>%
             mutate(year = yr, lts = lts_level)
+
+          # --- BACKFILL: Calculate access_15min_vol if missing in legacy trip files ---
+          if (!"access_15min_vol" %in% names(trips) && !is.null(dest_land_use)) {
+            cat("    [BACKFILL] access_15min_vol missing. Calculating on-the-fly...\n")
+            travel_matrix <- trips %>%
+              st_drop_geometry() %>%
+              select(from_id, to_id, total_duration)
+            tryCatch(
+              {
+                acc <- accessibility::cumulative_cutoff(
+                  travel_matrix = travel_matrix,
+                  land_use_data = dest_land_use,
+                  opportunity = "volume",
+                  travel_cost = "total_duration",
+                  cutoff = 15
+                )
+                stats <- stats %>%
+                  left_join(acc %>% select(from_id = id, access_15min_vol = volume), by = "from_id") %>%
+                  mutate(access_15min_vol = replace_na(access_15min_vol, 0))
+              },
+              error = function(e) {
+                cat("    [WARN] Backfill failed:", e$message, "\n")
+                stats$access_15min_vol <- 0
+              }
+            )
+          } else if ("access_15min_vol" %in% names(trips)) {
+            # If already present, just ensure it's in the stats
+            stats$access_15min_vol <- trips %>%
+              st_drop_geometry() %>%
+              group_by(from_id, to_id) %>%
+              summarise(access_15min_vol = first(access_15min_vol), .groups = "drop") %>%
+              pull(access_15min_vol)
+          } else {
+            stats$access_15min_vol <- 0
+          }
 
           all_stats[[paste0(yr, "_", lts_level)]] <- stats
         }

@@ -330,8 +330,6 @@ for (city in target_cities) {
                         trips <- unique_trips
                     }
 
-                    saveRDS(trips, res_file)
-
 
                     # --- Accessibility (using full travel matrix to ensure correct volume sum) ---
                     avg_acc <- NA
@@ -349,7 +347,12 @@ for (city in target_cities) {
                                     cutoff = 15
                                 )
                                 if (nrow(acc) > 0) {
-                                    # User requested the SUM across all 20k trips
+                                    # Update trips with per-origin accessibility
+                                    trips <- trips %>%
+                                        left_join(acc %>% select(from_id = id, access_15min_vol = volume), by = "from_id") %>%
+                                        mutate(access_15min_vol = replace_na(access_15min_vol, 0))
+
+                                    # User requested the SUM across all 20k trips still for the summary file
                                     avg_acc <- round(sum(acc$volume, na.rm = TRUE))
                                 }
                             },
@@ -358,6 +361,8 @@ for (city in target_cities) {
                             }
                         )
                     }
+
+                    saveRDS(trips, res_file)
 
                     # Export route finding metrics tracking how many successfully found a route
                     found_routes <- nrow(trips)

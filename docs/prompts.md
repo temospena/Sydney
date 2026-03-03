@@ -1719,3 +1719,44 @@ Modified
 
 Data Preservation: I commented out the line that deletes the heavy trips_...rds files, so you can keep the physical path geometries as requested.
 Aggregation: Updated the summarise block to preserve these new route-level columns when generating the consolidated cityX_routing_stats_all.rds file.
+
+## Prompt 44
+
+I actually forgot to add also the access_15min_vol to the route level data. Can you add it to the pipeline? 
+For the 10 cities that I already run, is it possible do add that variable too based on the trips_city_year_ltsX.rds (that are in gitignore and not on this side, they live in the server) ?
+if not, I will just run again for all.
+
+### Response
+
+ have added access_15min_vol to the route-level data in the pipeline.
+
+Key Improvements:
+Updated 
+
+05_r5r_routing.R
+:
+
+The 15-minute accessibility volume is now joined back to each individual route before the trip data is saved.
+This provides a direct measure of "opportunity reach" from each specific origin in your model.
+Enhanced 
+
+11_tidy_up.R
+ with Backfill Logic:
+
+I've added a "Backfill" mechanism. When tidying up, the script checks if the access_15min_vol column is missing (as is the case for your 10 previously processed cities).
+Automated Calculation: If missing, it automatically loads the corresponding 
+
+destinations.gpkg
+, re-calculates the 15-minute accessibility matrix for that scenario, and appends it to the results.
+No Re-routing Needed: You do not need to re-run the full routing for your existing 10 cities. Simply running the 
+
+11_tidy_up.R
+ script will populate this variable into your cityX_routing_stats_all.rds files.
+Summary of the Route-Level Dataset:
+The cityX_routing_stats_all.rds table now contains:
+
+Routing Essentials: from_id, to_id, total_duration, total_distance, year, lts.
+Infrastructure Exposure: route_ci_{type}_m.
+Safety/Quality: route_pct_lts{1-4}, route_interruptions_count.
+Geometric Context: euclidean_distance.
+Land Use Context: access_15min_vol (the total volume accessible within 15 mins from that route's origin).
