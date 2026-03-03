@@ -64,37 +64,16 @@ for (city in target_cities) {
             ) %>%
             mutate(year = yr, lts = lts_level)
 
-          # --- BACKFILL: Calculate access_15min_vol if missing in legacy trip files ---
-          if (!"access_15min_vol" %in% names(trips) && !is.null(dest_land_use)) {
-            cat("    [BACKFILL] access_15min_vol missing. Calculating on-the-fly...\n")
-            travel_matrix <- trips %>%
-              st_drop_geometry() %>%
-              select(from_id, to_id, total_duration)
-            tryCatch(
-              {
-                acc <- accessibility::cumulative_cutoff(
-                  travel_matrix = travel_matrix,
-                  land_use_data = dest_land_use,
-                  opportunity = "volume",
-                  travel_cost = "total_duration",
-                  cutoff = 15
-                )
-                stats <- stats %>%
-                  left_join(acc %>% select(from_id = id, access_15min_vol = volume), by = "from_id") %>%
-                  mutate(access_15min_vol = replace_na(access_15min_vol, 0))
-              },
-              error = function(e) {
-                cat("    [WARN] Backfill failed:", e$message, "\n")
-                stats$access_15min_vol <- 0
-              }
-            )
-          } else if ("access_15min_vol" %in% names(trips)) {
-            # If already present, just ensure it's in the stats
-            stats$access_15min_vol <- trips %>%
+          # Ensure access_15min_vol is preserved if present
+          if ("access_15min_vol" %in% names(trips)) {
+            # trips has trip_id as from_id, we need to join the stats
+            acc_data <- trips %>%
               st_drop_geometry() %>%
               group_by(from_id, to_id) %>%
-              summarise(access_15min_vol = first(access_15min_vol), .groups = "drop") %>%
-              pull(access_15min_vol)
+              summarise(access_15min_vol = first(access_15min_vol), .groups = "drop")
+
+            stats <- stats %>%
+              left_join(acc_data, by = c("from_id", "to_id"))
           } else {
             stats$access_15min_vol <- 0
           }

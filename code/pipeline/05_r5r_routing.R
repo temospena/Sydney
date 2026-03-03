@@ -40,13 +40,32 @@ for (city in target_cities) {
         volume = destinations$volume
     )
 
-    # Prepare opportunities data for accessibility (must match dest_id)
-    dest_land_use <- data.frame(
-        id = dests_df$id,
-        volume = dests_df$volume
-    )
-    # Filter to unique IDs to satisfy accessibility package requirements
-    dest_land_use <- dest_land_use[!duplicated(dest_land_use$id), ]
+    # Load real land use dataset (full grid) instead of using the destination samples
+    land_use_path <- file.path(city_dir, "land_use.gpkg")
+    if (!file.exists(land_use_path)) {
+        warning(paste("Missing land_use.gpkg for", city, "- falling back to destination samples (will be incomplete!)"))
+        dest_land_use <- data.frame(
+            id = as.character(destinations$id),
+            volume = destinations$volume
+        )
+        # Filter to unique IDs to satisfy accessibility package requirements
+        dest_land_use <- dest_land_use[!duplicated(dest_land_use$id), ]
+        land_use_r5 <- data.frame(
+            id = dest_land_use$id,
+            lon = st_coordinates(destinations)[!duplicated(destinations$id), 1],
+            lat = st_coordinates(destinations)[!duplicated(destinations$id), 2]
+        )
+    } else {
+        cat("  Loading city-wide land use grid for true accessibility...\n")
+        land_use_sf <- st_read(land_use_path, quiet = TRUE)
+        dest_land_use <- st_drop_geometry(land_use_sf) %>% mutate(id = as.character(id))
+        land_use_r5 <- data.frame(
+            id = dest_land_use$id,
+            lon = st_coordinates(st_centroid(land_use_sf))[, 1],
+            lat = st_coordinates(st_centroid(land_use_sf))[, 2]
+        )
+        rm(land_use_sf)
+    }
 
     # --- Unique OD pair optimization ---
     # Since OD data uses H3 cell centroids, many trips share the same O-D pair.
@@ -207,8 +226,17 @@ for (city in target_cities) {
                         } else if (pbf_updated) {
                             cat("  Existing results are older than updated/missing Street Network. Re-running...\n")
                         } else {
-                            cat(paste("  Valid results already exist - SKIPPING. Path:", check_file, "\n"))
-                            next
+                            # Check if existing file needs enriching with access_15min_vol
+                            existing_trips <- readRDS(check_file)
+                            if (!"access_15min_vol" %in% names(existing_trips)) {
+                                cat(paste("  Valid results exist but MISSING access_15min_vol. Re-processing enrichment for:", check_file, "\n"))
+                                # Carry on with this LTS level loop but signal to skip detailed_itineraries
+                                trips_already_loaded <- existing_trips
+                            } else {
+                                cat(paste("  Valid results already exist - SKIPPING. Path:", check_file, "\n"))
+                                rm(existing_trips)
+                                next
+                            }
                         }
 
                         # Triggered a re-run: delete the old RDS to force fresh computation
@@ -219,16 +247,23 @@ for (city in target_cities) {
                         "  Calculating itineraries for Year", yr, "LTS", lts_level,
                         "(", nrow(unique_origins_df), "unique pairs )"
                     ))
-                    unique_trips <- detailed_itineraries(
-                        r5r_network = r5_engine,
-                        origins = unique_origins_df,
-                        destinations = unique_dests_df,
-                        mode = "BICYCLE",
-                        shortest_path = TRUE,
-                        max_lts = lts_level,
-                        progress = TRUE,
-                        osm_link_ids = TRUE
-                    )
+                    if (exists("trips_already_loaded") && !is.null(trips_already_loaded)) {
+                        cat("    Skipping detailed_itineraries (already have routes), re-calculating true accessibility...\n")
+                        unique_trips <- data.frame() # will not be used
+                        trips <- trips_already_loaded
+                        rm(trips_already_loaded)
+                    } else {
+                        unique_trips <- detailed_itineraries(
+                            r5r_network = r5_engine,
+                            origins = unique_origins_df,
+                            destinations = unique_dests_df,
+                            mode = "BICYCLE",
+                            shortest_path = TRUE,
+                            max_lts = lts_level,
+                            progress = TRUE,
+                            osm_link_ids = TRUE
+                        )
+                    }
 
                     if (nrow(unique_trips) > 0) {
                         cat("    Calculating route-level exposure metrics for unique pairs...\n")
@@ -334,27 +369,48 @@ for (city in target_cities) {
                     # --- Accessibility (using full travel matrix to ensure correct volume sum) ---
                     avg_acc <- NA
                     if (nrow(trips) > 0) {
-                        cat("    Calculating 15-min volume accessibility sum (Full Matrix)...\n")
-                        travel_matrix <- sf::st_drop_geometry(trips)[, c("from_id", "to_id", "total_duration")]
+                        cat("    Calculating TRUE 15-min volume accessibility (Matrix to all H3 cells)...\n")
 
                         tryCatch(
                             {
+                                # We need travel times from UNIQUE origins to ALL land use cells
+                                ttm <- travel_time_matrix(
+                                    r5r_network = r5_engine,
+                                    origins = unique_origins_df,
+                                    destinations = land_use_r5,
+                                    mode = "BICYCLE",
+                                    max_trip_duration = 15,
+                                    max_lts = lts_level,
+                                    verbose = FALSE
+                                )
+
                                 acc <- accessibility::cumulative_cutoff(
-                                    travel_matrix = travel_matrix,
+                                    travel_matrix = ttm,
                                     land_use_data = dest_land_use,
                                     opportunity = "volume",
-                                    travel_cost = "total_duration",
+                                    travel_cost = "travel_time",
                                     cutoff = 15
                                 )
-                                if (nrow(acc) > 0) {
-                                    # Update trips with per-origin accessibility
-                                    trips <- trips %>%
-                                        left_join(acc %>% select(from_id = id, access_15min_vol = volume), by = "from_id") %>%
-                                        mutate(access_15min_vol = replace_na(access_15min_vol, 0))
 
-                                    # User requested the SUM across all 20k trips still for the summary file
-                                    avg_acc <- round(sum(acc$volume, na.rm = TRUE))
+                                if (nrow(acc) > 0) {
+                                    # 1. Update the 'trips' object (which uses original trip_ids)
+                                    # Map unique_id back to access data
+                                    acc_to_join <- acc %>%
+                                        select(unique_id = id, access_15min_vol = volume) %>%
+                                        mutate(unique_id = as.character(unique_id))
+
+                                    # We need to handle the expansion from unique_id to trip_id
+                                    # all_pairs mapping is: trip_id <-> unique_id
+                                    trips <- trips %>%
+                                        left_join(expansion_map %>% select(trip_id, unique_id), by = c("from_id" = "trip_id")) %>%
+                                        left_join(acc_to_join, by = "unique_id") %>%
+                                        mutate(access_15min_vol = replace_na(access_15min_vol, 0)) %>%
+                                        select(-unique_id)
+
+                                    # 2. Summary stats for the routing_summary.csv (Average accessibility across sampled trips)
+                                    avg_acc <- round(mean(trips$access_15min_vol, na.rm = TRUE))
                                 }
+                                rm(ttm, acc)
                             },
                             error = function(e) {
                                 cat(paste("    [WARN] Accessibility failed:", e$message, "\n"))

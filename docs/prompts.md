@@ -1760,3 +1760,55 @@ Infrastructure Exposure: route_ci_{type}_m.
 Safety/Quality: route_pct_lts{1-4}, route_interruptions_count.
 Geometric Context: euclidean_distance.
 Land Use Context: access_15min_vol (the total volume accessible within 15 mins from that route's origin).
+
+
+## Prompt 45
+
+I am finding at route level that about 75% of the access_15min_vol are zero. 
+sum(routing_stats_model$access_15min_vol == 0) / nrow(routing_stats_model) # 74% !!!
+
+Is something missing here?
+
+### Response
+I have resolved the issue where 75% of your accessibility values were coming up as zero.
+
+The Problem
+The issue was that the accessibility was being calculated using only the sampled trips matrix. For each origin, the code was only checking if its single assigned destination was within 15 minutes. If that one specific destination was further away (which is common for sampled trips), the origin's accessibility was incorrectly marked as 0, ignoring all other nearby opportunities.
+
+The Solution: "True Accessibility"
+I have overhauled the calculation in 
+
+05_r5r_routing.R
+:
+
+Full Neighborhood Scan: The pipeline now loads your city-wide 
+
+land_use.gpkg
+ (which contains all H3 building volume cells).
+Travel Time Matrix: It calculates a proper travel_time_matrix from each origin to every reachable cell in the city within 15 minutes.
+Accurate Volume: access_15min_vol now reflects the true sum of building volume reachable within a 15-minute bike ride from that route's origin.
+How to fix your 10 cities (The "Auto-Enrich" feature)
+I added a smart enrichment mechanism to 
+
+05_r5r_routing.R
+. You don't need to re-route everything:
+
+Run 
+
+05_r5r_routing.R
+ again: It will detect if an existing 
+
+.rds
+ file is missing the access_15min_vol column.
+Fast enrichment: It will load the existing routes from your disk, skip the time-consuming routing (detailed_itineraries), calculate only the missing accessibility metrics, and save the enriched file.
+Tidy Up: Once the routing script has enriched the files, run 
+
+11_tidy_up.R
+ to consolidate everything into your final 
+
+routing_stats_all.rds
+.
+I have also cleaned up 
+
+11_tidy_up.R
+ to ensure it correctly preserves these new columns during aggregation.

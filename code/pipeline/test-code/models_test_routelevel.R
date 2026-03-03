@@ -1,16 +1,25 @@
 # model test for routlevels
 
-barcelona_routing_stats_all = readRDS("data/pipeline/barcelona/barcelona_routing_stats_all.rds")
-sydney_routing_stats_all = readRDS("data/pipeline/sydney/sydney_routing_stats_all.rds")
-paris_routing_stats_all = readRDS("data/pipeline/paris/paris_routing_stats_all.rds")
-newyork_routing_stats_all = readRDS("data/pipeline/new york/new york_routing_stats_all.rds")
-lisbon_routing_stats_all = readRDS("data/pipeline/lisbon/lisbon_routing_stats_all.rds")
+target_cities = c(
+"Amsterdam", "Austin", "Beijing", "Berlin", "Bogota", # Barcelona
+"Bologna", "Brussels", "Buenos Aires",
+"Sydney", "Paris", "Barcelona", "New York", "Lisbon")
 
-routing_stats_all = rbind(barcelona_routing_stats_all |> mutate(city = "barcelona"),
-                          sydney_routing_stats_all |> mutate(city = "sydney"),
-                          paris_routing_stats_all |> mutate(city = "paris"),
-                          newyork_routing_stats_all |> mutate(city = "new york"),
-                          lisbon_routing_stats_all |> mutate(city = "lisbon"))
+routing_stats_all = data.frame() # initialize
+
+for (city in target_cities) {
+  print(paste("Processing", city))
+  
+  city = tolower(city)
+  # Here you would load and process the routing stats for each city
+  # For example:
+  routing_stats_city = readRDS(paste0("data/pipeline/", city, "/", city, "_routing_stats_all.rds"))
+  routing_stats_city = routing_stats_city |> 
+    mutate(city = city)
+  
+  routing_stats_all = rbind(routing_stats_all, routing_stats_city)
+}
+
 routing_stats_model = routing_stats_all |> 
   filter(lts %in% c(1,2)) |> 
   mutate(
@@ -31,7 +40,8 @@ routing_stats_model = routing_stats_all |>
 
 # str(routing_stats_all)
 
-
+# check the percentage of zeros in access_15min_vol
+sum(routing_stats_model$access_15min_vol == 0) / nrow(routing_stats_model) # 74% !!!
 
 # models ------------------------------------------------------------------
 
