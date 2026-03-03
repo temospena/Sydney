@@ -123,15 +123,13 @@ for (city in target_cities) {
             }
         }
 
-        # Dynamic year-pair comparisons (consecutive years + first-to-last)
+        # Dynamic year-pair comparisons (first-to-last only as requested)
         available_years <- sort(unique(trips_df$year))
         year_pairs <- list()
-        for (i in seq_along(available_years)[-1]) {
-            year_pairs[[length(year_pairs) + 1]] <- c(available_years[i - 1], available_years[i])
-        }
-        # Add first-to-last if more than 2 years
-        if (length(available_years) > 2) {
-            year_pairs[[length(year_pairs) + 1]] <- c(available_years[1], available_years[length(available_years)])
+
+        # Add first-to-last if available (e.g., 2016 vs 2026)
+        if (length(available_years) >= 2) {
+            year_pairs[[1]] <- as.character(c(available_years[1], available_years[length(available_years)]))
         }
 
         for (pair in year_pairs) {
@@ -152,38 +150,7 @@ for (city in target_cities) {
                     change_pct = (.data[[last_col]] - .data[[first_col]]) / .data[[first_col]]
                 )
 
-            # Build consecutive period differences for histogram
-            gains_data <- list()
-            for (i in seq_along(available_years)[-1]) {
-                col_prev <- paste0("dist_", available_years[i - 1])
-                col_curr <- paste0("dist_", available_years[i])
-                if (col_prev %in% names(trips_wide) && col_curr %in% names(trips_wide)) {
-                    period_label <- paste(available_years[i - 1], "to", available_years[i])
-                    gains_data[[period_label]] <- data.frame(
-                        period = period_label,
-                        diff = trips_wide[[col_curr]] - trips_wide[[col_prev]]
-                    )
-                }
-            }
-
-            if (length(gains_data) > 0) {
-                gains_long <- bind_rows(gains_data)
-
-                p_hist <- ggplot(gains_long, aes(x = diff, fill = period)) +
-                    geom_histogram(binwidth = 250, color = "white", alpha = 0.7, position = "identity") +
-                    geom_vline(xintercept = 0, linetype = "dashed", size = 1) +
-                    scale_fill_viridis_d() +
-                    labs(
-                        title = paste(city, "- Distribution of Trip Distance Changes (LTS", lts_level, ")"),
-                        subtitle = "Negative values indicate the new infrastructure allowed for shorter routes",
-                        x = "Change in Distance (meters)",
-                        y = "Number of OD Pairs"
-                    ) +
-                    theme_minimal() +
-                    xlim(-3500, 3500)
-
-                ggsave(file.path(results_dir, paste0("distance_change_histogram_lts", lts_level, ".png")), p_hist, width = 8, height = 6)
-            }
+            # Histogram generation disabled as requested
         }
         # CSV saving moved to 07_analysis.R
 
@@ -232,7 +199,7 @@ for (city in target_cities) {
             map_data <- map_data |>
                 filter(!st_is_empty(geometry)) |>
                 st_make_valid() |>
-                st_simplify(dTolerance = 0.00005) |> # Approx 5 meters
+                st_simplify(dTolerance = 0.0001) |> # Increased to approx 10m for faster plotting
                 filter(trips > 1) # Filter singlets for cleaner map
 
             # Save overline data First (in case plotting crashes)

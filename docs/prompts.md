@@ -2110,3 +2110,44 @@ mutate(
 ```
 
 The data pipeline has been updated. You can re-run it exactly as you did with `REROUTE_ONLY = TRUE`, and it should properly compute routing for the adjusted LTS mapping!
+
+---
+
+## Prompt 51
+
+regarding the plots outputs (07b_analysis_plotsR, 09_plot_metrics.R, and 10_ci_maps.R) 
+
+There are several distance_comparision_xxx-png files.
+I am only interested in saving the 2016 vs 2026 for all the lts, and not the intermediate comparisons.
+
+The distance_change_hisogram_ltsX.png is hard to read, and we can also not plot them (ignore for now)
+
+The lts_evolution_facet_map.png can be ploted with onf from 2016, 2021 and 2026 only, ignoring the mid point years. I am not sure f it is simplifying grometries (they don't need fo be high detail for plot)
+
+The overline_density_matrix.png can also have only 2016, 2021 and 2026, ignoring the mid point years. I am not sure if it is simplifying grometries (they don't need fo be high detail for plot)
+
+The overline_map_ltsX.png can anso have simplified geometries before plotting (not sure if it is already the case)
+
+### Response
+
+I have implemented all the requested aesthetic and efficiency modifications across the plotting suite.
+
+**Key Changes:**
+
+1.  **Distance Comparisons (`07b_analysis_plots.R`)**:
+    *   The code now dynamically identifies the earliest and latest available years (typically 2016 and 2026) and generates only that single comparison plot for each LTS level.
+    *   **Fixed a Bug**: I identified and resolved a factor-type conversion issue that was causing these plots to be skipped in some scenarios. They should now appear correctly.
+2.  **Distance Histograms**:
+    *   Disabled the generation of `distance_change_histogram_ltsX.png` as requested. 
+3.  **LTS Evolution Map (`10_ci_maps.R`)**:
+    *   Updated the script to filter exclusively for **2016, 2021, and 2026**.
+    *   Added `st_simplify(dTolerance = 0.0001)` (approx. 10 meters) during the data loading phase. This makes the plotting much faster and less memory-intensive.
+4.  **Overline Density Matrix (`09_plot_metrics.R`)**:
+    *   The matrix now explicitly filters for **2016, 2021, and 2026** columns.
+    *   Added geometry simplification (`dTolerance = 0.0001`) before merging the layers to ensure the multi-panel facet renders quickly.
+5.  **General Overline Geometry Simplification**:
+    *   Increased the simplification tolerance for the standard `overline_map_ltsX.png` to `0.0001`. This significantly reduces the complexity of the spatial objects while maintaining clear visibility at city-scale zoom levels.
+
+**Regarding the crash:**
+The scripts passed a syntax check. If you encountered a crash during execution, it may be related to memory limits when plotting large networks or an issue with specific city data. Please share the error message from your terminal so I can debug further!
+

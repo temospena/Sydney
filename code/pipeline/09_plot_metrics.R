@@ -123,7 +123,9 @@ for (current_city in unique(final_df$city)) {
     ov_rds <- file.path(results_dir, paste0("overline_data_lts", lts_level, ".rds"))
     if (file.exists(ov_rds)) {
       ovline <- readRDS(ov_rds) |>
-        mutate(lts = paste0("LTS ", lts_level))
+        mutate(lts = paste0("LTS ", lts_level)) |>
+        filter(as.character(year) %in% c("2016", "2021", "2026")) |>
+        st_simplify(dTolerance = 0.0001) # Simplify geometries before plotting
       overlines_list[[lts_level]] <- ovline
     }
   }
@@ -132,9 +134,10 @@ for (current_city in unique(final_df$city)) {
     all_overlines <- bind_rows(overlines_list) |>
       filter(trips > 1) |> # Basic filtering to keep it readable
       mutate(
-        year = factor(year, levels = paste0("20", years)),
+        year = factor(year, levels = c("2016", "2021", "2026")),
         lts = factor(lts, levels = c("LTS 1", "LTS 2", "LTS 3", "LTS 4"))
-      )
+      ) |>
+      filter(!is.na(year)) # To drop any remaining uncategorized years
 
     p_matrix <- ggplot() +
       geom_sf(data = all_overlines, aes(linewidth = trips, color = trips)) +

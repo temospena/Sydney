@@ -88,6 +88,12 @@ for (city in target_cities) {
     for (i in seq_along(years_labels)) {
         yr_short <- substring(years_labels[i], 3)
         yr_full <- years_labels[i]
+
+        # Only process requested key years (ignoring mid points)
+        if (!yr_full %in% c("2016", "2021", "2026")) {
+            next
+        }
+
         lts_path <- file.path(city_dir, paste0("r5r_", yr_short), paste0(city_lower, "_", yr_short, "_lts.gpkg"))
 
         if (file.exists(lts_path)) {
@@ -101,7 +107,8 @@ for (city in target_cities) {
 
             lts_layer <- lts_layer |>
                 mutate(year = yr_full) |>
-                select(bicycle_lts, year)
+                select(bicycle_lts, year) |>
+                st_simplify(dTolerance = 0.0001)
 
             all_lts_list[[yr_full]] <- lts_layer
         }
@@ -110,7 +117,7 @@ for (city in target_cities) {
     if (length(all_lts_list) > 0) {
         all_lts <- bind_rows(all_lts_list) |>
             mutate(
-                year = factor(year, levels = years_labels),
+                year = factor(year, levels = c("2016", "2021", "2026")),
                 bicycle_lts = as.factor(bicycle_lts)
             ) |>
             arrange(year, bicycle_lts)
