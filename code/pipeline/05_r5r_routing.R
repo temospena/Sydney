@@ -239,8 +239,8 @@ for (city in target_cities) {
                             }
                         }
 
-                        # Triggered a re-run: delete the old RDS to force fresh computation
-                        if (file.exists(check_file)) file.remove(check_file)
+                        # Triggered a re-run: don't delete yet, overwrite at the end of the loop
+                        # if (file.exists(check_file)) file.remove(check_file)
                     }
 
                     print(paste(
@@ -250,7 +250,9 @@ for (city in target_cities) {
                     enriching <- FALSE
                     if (exists("trips_already_loaded") && !is.null(trips_already_loaded)) {
                         cat("    Enrichment Mode: Re-processing metadata for existing routes...\n")
-                        trips <- trips_already_loaded
+                        # Ensure ID types match unique_id format
+                        trips <- trips_already_loaded %>%
+                            mutate(from_id = as.character(from_id), to_id = as.character(to_id))
                         enriching <- TRUE
                         rm(trips_already_loaded)
                         unique_trips <- data.frame()
@@ -278,11 +280,13 @@ for (city in target_cities) {
 
                         # Target for metrics calculation: unique_trips if new, otherwise trips (deduplicated for speed if possible)
                         target_for_metrics <- if (nrow(unique_trips) > 0) {
-                            unique_trips
+                            unique_trips %>% mutate(from_id = as.character(from_id), to_id = as.character(to_id))
                         } else {
                             # In enrichment, trips might have 20k rows.
                             # We filter to unique from_id/to_id to speed up processing
+                            # ID casting is crucial here to match unique_id/trip_id logic
                             trips %>%
+                                mutate(from_id = as.character(from_id), to_id = as.character(to_id)) %>%
                                 group_by(from_id, to_id) %>%
                                 slice(1) %>%
                                 ungroup()

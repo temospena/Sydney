@@ -1839,3 +1839,21 @@ You can now re-run the pipeline. The "Enrichment Mode" will detect your existing
 
 07_analysis.R
  and the rest of the steps should run without errors.
+
+ I have identified and fixed the issues causing the "geometry missing" errors and the data loss during the enrichment phase.
+
+What was going wrong:
+Destructive Deletion: The script was deleting the old 
+
+.rds
+ file before calculating the new metrics. If the script crashed (e.g., due to a memory limit or a join error), the file was gone forever, and subsequent steps would find nothing.
+Geometry/Class Loss: During the join with accessibility data, the object was occasionally losing its sf identity and becoming a regular data frame. This is why 
+
+07_analysis.R
+ complained it couldn't find the geometry object.
+Grouping Error: The "Must group by variables found in .data" error occurred because the join keys (from_id, to_id) weren't being handled robustly between different types (character vs. numeric) in the enrichment loop.
+The Fixes Implemented:
+Atomic Updates: I removed the file.remove() call. The script now keeps the old file until it is ready to overwrite it with the complete, enriched version.
+Robust Geometry Preservation: I added an explicit "Geometry Backup & Restore" block that ensures the sf class and physical route lines are never lost, even if a complex join operation temporarily drops them.
+Bulletproof Enrichment: The join logic now explicitly casts IDs to character strings and ensures the from_id and to_id columns (which are your trip IDs) are present before any grouping is attempted.
+Error Resilience: I reinforced the tryCatch blocks so that if calculation fails for one scenario, it doesn't leave a "half-baked" or empty file on disk.
