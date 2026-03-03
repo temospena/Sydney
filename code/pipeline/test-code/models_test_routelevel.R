@@ -19,6 +19,7 @@ for (city in target_cities) {
   
   routing_stats_all = rbind(routing_stats_all, routing_stats_city)
 }
+rm(routing_stats_city) # clean up
 
 routing_stats_model = routing_stats_all |> 
   filter(lts %in% c(1,2)) |> 
