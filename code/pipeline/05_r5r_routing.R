@@ -280,6 +280,9 @@ for (city in target_cities) {
                     }
 
                     # --- Metadata Processing (Exposure Metrics) ---
+                    # Build expansion map (needed to go from unique pairs back to 20k trip IDs)
+                    expansion_map <- all_pairs[, c("trip_id", "unique_id")]
+
                     # If we have new unique_trips or if trips is missing exposure columns
                     needs_exposure <- FALSE
                     if (nrow(unique_trips) > 0) needs_exposure <- TRUE
@@ -292,9 +295,6 @@ for (city in target_cities) {
                         target_for_metrics <- if (nrow(unique_trips) > 0) {
                             unique_trips %>% mutate(from_id = as.character(from_id), to_id = as.character(to_id))
                         } else if (nrow(trips) > 0) {
-                            # In enrichment, trips might have 20k rows.
-                            # We filter to unique from_id/to_id to speed up processing
-                            # ID casting is crucial here to match unique_id/trip_id logic
                             trips %>%
                                 mutate(from_id = as.character(from_id), to_id = as.character(to_id)) %>%
                                 group_by(from_id, to_id) %>%
@@ -304,93 +304,112 @@ for (city in target_cities) {
                             data.frame()
                         }
 
-                        # Calculate Euclidean distance
-                        target_for_metrics <- target_for_metrics %>%
-                            mutate(
-                                euclidean_distance = as.numeric(st_distance(
-                                    lwgeom::st_startpoint(geometry),
-                                    lwgeom::st_endpoint(geometry),
-                                    by_element = TRUE
-                                ))
+                        if (nrow(target_for_metrics) > 0 && inherits(target_for_metrics, "sf")) {
+                            # Calculate Euclidean distance
+                            target_for_metrics <- target_for_metrics %>%
+                                mutate(
+                                    euclidean_distance = as.numeric(st_distance(
+                                        lwgeom::st_startpoint(geometry),
+                                        lwgeom::st_endpoint(geometry),
+                                        by_element = TRUE
+                                    ))
+                                )
+
+                            edge_list_str <- as.character(target_for_metrics$edge_id_list)
+                            edge_list <- strsplit(edge_list_str, ",")
+
+                            route_edges_mapping <- data.frame(
+                                row_idx = rep(1:nrow(target_for_metrics), lengths(edge_list)),
+                                edge_index = as.numeric(unlist(edge_list))
                             )
 
-                        edge_list_str <- as.character(target_for_metrics$edge_id_list)
-                        edge_list <- strsplit(edge_list_str, ",")
-
-                        route_edges_mapping <- data.frame(
-                            row_idx = rep(1:nrow(target_for_metrics), lengths(edge_list)),
-                            edge_index = as.numeric(unlist(edge_list))
-                        )
-
-                        route_stats <- route_edges_mapping %>%
-                            left_join(edges, by = "edge_index") %>%
-                            mutate(
-                                is_strong = osm_id %in% ci_ids$strong,
-                                is_medium = osm_id %in% ci_ids$medium,
-                                is_weak   = osm_id %in% ci_ids$weak,
-                                is_foot   = osm_id %in% ci_ids$foot,
-                                is_any_ci = is_strong | is_medium | is_weak | is_foot
-                            ) %>%
-                            group_by(row_idx) %>%
-                            summarise(
-                                route_ci_strong_m = sum(length[is_strong], na.rm = TRUE),
-                                route_ci_medium_m = sum(length[is_medium], na.rm = TRUE),
-                                route_ci_weak_m = sum(length[is_weak], na.rm = TRUE),
-                                route_ci_foot_m = sum(length[is_foot], na.rm = TRUE),
-                                lts1_m = sum(length[bicycle_lts == 1], na.rm = TRUE),
-                                lts2_m = sum(length[bicycle_lts == 2], na.rm = TRUE),
-                                lts3_m = sum(length[bicycle_lts == 3], na.rm = TRUE),
-                                lts4_m = sum(length[bicycle_lts == 4], na.rm = TRUE),
-                                total_edge_len = sum(length, na.rm = TRUE),
-                                route_interruptions_count = {
-                                    ci_flag <- is_any_ci
-                                    edge_len <- length
-                                    n <- length(ci_flag)
-                                    if (n <= 1) {
-                                        0L
-                                    } else {
-                                        interruptions <- 0L
-                                        non_ci_accum <- 0
-                                        was_on_ci <- FALSE
-                                        for (k in seq_len(n)) {
-                                            if (is_any_ci[k]) {
-                                                if (was_on_ci && non_ci_accum > 100) interruptions <- interruptions + 1L
-                                                non_ci_accum <- 0
-                                                was_on_ci <- TRUE
-                                            } else {
-                                                non_ci_accum <- non_ci_accum + ifelse(is.na(edge_len[k]), 0, edge_len[k])
+                            route_stats <- route_edges_mapping %>%
+                                left_join(edges, by = "edge_index") %>%
+                                mutate(
+                                    is_strong = osm_id %in% ci_ids$strong,
+                                    is_medium = osm_id %in% ci_ids$medium,
+                                    is_weak   = osm_id %in% ci_ids$weak,
+                                    is_foot   = osm_id %in% ci_ids$foot,
+                                    is_any_ci = is_strong | is_medium | is_weak | is_foot
+                                ) %>%
+                                group_by(row_idx) %>%
+                                summarise(
+                                    route_ci_strong_m = sum(length[is_strong], na.rm = TRUE),
+                                    route_ci_medium_m = sum(length[is_medium], na.rm = TRUE),
+                                    route_ci_weak_m = sum(length[is_weak], na.rm = TRUE),
+                                    route_ci_foot_m = sum(length[is_foot], na.rm = TRUE),
+                                    lts1_m = sum(length[bicycle_lts == 1], na.rm = TRUE),
+                                    lts2_m = sum(length[bicycle_lts == 2], na.rm = TRUE),
+                                    lts3_m = sum(length[bicycle_lts == 3], na.rm = TRUE),
+                                    lts4_m = sum(length[bicycle_lts == 4], na.rm = TRUE),
+                                    total_edge_len = sum(length, na.rm = TRUE),
+                                    route_interruptions_count = {
+                                        ci_flag <- is_any_ci
+                                        edge_len <- length
+                                        n <- length(ci_flag)
+                                        if (n <= 1) {
+                                            0L
+                                        } else {
+                                            interruptions <- 0L
+                                            non_ci_accum <- 0
+                                            was_on_ci <- FALSE
+                                            for (k in seq_len(n)) {
+                                                if (is.na(ci_flag[k])) next
+                                                if (ci_flag[k]) {
+                                                    if (was_on_ci && non_ci_accum > 100) interruptions <- interruptions + 1L
+                                                    non_ci_accum <- 0
+                                                    was_on_ci <- TRUE
+                                                } else {
+                                                    non_ci_accum <- non_ci_accum + ifelse(is.na(edge_len[k]), 0, edge_len[k])
+                                                }
                                             }
+                                            interruptions
                                         }
-                                        interruptions
-                                    }
-                                },
-                                .groups = "drop"
-                            ) %>%
-                            mutate(
-                                route_pct_lts1 = round(lts1_m / pmax(total_edge_len, 1) * 100, 2),
-                                route_pct_lts2 = round(lts2_m / pmax(total_edge_len, 1) * 100, 2),
-                                route_pct_lts3 = round(lts3_m / pmax(total_edge_len, 1) * 100, 2),
-                                route_pct_lts4 = round(lts4_m / pmax(total_edge_len, 1) * 100, 2)
-                            ) %>%
-                            select(-lts1_m, -lts2_m, -lts3_m, -lts4_m, -total_edge_len)
+                                    },
+                                    .groups = "drop"
+                                ) %>%
+                                mutate(
+                                    route_pct_lts1 = round(lts1_m / pmax(total_edge_len, 1) * 100, 2),
+                                    route_pct_lts2 = round(lts2_m / pmax(total_edge_len, 1) * 100, 2),
+                                    route_pct_lts3 = round(lts3_m / pmax(total_edge_len, 1) * 100, 2),
+                                    route_pct_lts4 = round(lts4_m / pmax(total_edge_len, 1) * 100, 2)
+                                ) %>%
+                                select(-lts1_m, -lts2_m, -lts3_m, -lts4_m, -total_edge_len)
 
-                        target_for_metrics <- target_for_metrics %>%
-                            mutate(row_idx = row_number()) %>%
-                            left_join(route_stats, by = "row_idx") %>%
-                            select(-row_idx) %>%
-                            mutate(across(starts_with("route_"), ~ replace_na(., 0)))
+                            target_for_metrics <- target_for_metrics %>%
+                                mutate(row_idx = row_number()) %>%
+                                left_join(route_stats, by = "row_idx") %>%
+                                select(-row_idx) %>%
+                                mutate(across(starts_with("route_"), ~ replace_na(., 0)))
 
-                        if (!enriching) {
-                            # Expand unique_trips to 20k rows
-                            trips <- target_for_metrics %>%
+                            if (!enriching) {
+                                # Expand unique_trips to 20k rows
+                                trips <- target_for_metrics %>%
+                                    inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") %>%
+                                    mutate(from_id = trip_id, to_id = trip_id) %>%
+                                    select(-trip_id)
+                            } else {
+                                # Re-join metrics to existing 20k rows
+                                metric_cols <- st_drop_geometry(target_for_metrics) %>%
+                                    select(from_id, to_id, starts_with("route_"), euclidean_distance)
+                                trips <- trips %>%
+                                    left_join(metric_cols, by = c("from_id", "to_id")) %>%
+                                    mutate(across(starts_with("route_"), ~ replace_na(., 0)))
+                            }
+                        } else {
+                            cat("    [WARN] No valid sf data for metric calculation. Skipping exposure metrics.\n")
+                            if (!enriching) trips <- unique_trips # will be empty
+                        }
+                    } else if (!enriching) {
+                        # No exposure needed AND not enriching => unique_trips was empty (no routes found)
+                        # Expand to trips anyway (will be 0 rows)
+                        if (nrow(unique_trips) > 0) {
+                            trips <- unique_trips %>%
                                 inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") %>%
                                 mutate(from_id = trip_id, to_id = trip_id) %>%
                                 select(-trip_id)
                         } else {
-                            # Re-join metrics to existing 20k rows
-                            trips <- trips %>%
-                                left_join(st_drop_geometry(target_for_metrics) %>% select(from_id, to_id, starts_with("route_"), euclidean_distance), by = c("from_id", "to_id")) %>%
-                                mutate(across(starts_with("route_"), ~ replace_na(., 0)))
+                            trips <- unique_trips
                         }
                     }
 
