@@ -196,7 +196,10 @@ for (city in target_cities) {
                     if ("osm_id" %in% names(ci) && use_lts_1) {
                         new_lts_ci <- st_drop_geometry(ci) %>%
                             select(osm_id) %>%
-                            mutate(lts = 1)
+                            mutate(
+                                osm_id = as.numeric(osm_id),
+                                lts = 1L
+                            )
                     }
                     rm(ci)
                 }

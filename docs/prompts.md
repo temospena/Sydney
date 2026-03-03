@@ -2082,3 +2082,31 @@ When you set `REROUTE_ONLY <- TRUE` and run the pipeline:
 2. It **forces** the itinerary routing step for every year/LTS combination exactly as if you had manually deleted the local `trips_<city>_<year>_lts<X>.rds` files.
 
 You can now use `REROUTE_ONLY = TRUE` in the server to smoothly re-run your dynamic `<lts=1>` cycling infrastructure parameters without losing your base data setup.
+
+---
+
+## Prompt 50
+
+i tried to run for Lisbon, on the server side, with REROUTE_ONLY = TRUE.
+it seems to make no effect, the parameter in the config, it did not reroute (it usually takes some time to route, but this time was super fast - indicating it actually didn't.
+
+### Response
+
+Ah! It *did* try to bypass the files because of `REROUTE_ONLY = TRUE`, but it crashed immediately inside the loop.
+
+Because the entire routing setup for each year sits inside a large `tryCatch` block (to prevent a single bad city/year from stopping your entire pipeline), the error wasn't displayed in your standard log. Instead, it silently threw a warning, exited the LTS routing loop completely, and instantly jumped to configuring the next year (Year 19). That's exactly why it was "super fast"—it skipped computing the paths entirely!
+
+**The underlying cause:**
+The `r5r` package is **strenuously strict** with data types inside the `new_lts` dataframe. Specifically, it has C-level assertions that require `osm_id` to strictly be type `numeric`, and `lts` to purely be type `integer`.
+Because the OpenStreetMap geometries loaded from the GeoPackage natively read as `character` vectors and `double` floating points, `r5r` instantly rejected the modified dataframe and threw a fatal error.
+
+**The Fix:**
+I have explicitly forced typecasting in `code/pipeline/05_r5r_routing.R` when formatting `new_lts_ci` from the CI polygon:
+```R
+mutate(
+    osm_id = as.numeric(osm_id),
+    lts = 1L # The L strictly maps the number as an Integer
+)
+```
+
+The data pipeline has been updated. You can re-run it exactly as you did with `REROUTE_ONLY = TRUE`, and it should properly compute routing for the adjusted LTS mapping!
