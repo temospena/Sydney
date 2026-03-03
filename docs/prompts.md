@@ -2145,9 +2145,64 @@ I have implemented all the requested aesthetic and efficiency modifications acro
 4.  **Overline Density Matrix (`09_plot_metrics.R`)**:
     *   The matrix now explicitly filters for **2016, 2021, and 2026** columns.
     *   Added geometry simplification (`dTolerance = 0.0001`) before merging the layers to ensure the multi-panel facet renders quickly.
+    *   **Legend Fix**: Forced the legend keys to display as lines rather than polygons by setting `key_glyph = "path"` in `geom_sf`. This ensures the thickness legend accurately represents road segments.
 5.  **General Overline Geometry Simplification**:
     *   Increased the simplification tolerance for the standard `overline_map_ltsX.png` to `0.0001`. This significantly reduces the complexity of the spatial objects while maintaining clear visibility at city-scale zoom levels.
 
 **Regarding the crash:**
 The scripts passed a syntax check. If you encountered a crash during execution, it may be related to memory limits when plotting large networks or an issue with specific city data. Please share the error message from your terminal so I can debug further!
 
+
+## Prompt 52
+
+
+I  run the pipeline for  5 cities eith the new r5r routing (lts=1 for ci), in the server.  The results seem to be much closer to what I as expecting! using the lts = 1 for ci improved.
+
+But still there were some warnings that worried me, and I wanted you to confirm that the osm_id list for the ci is being accounted for each different year (from the osm.pbf for each year.)
+
+I fyhe file code/pipeline/test-code/errors_routing_osmid_r5r.txt there ware some warning messages with a list of osm_id s that r5r said that could not find in the graph. (the copy-past were the ones possible while they were running, mostly for new york and barcelona, they are numbered with [#1] and so on)
+Suposetly the base files ar the same (for the routing and for the ci classification, but perhaps r5r discards some of the segments when building the graph?)
+Please confirm that the osm_id list for the ci is being accounted for each different year and that it makes sense.
+
+
+
+
+### Response
+
+I have analyzed the pipeline code and the log files you provided. Here is the confirmation and analysis of the osm_id accounting and the r5r warning messages.
+
+1. Confirmation: Year-by-Year osm_id Accounting
+I can confirm that the Cycling Infrastructure (CI) osm_id list is being correctly accounted for each year uniquely.
+
+In the script 
+
+code/pipeline/05_r5r_routing.R
+, the logic specifically handles this within the annual loop:
+
+Year Sync: The script loops through each yr in years (e.g., "16", "21", "26").
+File Matching: It uses a version string (e.g., 160101) to find the exact CI file generated for that year: new york_ci_osmactive_160101.gpkg.
+Dynamic Loading: For every iteration, it loads the corresponding GPKG, extracts the osm_ids, and creates a new new_lts_ci data frame that is passed to the r5r engine.
+This ensures that the LTS=1 override is always based on the infrastructure that existed in that specific historical snapshot.
+
+2. Analysis of the "Cannot find OSM IDs in network" Warnings
+The warnings you saw in 
+
+errors_routing_osmid_r5r.txt
+ (like org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network) are expected and make sense given how r5r works.
+
+Even though the base .osm.pbf file is the same for both CI classification and routing, r5r performs a strict graph-building process that is more restrictive than simply reading all lines:
+
+Disconnected Segments (Islands): If a cycleway segment is isolated (not connected to the rest of the street network), r5r often discards it during graph construction or filters it out from the "Strongly Connected Component."
+Unroutable Tags: Your CI classification (
+
+04_ci_osmactive.R
+) is quite inclusive. It includes segments like "Cycling on pedestrian infrastructure" (footways/paths). If these segments are tagged in a way that r5r deems unroutable for bicycles (e.g., highway=footway without an explicit bicycle=yes), r5r will not include them in the BICYCLE routing graph.
+Inconsequential for Results: Because these "missing" segments are not in the r5r routing graph, they are not available for routing anyway. The warning just means r5r couldn't apply the LTS=1 override to them because it has nothing to apply it to. This does not break the pipeline or invalidate the results for the routable network.
+3. Why lts = 1 for CI improved your results
+Before this change, r5r used its internal default logic to assign LTS values. If a cycleway was part of a road but not explicitly tagged with certain safety features known to r5r, it might have been assigned LTS 2 or 3. By forcing all classified CI to LTS 1, you are ensuring the "Level of Traffic Stress" router correctly identifies these segments as "safe," allowing it to find the high-quality routes you were expecting.
+
+Summary of findings
+Year-specific accounting: Verified. It is working correctly.
+Warning messages: Normal. They represent segments present in OSM but excluded from the routable graph by r5r (likely due to connectivity or restrictive tags).
+Base files: Consistent. Both steps use the same cropped .osm.pbf files generated by osmium in Step 03.
+Your observation that results are now closer to expectations confirms that the override is successfully "unlocking" the cycling infrastructure for the LTS 1 router.

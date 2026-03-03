@@ -140,7 +140,7 @@ for (current_city in unique(final_df$city)) {
       filter(!is.na(year)) # To drop any remaining uncategorized years
 
     p_matrix <- ggplot() +
-      geom_sf(data = all_overlines, aes(linewidth = trips, color = trips)) +
+      geom_sf(data = all_overlines, aes(linewidth = trips, color = trips), key_glyph = "path") +
       scale_color_viridis_c(option = "inferno", direction = -1) +
       scale_linewidth_continuous(range = c(0.1, 2.5)) +
       facet_grid(lts ~ year, switch = "y") +

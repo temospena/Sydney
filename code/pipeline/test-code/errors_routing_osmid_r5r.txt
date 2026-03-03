@@ -1,0 +1,163 @@
+[#1]
+
+
+
+10:03:07.036 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE origin wasn't found!
+10:03:07.041 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE origin wasn't found!
+10:03:07.055 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE destination wasn't found!
+10:03:07.059 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:03:07.076 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE destination wasn't found!
+10:03:07.079 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE origin wasn't found!
+10:03:07.081 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE destination wasn't found!
+10:03:07.091 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE origin wasn't found!
+10:03:07.092 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE origin wasn't found!
+10:03:07.093 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE destination wasn't found!
+10:03:07.116 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE origin wasn't found!
+10:03:07.122 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE destination wasn't found!
+10:03:07.139 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE origin wasn't found!
+10:03:07.139 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE origin wasn't found!
+10:03:07.163 [INFO ] org.ipea.r5r.Process.R5Process - 18371 out of 18371 origins processed.
+10:03:07.163 [INFO ] org.ipea.r5r.Process.R5Process - .. DONE!
+10:03:07.163 [INFO ] org.ipea.r5r.Process.R5Process - Consolidating results...
+10:03:07.167 [INFO ] org.ipea.r5r.Process.R5Process -  DONE!
+    Calculating route-level exposure metrics (CI, LTS, circuity)...
+    Calculating TRUE 15-min volume accessibility (Matrix to all H3 cells)...
+ℹ Modifying LTS levels...
+10:03:12.051 [WARN ] org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network: {629228930, 773066256, 742616134, 1279388740, 1279388743, 1279388742, 582410898, 27074993, 582410887, 582410884, 582410892, 582410890, 273895443, 273895442, 834703763, 361084382, 223694293, 1280445641, 11632666, 223694231, 223694227, 11632708, 742223041, 742223040, 1451382660, 421165062, 1046871878, 879998274, 879998272, 879998267, 879998265, 879998264, 879998271, 879998270, 879998269, 580985807, 1096958187, 462354986, 729631451, 11632896, 1318154016, 11632898, 26443819, 439933951, 656794913, 656794914, 26444699, 26444698, 26444697, 26444701, 26444700, 1231170418, 675121679, 26444714, 685943467, 685943464, 685943465, 685943468, 11633385, 173623354, 717383856, 1377742953, 11633205, 835580745, 11633204, 835580744, 1318153241, 1422349900, 1422349899, 582639652, 721061978, 1092756358, 27501327, 11633153, 11633157, 835580679, 835580701, 835580702, 361084766, 1447556256, 835580709, 835580708, 835580711, 835580710, 361084796, 11633229, 1201562766, 1204249814, 1201562763, 1032609481, 1032609482, 1447458085, 359601692, 578863361, 11633458, 11633447, 1246259594, 1017782134, 1436677717, 1436677716, 1279373238, 420617490, 420617491, 617095369, 420617489, 420617494, 11633844, 420617492, 1041365527, 420617493, 776890950, 776890951, 617095362, 420617472, 420617473, 420617479, 420617482, 420617486, 420617487, 420617484, 420617485, 583837409, 46171887, 583837411, 420617506, 420617507, 420617504, 420617509, 1450226228, 978746896, 1450226237, 978746894, 978746895, 978746892, 978746893, 1213172795, 11633866, 1379612350, 806352008, 1070013261, 11633667, 416488555, 1037056287, 798231364, 416488457, 59582313, 1436676434, 1035999546, 963689587, 963689589, 26944656, 222857300, 222857301, 11634067, 222857228, 416488845, 222857261, 11634112, 222857276, 222857277, 222857269, 1097606368, 1097606369, 232065094, 11633957, 11633960, 1039251544, 11633950, 1200857640, 415669520, 767822810, 582796443, 582796437, 276657750, 582796431, 582796421, 274044521, 280401546, 988019895, 988019894, 11634214, 420896651, 420896649, 11634194, 11634197, 572204199, 450255902, 450255903, 450255900, 450255901, 450255899, 11634262, 450255904, 450255905, 11634250, 1097959028, 986439107, 1436709554, 581035419, 581035420, 1317734859, 1317734860, 773613932, 773613928, 1451381238, 773613930, 735407276, 735407275, 420617887, 361083412, 26740284, 420617890, 420617895, 420617896, 847002205, 671301758, 1231167994, 1231167995, 1231167998, 1231167997, 279410753, 1258439197, 784369649, 577891132, 1016387015, 1317488601, 1317636088, 635161720, 963555546, 963555545, 1010988536, 132500965, 994013475, 973262882, 973262883, 1422352098, 1422352097, 132500893, 132500892, 132500894, 679469813, 679469806, 1436720954, 26446601, 132500857, 412160525, 412160524, 222857192, 222857193, 760178668, 760178667, 222857199, 912170225, 1093815171, 1447255170, 1015371354, 579430499, 705093876, 1032828545, 1036506850, 1366162013, 1376950609, 1039251111, 1039251113, 656813183, 1039251112, 27552450, 26741484, 1451171293, 1451171292, 656813186, 656813185, 28101148, 494204618, 1278093309, 1451130280, 795813043, 1121143075, 1121143074, 1121143073, 1121143072, 582438580, 582438587, 582438585, 1290830060, 60428208, 793494395, 858529566, 798237607, 221921536, 798237608, 582438648, 582438624, 582438635, 708347495, 1037078968, 582438599, 582438597, 582438595, 582438593, 783393479, 783393478, 962843924, 582438600, 60501802, 27463015, 1026617824, 1026617825, 60419743, 1030312051, 1317487524, 1317487523, 60419760, 60419757, 60419793, 60419794, 60419777, 46690195, 60419778, 46690196, 221921369, 1313817387, 1313817385, 579899390, 579899391, 1057788574, 1057788575, 1030320332, 1057788580, 1057788581, 1057788582, 1057788583, 1057788576, 1057788579, 420902790, 420902788, 420902789, 420902786, 420902787, 420902794, 420902792, 420902793, 708347034, 708347035, 420599719, 421165054, 800211287, 368777977, 27479721, 47345098, 808066867, 808066864, 47345097, 1418640301, 415873004, 761152120, 420623953, 420623958, 420623959, 713401792, 420623956, 420623957, 713401794, 420623962, 420623960, 416503687, 509522182, 509522181, 860838962, 756589209, 26783330, 26783335, 1426679049, 1426679048, 60437426, 830193960, 1447757343, 887375027, 830193959, 830193958, 773611134, 773611135, 962169129, 962169128, 1035095501, 56054724, 56054722, 56054760, 1353818126, 944908423, 965609816, 965609814, 965609815, 944908424, 376694628, 617502183, 1366466562, 1366466560, 1176926206, 198924804, 921413428, 60420508, 60420497, 60420496, 60420500, 60420502, 46788753, 221921126, 221921127, 678484525, 719009979, 1353818673, 60436754, 60436755, 60436746, 579899393, 60428553, 226148272, 60428619, 579899471, 965839727, 450259414, 450259412, 450259410, 450259420, 450259419, 450259416, 889308687, 450259417, 450259399, 650442193, 450259392, 650442194, 450259406, 450259407, 450259404, 650442206, 450259405, 450259446, 450259444, 450259445, 450259442, 450259443, 450259430, 450259429, 450259438, 450259439, 450259433, 404720477, 404720476, 1378648516, 27062898, 27062889, 1451172452, 1451172451, 579737258, 572749333, 629895627, 629895624, 957844817, 1447739928, 1447739927, 1225579903, 908894892, 908894893, 908894894, 908894895, 908894888, 908894889, 908894890, 908894891, 908894884, 908894885, 908894886, 908894887, 1001549630, 1225579904, 908894882, 908894883, 908894908, 908894909, 908894904, 908894905, 908894906, 908894907, 908894900, 908894901, 908894902, 908894903, 908894896, 908894897, 908894898, 908894899, 77705231, 1032775996, 1032775997, 1032775995, 1001549632, 1001549636, 1204253418, 1204253417, 11630059, 226015244, 389489228, 582399804, 582399790, 1422401909, 60356190, 60356175, 60356167, 1059515080, 60356192, 60356195, 60356197, 60429715, 26744766, 1418576575, 1418576574, 627037027, 26744790, 1451385063, 463728074, 463728073, 1378935952, 1378935953, 657035677, 657035676, 1135736189, 1414783647, 1135736188, 551933932, 551933931, 11630507, 633770726, 633770724, 1047062874, 60421283, 27522791, 276817716, 11630588, 11630565, 716807635, 716807634, 27522569, 1202991168, 60339296, 60339300, 60339301, 584850140, 584850141, 584850142, 584850143, 721957643, 584850136, 584850137, 584850139, 584850134, 584850135, 584850128, 961904984, 584850127, 879996006, 879996005, 584850116, 584850117, 584850115, 944906352, 944906353, 584850157, 584850148, 584850151, 584850144, 584850145, 1162403090, 256661309, 275580955, 11630651, 572005049, 1436929284, 1073219420, 1073219422, 1106966870, 1052632589, 719934047, 719934046, 1032553788, 27523429, 1436675444, 11630694, 361082207, 368774432, 224015794, 361082220, 55573413, 720974816, 720974810, 988300235, 720974815, 11630981, 11630983, 27523302, 11631102, 371519344, 361082075, 796456449, 796456451, 11631054, 584850268, 26744890, 412156215, 808110563, 790386424, 790386422, 790386423, 1379109825, 1047069808, 885313268, 885313270, 1015367350, 28097513, 796456445, 1377355953, 608853757, 11631118, 1377429705, 27835250, 27081380, 27081378, 450257302, 450257300, 450257301, 962273795, 962273793, 11631569, 11631557, 11631564, 1050199321, 27523621, 629227017, 954557293, 629227020, 885313372, 1030285040, 1030285041, 1030285042, 885313371, 1415221241, 846850524, 846850514, 846850509, 846850508, 846850502, 1447251334, 1447251333, 156898650, 156898646, 361081225, 361081224, 11631806, 156898645, 361081226, 757395767, 333008797, 46907008, 1373310339, 11631853, 1373310343, 1373310342, 11631815, 11631823, 46907006, 1063060376, 626014617, 626014623, 1047069366, 1022754842, 1317597810, 1317597811, 1377398555, 384609257, 11632061, 555580422, 11632016, 783709071, 413050335, 11632087, 11632086, 700593235, 715872063, 771190869, 214528355, 214528359, 27073580, 1377988504, 723293936, 26738583, 588168462, 26738582, 26738579, 450258118, 450258117, 450258112, 900664243, 900664242, 1176926208, 1317613752, 450258110, 450258111, 420349818, 11632178, 950552127, 625974243, 1032561468, 1318154282, 11632248, 420620254, 420620255, 420620252, 420620253, 1015399018, 420620256, 420620257, 844172455, 844172454, 844172457, 1030071197, 844172456, 1030071196, 1030071199, 844172458, 1030071195, 1030071194, 11632567, 11632566, 739111681, 739111680, 1436961462, 1043644713, 11632627, 11632634, 1377357154, 1378291037, 1377357155, 11632434, 96041504, 96041496, 579984675, 579984681, 579984680, 579984683, 579984682, 224940673, 361081458, 719041830}
+All r5r networks have been successfully stopped.
+r5r phase complete.
+DONE STEP: code/pipeline/05_r5r_routing.R
+
+------------------------------------------
+CITY: new york | STEP: code/pipeline/07_analysis.R
+------------------------------------------
+[CONFIG] FORCE_RERUN is currently: FALSE
+[DEBUG] Working Directory: /media/rosa/Dados/GIS/Sydney
+[DEBUG] Data Directory: /media/rosa/Dados/GIS/Sydney/data/pipeline
+[CONFIG] Loaded geofabrik_regions.csv with 285 rows.
+Starting Phase 3 Analysis...
+Processing analysis for New York
+  Analyzing LTS 1
+    Calculating linear snapped distances and circuity...
+    Filtered to 16931 OD pairs successfully routed across all years.
+  Analyzing LTS 2
+
+
+ [#2]
+
+
+All r5r networks have been successfully stopped.
+Setting up r5r network for Barcelona year 24 ...
+ℹ No raster .tif files found in /media/rosa/Dados/GIS/Sydney/data/pipeline/barcelona/r5r_24. Using elevation = "'NONE'".
+ℹ Using cached network from /media/rosa/Dados/GIS/Sydney/data/pipeline/barcelona/r5r_24/network.dat.
+[1] "Entering LTS loop for Year 24"
+[1] "  Calculating itineraries for Year 24 LTS 1 ( 18866 unique pairs )"
+ℹ Modifying LTS levels...
+10:13:15.469 [WARN ] org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network: {1096261921, 1220157468, 1039984798, 1039877870}
+10:13:15.532 [INFO ] org.ipea.r5r.Process.R5Process - 1 out of 18866 origins processed.
+10:13:15.803 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:15.840 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:15.914 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:15.961 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:16.017 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+
+
+
+[#3]
+
+
+
+
+:13:28.746 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:28.755 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:29.125 [INFO ] org.ipea.r5r.Process.R5Process - 18866 out of 18866 origins processed.
+10:13:29.125 [INFO ] org.ipea.r5r.Process.R5Process - .. DONE!
+10:13:29.125 [INFO ] org.ipea.r5r.Process.R5Process - Consolidating results...
+10:13:29.138 [INFO ] org.ipea.r5r.Process.R5Process -  DONE!
+    Calculating route-level exposure metrics (CI, LTS, circuity)...
+    Calculating TRUE 15-min volume accessibility (Matrix to all H3 cells)...
+ℹ Modifying LTS levels...
+10:13:35.635 [WARN ] org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network: {1096261921, 1220157468, 1039984798, 1039877870}
+[1] "  Calculating itineraries for Year 24 LTS 2 ( 18866 unique pairs )"
+ℹ Modifying LTS levels...
+10:13:42.619 [WARN ] org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network: {1096261921, 1220157468, 1039984798, 1039877870}
+10:13:42.636 [INFO ] org.ipea.r5r.Process.R5Process - 1 out of 18866 origins processed.
+10:13:42.656 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.707 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.707 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.788 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.841 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.862 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.884 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.889 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.902 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.952 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.976 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.990 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:42.993 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:43.014 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:43.047 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:43.110 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:43.120 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:43.144 [INFO ] org.ipea.r5r.Process.R5Process - 1001 out of 18866 origins processed.
+10:13:43.147 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't foun
+
+
+
+[#4]
+
+
+
+
+
+10:13:54.296 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:13:54.439 [INFO ] org.ipea.r5r.Process.R5Process - 18866 out of 18866 origins processed.
+10:13:54.439 [INFO ] org.ipea.r5r.Process.R5Process - .. DONE!
+10:13:54.439 [INFO ] org.ipea.r5r.Process.R5Process - Consolidating results...
+10:13:54.445 [INFO ] org.ipea.r5r.Process.R5Process -  DONE!
+    Calculating route-level exposure metrics (CI, LTS, circuity)...
+    Calculating TRUE 15-min volume accessibility (Matrix to all H3 cells)...
+ℹ Modifying LTS levels...
+10:14:00.899 [WARN ] org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network: {1096261921, 1220157468, 1039984798, 1039877870}
+[1] "  Calculating itineraries for Year 24 LTS 3 ( 18866 unique pairs )"
+ℹ Modifying LTS levels...
+10:14:07.797 [WARN ] org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network: {1096261921, 1220157468, 1039984798, 1039877870}
+10:14:07.814 [INFO ] org.ipea.r5r.Process.R5Process - 1 out of 18866 origins processed.
+10:14:07.848 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:14:07.883 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:14:07.956 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:14:08.028 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:14:08.059 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:14:08.089 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+
+
+
+
+[#5]
+
+
+
+
+
+10:15:15.352 [INFO ] org.ipea.r5r.Process.R5Process - .. DONE!
+10:15:15.352 [INFO ] org.ipea.r5r.Process.R5Process - Consolidating results...
+10:15:15.367 [INFO ] org.ipea.r5r.Process.R5Process -  DONE!
+    Calculating route-level exposure metrics (CI, LTS, circuity)...
+    Calculating TRUE 15-min volume accessibility (Matrix to all H3 cells)...
+ℹ Modifying LTS levels...
+10:15:22.573 [WARN ] org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network: {1316982436, 1039877870}
+[1] "  Calculating itineraries for Year 26 LTS 2 ( 18866 unique pairs )"
+ℹ Modifying LTS levels...
+10:15:30.712 [WARN ] org.ipea.r5r.Scenario.SetLtsOsm - Cannot find the following OSM IDs in network: {1316982436, 1039877870}
+10:15:30.752 [INFO ] org.ipea.r5r.Process.R5Process - 1 out of 18866 origins processed.
+10:15:30.815 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:30.833 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:30.908 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:30.997 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:31.026 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:31.049 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:31.057 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:31.066 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:31.129 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+10:15:31.158 [WARN ] org.ipea.r5r.Planner.TripPlanner - Direct mode BICYCLE last state wasn't found
+
