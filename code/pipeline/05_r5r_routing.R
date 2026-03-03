@@ -250,9 +250,19 @@ for (city in target_cities) {
                     enriching <- FALSE
                     if (exists("trips_already_loaded") && !is.null(trips_already_loaded)) {
                         cat("    Enrichment Mode: Re-processing metadata for existing routes...\n")
-                        # Ensure ID types match unique_id format
-                        trips <- trips_already_loaded %>%
-                            mutate(from_id = as.character(from_id), to_id = as.character(to_id))
+
+                        # Defensive: Ensure standard column names for legacy files
+                        trips <- trips_already_loaded
+                        if (!"from_id" %in% names(trips) && "id" %in% names(trips)) trips <- trips %>% rename(from_id = id)
+                        if (!"to_id" %in% names(trips) && "id" %in% names(trips)) trips <- trips %>% rename(to_id = id)
+
+                        # Ensure ID types match unique_id/trip_id format
+                        trips <- trips %>%
+                            mutate(
+                                from_id = as.character(from_id),
+                                to_id = as.character(to_id)
+                            )
+
                         enriching <- TRUE
                         rm(trips_already_loaded)
                         unique_trips <- data.frame()
@@ -281,7 +291,7 @@ for (city in target_cities) {
                         # Target for metrics calculation: unique_trips if new, otherwise trips (deduplicated for speed if possible)
                         target_for_metrics <- if (nrow(unique_trips) > 0) {
                             unique_trips %>% mutate(from_id = as.character(from_id), to_id = as.character(to_id))
-                        } else {
+                        } else if (nrow(trips) > 0) {
                             # In enrichment, trips might have 20k rows.
                             # We filter to unique from_id/to_id to speed up processing
                             # ID casting is crucial here to match unique_id/trip_id logic
@@ -290,6 +300,8 @@ for (city in target_cities) {
                                 group_by(from_id, to_id) %>%
                                 slice(1) %>%
                                 ungroup()
+                        } else {
+                            data.frame()
                         }
 
                         # Calculate Euclidean distance
@@ -417,22 +429,30 @@ for (city in target_cities) {
 
                                     # we join to 'trips' (which is the full 20k rows)
                                     # mapping back: trip_id is in from_id.
-                                    trips_meta <- all_pairs %>%
+                                    trips_meta_acc <- all_pairs %>%
                                         select(trip_id, unique_id) %>%
                                         mutate(trip_id = as.character(trip_id))
+
+                                    # Backup geometry and class
+                                    is_sf <- inherits(trips, "sf")
+                                    if (is_sf) geom_backup <- st_geometry(trips)
 
                                     trips_enriched <- trips %>%
                                         st_drop_geometry() %>%
                                         mutate(from_id = as.character(from_id)) %>%
-                                        left_join(trips_meta, by = c("from_id" = "trip_id")) %>%
+                                        left_join(trips_meta_acc, by = c("from_id" = "trip_id")) %>%
                                         left_join(acc_to_join, by = "unique_id") %>%
                                         mutate(access_15min_vol = replace_na(access_15min_vol, 0)) %>%
                                         select(-unique_id)
 
-                                    # Re-attribute geometry
-                                    geom_backup <- st_geometry(trips)
-                                    trips <- trips_enriched
-                                    st_geometry(trips) <- geom_backup
+                                    # Re-attribute geometry if it was sf
+                                    if (is_sf) {
+                                        # Use standard geometry name 'geometry'
+                                        trips <- st_as_sf(trips_enriched, geometry = geom_backup)
+                                        st_geometry(trips) <- "geometry"
+                                    } else {
+                                        trips <- trips_enriched
+                                    }
 
                                     avg_acc <- round(mean(trips$access_15min_vol, na.rm = TRUE))
                                 }

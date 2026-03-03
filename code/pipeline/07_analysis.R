@@ -50,7 +50,10 @@ for (city in target_cities) {
         }
 
         # Combine all
-        trips_combined <- bind_rows(trips_list) |> mutate(year = as.factor(year))
+        trips_combined <- do.call(rbind, trips_list) %>%
+            mutate(year = as.factor(year)) %>%
+            st_as_sf()
+        if (inherits(trips_combined, "sf")) st_geometry(trips_combined) <- "geometry"
 
         # Calculate snapped linear distance and circuity directly from routing geometries
         cat("    Calculating linear snapped distances and circuity...\n")
@@ -59,7 +62,7 @@ for (city in target_cities) {
                 snapped_start = lwgeom::st_startpoint(geometry),
                 snapped_end = lwgeom::st_endpoint(geometry),
                 linear_distance = as.numeric(st_distance(snapped_start, snapped_end, by_element = TRUE)),
-                circuity = total_distance / linear_distance
+                circuity = total_distance / pmax(linear_distance, 1)
             ) |>
             select(-snapped_start, -snapped_end)
 
