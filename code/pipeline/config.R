@@ -27,7 +27,7 @@ years <- c("16", "19", "21", "24", "26")
 versions <- c("160101", "190101", "210101", "240101", "260101")
 
 # Set TRUE to re-run the routing step (and delete existing trips_*.rds) without rebuilding networks
-REROUTE_ONLY <- TRUE
+REROUTE_ONLY <- FALSE
 
 # Set TRUE to re-run all steps even if output files already exist, including donwload osm files
 FORCE_RERUN <- FALSE
