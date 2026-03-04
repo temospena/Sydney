@@ -209,7 +209,7 @@ etable(model_route_safety, dict = c("ci_strong_km" = "Protected CI (km)", "ci_me
 # etable(model_route_interrupt, dict = c("ci_strong_km" = "Protected CI (km)", "ci_medium_km" = "Painted CI (km)"))
 etable(model_route_avg_lts, model_route_safe_pct, dict = c("ci_strong_km" = "Protected CI (km)", "ci_medium_km" = "Painted CI (km)"))
 etable(model_origin_access, dict = c("total_ci_km" = "Total City CI Built (km)"))
-
+etable(model_route_avg_lts)
 # fixed effects
 summary(fixef(model_route_safety[[1]])) #only for lts1
 # plot(fixef(model_route_safety[[1]]))
@@ -226,7 +226,7 @@ coefplot(model_route_safety)
 
 
 
-# try form zero -----------------------------------------------------------
+# try form zero USE THIS ONE!!! -----------------------------------------------------------
 
 library(dplyr)
 library(fixest)
@@ -249,13 +249,54 @@ route_lts1 <- routing_stats_model |>
     )
   )
 
+# also lts2 for sake of verification
+city_lts2 <- city_data_model |>
+  filter(lts == 2) |> 
+  mutate(total_ci_km = total_ci_m /100)
+route_lts2 <- routing_stats_model |>
+  filter(lts == 2) |> 
+  mutate(
+    dist_cat = case_when(
+      euclidean_distance < 2000 ~ "1_Short (<2km)",
+      euclidean_distance >= 2000 & euclidean_distance < 5000 ~ "2_Medium (2-5km)",
+      euclidean_distance >= 5000 ~ "3_Long (>5km)"
+    )
+  )
+
 # ==========================================
 # STEP 2: THE MACRO STORY (CITY LEVEL)
-# Does a 1% bigger network mean 1% more accessibility?
 # ==========================================
+
+# 1. Average Duration (Log-Log)
+macro_duration <- feols(
+  log(avg_duration_min) ~ log_total_ci_km + log_total_road_km | city + year,
+  data = city_lts1,
+  # data = city_lts2,
+  cluster = ~city # Cluster standard errors by city
+)
+
+# # 2. Average Circuity (Log-Log)
+# macro_circuity <- feols(
+#   log(avg_circuity) ~ log_total_ci_km + log_total_road_km | city + year,
+#   data = city_lts1,
+#   cluster = ~city
+# )
+# 
+# # 3. Average Safety / LTS 1 (Level-Log)
+# # Note: pct_lts1 is already a percentage (0-100), so no need to log the dependent variable.
+# macro_safety <- feols(
+#   pct_lts1 ~ log_total_ci_km + log_total_road_km | city + year,
+#   data = city_lts1,
+#   cluster = ~city
+# )
+
+# 4. Total Accessibility (Log-Log)
+# Does building total city infrastructure lower the AVERAGE city trip duration?
 macro_access <- feols(
   log_access ~ log_total_ci_km + log_total_road_km | city + year,
-  data = city_lts1
+  data = city_lts1,
+  # data = city_lts2,
+  cluster = ~city
 )
 
 # ==========================================
@@ -268,6 +309,7 @@ micro_duration <- feols(
   + ci_foot_km
    | route_id + year,
   data = route_lts1,
+  # data = route_lts2,
   cluster = ~city 
 )
 
@@ -277,6 +319,7 @@ micro_circuity <- feols(
   + ci_foot_km
   | route_id + year,
   data = route_lts1,
+  # data = route_lts2,
   cluster = ~city
 )
 
@@ -286,17 +329,45 @@ micro_safety <- feols(
   # + ci_foot_km
   | route_id + year,
   data = route_lts1,
+  # data = route_lts2,
   cluster = ~city
 )
+
+# Trip safety LTS composite: Does infrastructure lower the average stress score? (Level-Level)
+model_avg_wlts <- feols(
+  route_avg_lts ~ ci_strong_km + ci_medium_km + ci_weak_km
+  # + ci_foot_km 
+  | route_id + year,
+  data = route_lts1,
+  # data = route_lts2,
+  cluster = ~city 
+)
+etable(model_avg_wlts)
 
 # ==========================================
 # STEP 4: PREPARE THE RESULTS FOR YOUR PAPER
 # ==========================================
+# Macro impacts
+modelsummary(
+  list("Avg Duration (Log)" = macro_duration, 
+       # "Avg Circuity (Log)" = macro_circuity, 
+       # "% Safe Route" = macro_safety,
+       "Accessibility (Log)" = macro_access),
+  coef_rename = c("log_total_ci_km" = "Total City CI (Log)",
+                  "log_total_road_km" = "Total City Road Network (Log)"),
+  stars = TRUE,
+  title = "Macro Impact of Network Expansion on City-Wide Averages (LTS 1)",
+  gof_omit = "IC|Log.Lik|F" #|RMSE
+)
+
+
+
 # Micro models
 modelsummary(
   list("Log Duration" = micro_duration, 
        "Log Circuity" = micro_circuity, 
-       "% Safe Route" = micro_safety),
+       "% LTS1 Safe" = micro_safety,
+        "Stress Score" = model_avg_wlts),
   coef_rename = c("ci_strong_km" = "Protected cycling infra (added km)", 
                   "ci_medium_km" = "Painted lane (added km)",
                   "ci_weak_km" = "Sharrow type (added km)",
@@ -305,17 +376,6 @@ modelsummary(
   title = "Impact of 1km Infrastructure Expansion on Route Characteristics (LTS 1)",
   gof_omit = "IC|Log.Lik|F" # |RMSE ; Cleans up the bottom of the table
 )
-
-# Macro model
-modelsummary(
-  list("Log 15-Min Accessibility (buildings)" = macro_access),
-  coef_rename = c("log_total_ci_km" = "Total City CI (Log)",
-                  "log_total_road_km" = "Total City Road Network (Log)"),
-  stars = TRUE,
-  title = "Macro Impact of Network Expansion on City-Wide Accessibility (LTS 1)",
-  gof_omit = "IC|Log.Lik|F" #|RMSE
-)
-
 
 
 # other interactions ------------------------------------------------------
@@ -330,11 +390,10 @@ micro_duration_dist <- feols(
   data = route_lts1,
   cluster = ~city
 )
-
 etable(micro_duration_dist)
 #If that interaction term is negative and significant, you have mathematically
 # proven that infrastructure has a compounded, disproportionate benefit for short, local trips.
-
+# ot is good for 2-5 km trips.
 
 
 # The Macro Quadratic Model
@@ -344,5 +403,4 @@ macro_access_quad <- feols(
   | city + year,
   data = city_lts1
 )
-
-etable(macro_access_quad)
+etable(macro_access_quad) # not conclusive
