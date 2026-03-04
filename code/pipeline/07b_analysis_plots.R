@@ -162,7 +162,6 @@ for (city in target_cities) {
         trips_overline <- trips_combined |>
             mutate(trips = 1) |>
             st_zm(drop = TRUE, what = "ZM") |>
-            st_make_valid() |>
             st_simplify(dTolerance = 0.0002, preserveTopology = TRUE) |> # Approx 25 meters - much lighter for overline2
             st_make_valid() |>
             filter(!st_is_empty(geometry))
@@ -202,8 +201,8 @@ for (city in target_cities) {
             map_data <- map_data |>
                 filter(!st_is_empty(geometry)) |>
                 st_make_valid() |>
-                st_simplify(dTolerance = 0.0001) |> # Increased to approx 10m for faster plotting
-                filter(trips > 1) # Filter singlets for cleaner map
+                st_simplify(dTolerance = 0.0002) |> # Increased to approx 10m for faster plotting
+                filter(trips > 2) # Filter singlets for cleaner map
 
             # Save overline data First (in case plotting crashes)
             saveRDS(map_data, file.path(results_dir, paste0("overline_data_lts", lts_level, ".rds")))
