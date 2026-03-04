@@ -21,14 +21,14 @@ target_cities = c(
   "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
   )
 cities_less_100k = c("Cairo", "Cape Town", "Hong Kong")
-cities_weired_tagging = c("Lisbon", "Munich")
+cities_weired_tagging = c("Lisbon", "Munich", "Ljubljana")
 cities_no_data = c()
 cities_no_10pct_growth = c("Amsterdam",  "Stockhoml")
 target_cities_clean = setdiff(target_cities,
                               c(cities_less_100k,
                                 cities_weired_tagging,
                                 cities_no_data,
-                                cities_no_10pct_growth)) #51
+                                cities_no_10pct_growth)) #50
 
 ## at city level
 city_data_model <- final_estimations |> 
@@ -103,7 +103,7 @@ routing_stats_model = routing_stats_all |>
   filter(circuity >= 1 & !is.na(total_duration)) |>  # clean wered results
   mutate(log_access = log(access_15min_vol+1)) # log
 
-nrow(routing_stats_all) # 10.8 million routes across 51 cities
+nrow(routing_stats_model) # 10 million routes across 51 cities
 # str(routing_stats_all)
 
 # check the percentage of zeros in access_15min_vol
@@ -181,15 +181,15 @@ model_route_safe_pct <- feols(
   cluster = ~city
 )
 
-# 4. Model Interruptions (Log-Linear)
-# Does closing gaps on THIS route reduce the number of times they are dumped into traffic?
-model_route_interrupt <- feols(
-  log(route_interruptions_count + 1) ~ ci_strong_km + ci_medium_km + ci_weak_km + ci_foot_km
-  | route_id + year,
-  data = routing_stats_model,
-  split = ~lts,
-  cluster = ~city
-)
+# # 4. Model Interruptions (Log-Linear)
+# # Does closing gaps on THIS route reduce the number of times they are dumped into traffic?
+# model_route_interrupt <- feols(
+#   log(route_interruptions_count + 1) ~ ci_strong_km + ci_medium_km + ci_weak_km + ci_foot_km
+#   | route_id + year,
+#   data = routing_stats_model,
+#   split = ~lts,
+#   cluster = ~city
+# )
 
 # Model accessibility
 model_origin_access <- feols(
@@ -206,7 +206,7 @@ etable(model_route_duration, dict = c("ci_strong_km" = "Protected CI (km)", "ci_
 etable(model_route_circuity, dict = c("ci_strong_km" = "Protected CI (km)", "ci_medium_km" = "Painted CI (km)"))
 # this is the most exciting:
 etable(model_route_safety, dict = c("ci_strong_km" = "Protected CI (km)", "ci_medium_km" = "Painted CI (km)"))
-etable(model_route_interrupt, dict = c("ci_strong_km" = "Protected CI (km)", "ci_medium_km" = "Painted CI (km)"))
+# etable(model_route_interrupt, dict = c("ci_strong_km" = "Protected CI (km)", "ci_medium_km" = "Painted CI (km)"))
 etable(model_route_avg_lts, model_route_safe_pct, dict = c("ci_strong_km" = "Protected CI (km)", "ci_medium_km" = "Painted CI (km)"))
 etable(model_origin_access, dict = c("total_ci_km" = "Total City CI Built (km)"))
 
