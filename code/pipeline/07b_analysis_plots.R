@@ -52,42 +52,42 @@ for (city in target_cities) {
         # Combine all
         trips_combined <- bind_rows(trips_list) |> mutate(year = as.factor(year))
 
-    #     # Calculate snapped linear distance and circuity directly from routing geometries
-    #     cat("    Calculating linear snapped distances and circuity...\n")
-    #     trips_combined <- trips_combined |>
-    #         mutate(
-    #             snapped_start = lwgeom::st_startpoint(geometry),
-    #             snapped_end = lwgeom::st_endpoint(geometry),
-    #             linear_distance = as.numeric(st_distance(snapped_start, snapped_end, by_element = TRUE)),
-    #             circuity = total_distance / linear_distance
-    #         ) |>
-    #         select(-snapped_start, -snapped_end)
-    # 
-    #     trips_df <- trips_combined |> st_drop_geometry()
-    # 
-    #     # Discard OD pairs missing in at least one year
-    #     n_years <- length(unique(trips_df$year))
-    #     valid_ods <- trips_df |>
-    #         count(from_id, to_id) |>
-    #         filter(n == n_years)
-    # 
-    #     trips_df <- trips_df |> inner_join(valid_ods |> select(from_id, to_id), by = c("from_id", "to_id"))
-    #     cat("    Filtered to", nrow(valid_ods), "OD pairs successfully routed across all years.\n")
-    # 
-    #     # 1. Plot Cumulative Travel Distance
-    #     p1 <- ggplot(trips_df, aes(x = total_distance, color = year)) +
-    #         stat_ecdf(lwd = 1.2) +
-    #         geom_vline(xintercept = 5000, linetype = "dashed", color = "gray40") +
-    #         annotate("text", x = 5400, y = 0.15, label = "5 km", angle = 90) +
-    #         scale_color_viridis_d() +
-    #         labs(
-    #             title = paste0(city, " - Cumulative Travel Distance Distribution (LTS", lts_level, ")"),
-    #             x = "Distance (meters)", y = "Proportion of all trips"
-    #         ) +
-    #         theme_minimal() +
-    #         xlim(0, 20000)
-    # 
-    #     ggsave(file.path(results_dir, paste0("cumulative_distance_lts", lts_level, ".png")), p1, width = 8, height = 6)
+        #     # Calculate snapped linear distance and circuity directly from routing geometries
+        #     cat("    Calculating linear snapped distances and circuity...\n")
+        #     trips_combined <- trips_combined |>
+        #         mutate(
+        #             snapped_start = lwgeom::st_startpoint(geometry),
+        #             snapped_end = lwgeom::st_endpoint(geometry),
+        #             linear_distance = as.numeric(st_distance(snapped_start, snapped_end, by_element = TRUE)),
+        #             circuity = total_distance / linear_distance
+        #         ) |>
+        #         select(-snapped_start, -snapped_end)
+        #
+        #     trips_df <- trips_combined |> st_drop_geometry()
+        #
+        #     # Discard OD pairs missing in at least one year
+        #     n_years <- length(unique(trips_df$year))
+        #     valid_ods <- trips_df |>
+        #         count(from_id, to_id) |>
+        #         filter(n == n_years)
+        #
+        #     trips_df <- trips_df |> inner_join(valid_ods |> select(from_id, to_id), by = c("from_id", "to_id"))
+        #     cat("    Filtered to", nrow(valid_ods), "OD pairs successfully routed across all years.\n")
+        #
+        #     # 1. Plot Cumulative Travel Distance
+        #     p1 <- ggplot(trips_df, aes(x = total_distance, color = year)) +
+        #         stat_ecdf(lwd = 1.2) +
+        #         geom_vline(xintercept = 5000, linetype = "dashed", color = "gray40") +
+        #         annotate("text", x = 5400, y = 0.15, label = "5 km", angle = 90) +
+        #         scale_color_viridis_d() +
+        #         labs(
+        #             title = paste0(city, " - Cumulative Travel Distance Distribution (LTS", lts_level, ")"),
+        #             x = "Distance (meters)", y = "Proportion of all trips"
+        #         ) +
+        #         theme_minimal() +
+        #         xlim(0, 20000)
+        #
+        #     ggsave(file.path(results_dir, paste0("cumulative_distance_lts", lts_level, ".png")), p1, width = 8, height = 6)
 
         # # Plot Circuity
         # p_circ <- ggplot(trips_df, aes(x = circuity, color = year)) +
@@ -99,14 +99,14 @@ for (city in target_cities) {
         #     ) +
         #     theme_minimal() +
         #     xlim(1, 3)
-        # 
+        #
         # ggsave(file.path(results_dir, paste0("circuity_density_lts", lts_level, ".png")), p_circ, width = 8, height = 6)
-        # 
+        #
         # # 2. Distance differences (requires from_id, to_id, total_distance)
         # trips_wide <- trips_df |>
         #     select(from_id, to_id, total_distance, year) |>
         #     pivot_wider(values_from = total_distance, names_from = year, names_prefix = "dist_")
-        # 
+        #
         # plot_diff <- function(x_col, y_col, yr_x, yr_y) {
         #     if (x_col %in% names(trips_wide) && y_col %in% names(trips_wide)) {
         #         p <- ggplot(trips_wide, aes(x = .data[[x_col]], y = .data[[y_col]])) +
@@ -122,35 +122,35 @@ for (city in target_cities) {
         #         ggsave(file.path(results_dir, paste0("distance_comparison_", substring(yr_x, 3), "_", substring(yr_y, 3), "_lts", lts_level, ".png")), p, width = 8, height = 6)
         #     }
         # }
-        # 
+        #
         # # Dynamic year-pair comparisons (first-to-last only as requested)
         # available_years <- sort(unique(trips_df$year))
         # year_pairs <- list()
-        # 
+        #
         # # Add first-to-last if available (e.g., 2016 vs 2026)
         # if (length(available_years) >= 2) {
         #     year_pairs[[1]] <- as.character(c(available_years[1], available_years[length(available_years)]))
         # }
-        # 
+        #
         # for (pair in year_pairs) {
         #     x_col <- paste0("dist_", pair[1])
         #     y_col <- paste0("dist_", pair[2])
         #     plot_diff(x_col, y_col, pair[1], pair[2])
         # }
-        # 
+        #
         # # Dynamic distance change processing
         # first_yr <- available_years[1]
         # last_yr <- available_years[length(available_years)]
         # first_col <- paste0("dist_", first_yr)
         # last_col <- paste0("dist_", last_yr)
-        # 
+        #
         # if (first_col %in% names(trips_wide) && last_col %in% names(trips_wide)) {
         #     trips_wide <- trips_wide |>
         #         mutate(
         #             change_pct = (.data[[last_col]] - .data[[first_col]]) / .data[[first_col]]
         #         )
 
-            # Histogram generation disabled as requested
+        # Histogram generation disabled as requested
         # }
         # CSV saving moved to 07_analysis.R
 
@@ -163,7 +163,8 @@ for (city in target_cities) {
             mutate(trips = 1) |>
             st_zm(drop = TRUE, what = "ZM") |>
             st_make_valid() |>
-            st_simplify(dTolerance = 0.0001) |> # Approx 20 meters in WGS84
+            st_simplify(dTolerance = 0.0002, preserveTopology = TRUE) |> # Approx 25 meters - much lighter for overline2
+            st_make_valid() |>
             filter(!st_is_empty(geometry))
 
         map_data <- trips_overline |>
@@ -178,6 +179,8 @@ for (city in target_cities) {
                         {
                             cat(paste0("      Running overline2 for ", yr_val, "...\n"))
                             ov <- overline2(year_data, attrib = "trips")
+                            rm(year_data) # Immediate clear
+                            gc()
                             if (!is.null(ov) && nrow(ov) > 0) {
                                 ov |> mutate(year = yr_val)
                             } else {
