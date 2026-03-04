@@ -1,13 +1,38 @@
-# model test for routlevels
+# model test for route levels
+library(dplyr)
+library(fixest)
+
+
+# load data ---------------------------------------------------------------
+
+final_estimations = read.csv("data/pipeline/final_city_estimations.csv")
+dput(unique(final_estimations$city))
 
 target_cities = c(
-"Amsterdam", "Austin", "Beijing", "Berlin", "Bogota", # Barcelona
-"Bologna", "Brussels", "Buenos Aires",
-"Sydney", "Paris", "Barcelona", "New York", "Lisbon")
+  "Amsterdam", "Austin", "Barcelona", "Beijing", "Berlin", "Bogota", 
+  "Bologna", "Brussels", "Buenos Aires", "Cairo", "Cape Town", 
+  "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow", 
+  "Graz", "Hamburg", "Helsinki", "Hong Kong", "Kyoto", "Leeds", 
+  "Lisbon", "Ljubljana", "London", "Lyon", "Madrid", "Melbourne", 
+  "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal", 
+  "Munich", "Nantes", "New York", "Oslo", "Paris", "Portland", 
+  "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul", 
+  "Seville", "Shanghai", "Stockholm", "Strasbourg", "Sydney", "Taipei", 
+  "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
+  )
+cities_less_100k = c("Cairo", "Cape Town", "Hong Kong")
+cities_weired_tagging = c("Lisbon", "Munich")
+cities_no_data = c()
+cities_no_10pct_growth = c("Amsterdam",  "Stockhoml")
+target_cities_clean = setdiff(target_cities,
+                              c(cities_less_100k,
+                                cities_weired_tagging,
+                                cities_no_data,
+                                cities_no_10pct_growth)) #51
 
 routing_stats_all = data.frame() # initialize
 
-for (city in target_cities) {
+for (city in target_cities_clean) {
   print(paste("Processing", city))
   
   city = tolower(city)
@@ -22,7 +47,7 @@ for (city in target_cities) {
 rm(routing_stats_city) # clean up
 
 routing_stats_model = routing_stats_all |> 
-  filter(lts %in% c(1,2)) |> 
+  filter(lts %in% c(1,2)) |> # only lts 1 and 2
   mutate(
     route_id = paste(city, from_id, to_id, sep = "_"),
     circuity = total_distance / euclidean_distance,
@@ -37,12 +62,14 @@ routing_stats_model = routing_stats_all |>
                        4 * route_pct_lts4) / 100,     # Weighted Average LTS (Scale 1.0 to 4.0)
     route_pct_safe = route_pct_lts1 + route_pct_lts2 # Total "Safe" Percentage (LTS 1 + LTS 2)
   ) |>
-  filter(circuity >= 1 & !is.na(total_duration)) # clean wered results
+  filter(circuity >= 1 & !is.na(total_duration)) |>  # clean wered results
+  mutate(log_access = log(access_15min_vol+1)) # log
 
+nrow(routing_stats_all) # 10 million routes across 51 cities
 # str(routing_stats_all)
 
 # check the percentage of zeros in access_15min_vol
-sum(routing_stats_model$access_15min_vol == 0) / nrow(routing_stats_model) # 74% !!!
+# sum(routing_stats_model$access_15min_vol == 0) / nrow(routing_stats_model) 
 
 # models ------------------------------------------------------------------
 
@@ -82,7 +109,8 @@ model_route_safety <- feols(
 ## Safety composite
 # Model A: Does infrastructure lower the average stress score? (Level-Level)
 model_route_avg_lts <- feols(
-  route_avg_lts ~ ci_strong_km + ci_medium_km + ci_weak_km + ci_foot_km | route_id + year,
+  route_avg_lts ~ ci_strong_km + ci_medium_km + ci_weak_km + ci_foot_km 
+  | route_id + year,
   data = routing_stats_model,
   split = ~lts,
   cluster = ~city 
@@ -90,7 +118,8 @@ model_route_avg_lts <- feols(
 
 # Model B: Does infrastructure increase the 'Safe' portion of the trip? (Level-Level)
 model_route_safe_pct <- feols(
-  route_pct_safe ~ ci_strong_km + ci_medium_km + ci_weak_km + ci_foot_km | route_id + year,
+  route_pct_safe ~ ci_strong_km + ci_medium_km + ci_weak_km + ci_foot_km 
+  | route_id + year,
   data = routing_stats_model,
   split = ~lts,
   cluster = ~city
