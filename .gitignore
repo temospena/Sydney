@@ -69,3 +69,8 @@ data/pipeline/sydney/sydney_metro_buildings_height.geojson
 
 # Backup directory for old pipeline results
 data/pipeline_backup/
+images/ci_evolution
+images/circuity_density
+images/cumulative_distance
+images/distance_comparison
+images/overline_maps
