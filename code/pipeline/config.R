@@ -6,20 +6,20 @@
 
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
-# target_cities <- c(
-                  # "Amsterdam", "Austin", "Barcelona"
-                  # "Beijing", "Berlin", "Bogota",
-                  # "Bologna", "Brussels", "Buenos Aires",
-                  #  "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
-                  #  "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds",
-                  # "Ljubljana", "London", "Lyon", "Madrid", "Melbourne" # "Lisbon",
-                  # "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
-                  # "Munich", "Nantes", "New York", "Oslo", "Paris", "Portland",
-                  # "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
-                  # "Seville", "Shanghai", "Stockholm", "Strasbourg", "Sydney", "Taipei",
-                  # "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
-                  # ) #cairo, cape town,  hong kong (> 100km in 2026)
-target_cities <- c("Sydney", "Paris", "New York", "Barcelona")
+target_cities <- c(
+"Amsterdam", "Austin", #"Barcelona"
+"Beijing", "Berlin", "Bogota",
+"Bologna", "Brussels", "Buenos Aires",
+ "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
+ "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds",
+"Ljubljana", "London", "Lyon", "Madrid", "Melbourne", # "Lisbon",
+"Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
+"Munich", "Nantes",  "Oslo",  "Portland", # "Paris", "New York",
+"San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
+"Seville", "Shanghai", "Stockholm", "Strasbourg",  "Taipei", #"Sydney",
+"Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
+) #cairo, cape town,  hong kong (> 100km in 2026)
+# target_cities <- c("Sydney", "Paris", "New York", "Barcelona")
 # target_cities <- "Lisbon"
 
 # Years (2-digit) and full version strings — keep these in sync
@@ -35,7 +35,7 @@ FORCE_RERUN <- FALSE
 # Routing settings
 n_od_pairs <- 20000
 java_mem <- "-Xmx96G"
-lts_levels <- c(1, 2, 3, 4) # Select which LTS thresholds to route (1 to 4)  ## NOT RUN 3, 4 FOR NOW
+lts_levels <- c(1, 2) # Select which LTS thresholds to route (1 to 4)  ## NOT RUN 3, 4 FOR NOW
 
 # Routing: Should we override default LTS and force LTS=1 for all Cycling Infrastructure segments?
 lts1_for_ci <- TRUE
