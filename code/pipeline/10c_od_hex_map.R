@@ -100,11 +100,11 @@ for (city in target_cities) {
             )
         )
 
-    out_file <- file.path(results_dir, "od_density_facet_map.png")
+    out_file <- file.path(results_dir, "od_hex_map.png")
     ggsave(out_file, final_plot, width = 16, height = 9, dpi = 300)
 
     # Also save a copy in the general images folder
-    general_out <- file.path("images", paste0(city_lower, "_od_validation_facet.png"))
+    general_out <- file.path("images/od_hex_map", paste0(city_lower, "_od_hex_map.png"))
     ggsave(general_out, final_plot, width = 16, height = 9, dpi = 300)
 
     cat(paste("  Successfully saved OD density map to:", out_file, "\n"))
