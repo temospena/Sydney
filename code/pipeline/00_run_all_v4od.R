@@ -25,7 +25,7 @@ pipeline_steps <- c(
     "code/pipeline/05_r5r_routing.R",
     "code/pipeline/07_analysis.R",
     "code/pipeline/08_final_metrics.R",
-    # "code/pipeline/07b_analysis_plots.R", # run 00_run_all_v4od.R instead after
+    # "code/pipeline/07b_analysis_plots.R", # run 00_run_all_plots.R instead after
     # "code/pipeline/09_plot_metrics.R",
     # "code/pipeline/10_ci_maps.R",
     "code/pipeline/11_tidy_up.R"

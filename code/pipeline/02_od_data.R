@@ -23,33 +23,86 @@ if (requireNamespace("here", quietly = TRUE)) {
     if (!file.exists(city_list_path)) city_list_path <- "../../data/city_list.txt"
 }
 
-# Function to fetch buildings from S3 parquet using exact bbox
-fetch_building_points <- function(city_name, city_bbox, tile_name) {
-    parquet_s3_path <- paste0("s3://us-west-2.opendata.source.coop/tge-labs/globalbuildingatlas-lod1/", tile_name, ".parquet")
+# Function to generate 5x5 degree tile names from a bbox
+get_tile_names_for_bbox <- function(bbox) {
+    # Tiles are 5x5 degrees. Hamburg: e005_n55_e010_n50
+    # xmin = floor(lon/5)*5, ymin = floor(lat/5)*5
+    lon_min_tile <- floor(bbox["xmin"] / 5) * 5
+    lon_max_tile <- floor(bbox["xmax"] / 5) * 5
+    lat_min_tile <- floor(bbox["ymin"] / 5) * 5
+    lat_max_tile <- floor(bbox["ymax"] / 5) * 5
+
+    lon_vals <- seq(lon_min_tile, lon_max_tile, by = 5)
+    lat_vals <- seq(lat_min_tile, lat_max_tile, by = 5)
+
+    tiles <- c()
+    for (ln in lon_vals) {
+        for (lt in lat_vals) {
+            xmin <- ln
+            xmax <- ln + 5
+            ymin <- lt
+            ymax <- lt + 5
+
+            tile <- paste0(
+                if (xmin < 0) "w" else "e", sprintf("%03d", abs(xmin)), "_",
+                if (ymax < 0) "s" else "n", sprintf("%02d", abs(ymax)), "_",
+                if (xmax < 0) "w" else "e", sprintf("%03d", abs(xmax)), "_",
+                if (ymin < 0) "s" else "n", sprintf("%02d", abs(ymin))
+            )
+            tiles <- c(tiles, tile)
+        }
+    }
+    return(unique(tiles))
+}
+
+# Function to fetch buildings from S3 parquet using exact bbox, across multiple potential tiles
+fetch_building_points <- function(city_name, city_bbox, tile_names) {
+    con <- dbConnect(duckdb())
+    dbExecute(con, "INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs; SET s3_region='us-west-2'; SET preserve_insertion_order=false;")
+
+    all_raw_data <- list()
 
     q_xmin <- city_bbox["xmin"]
     q_ymin <- city_bbox["ymin"]
     q_xmax <- city_bbox["xmax"]
     q_ymax <- city_bbox["ymax"]
 
-    con <- dbConnect(duckdb())
-    dbExecute(con, "INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs; SET s3_region='us-west-2'; SET preserve_insertion_order=false;")
+    for (tile_name in tile_names) {
+        parquet_s3_path <- paste0("s3://us-west-2.opendata.source.coop/tge-labs/globalbuildingatlas-lod1/", tile_name, ".parquet")
 
-    query <- paste0("
-    SELECT * EXCLUDE (geometry),
-           ST_AsWKB(TRY_CAST(geometry AS GEOMETRY)) as geom_wkb
-    FROM read_parquet('", parquet_s3_path, "')
-    WHERE bbox.xmin >= ", q_xmin, " AND bbox.xmax <= ", q_xmax, "
-      AND bbox.ymin >= ", q_ymin, " AND bbox.ymax <= ", q_ymax)
+        query <- paste0("
+        SELECT * EXCLUDE (geometry),
+               ST_AsWKB(TRY_CAST(geometry AS GEOMETRY)) as geom_wkb
+        FROM read_parquet('", parquet_s3_path, "')
+        WHERE bbox.xmin >= ", q_xmin, " AND bbox.xmax <= ", q_xmax, "
+          AND bbox.ymin >= ", q_ymin, " AND bbox.ymax <= ", q_ymax)
 
-    message(paste("Fetching data for", city_name, "..."))
-    raw_data <- dbGetQuery(con, query) |>
-        filter(!is.na(geom_wkb))
+        message(paste("    Fetching buildings for", city_name, "from tile", tile_name, "..."))
+
+        # Try to fetch, some tiles might not exist
+        tile_data <- tryCatch(
+            {
+                dbGetQuery(con, query)
+            },
+            error = function(e) {
+                # message(paste("      Tile", tile_name, "not found or error. Skipping."))
+                return(NULL)
+            }
+        )
+
+        if (!is.null(tile_data) && nrow(tile_data) > 0) {
+            all_raw_data[[tile_name]] <- tile_data |> filter(!is.na(geom_wkb))
+        }
+    }
+
     dbDisconnect(con)
 
-    if (nrow(raw_data) == 0) {
+    if (length(all_raw_data) == 0) {
         return(NULL)
     }
+
+    raw_data <- bind_rows(all_raw_data) |>
+        distinct(id, .keep_all = TRUE) # ensure no duplicates if tiles overlap
 
     buildings_centroids <- raw_data %>%
         mutate(
@@ -89,25 +142,15 @@ for (city in target_cities) {
     city_list_all <- read.csv(city_list_path, header = FALSE) |>
         rename(city = V1, lat = V2, lon = V3, tile_name = V7)
 
+    # Identify all tiles to fetch: those matching the city name AND those overlapping the bbox
     matches <- city_list_all |> filter(city == !!city)
+    calc_tiles <- get_tile_names_for_bbox(bbox)
 
-    if (nrow(matches) == 0) {
-        warning(paste("No tile mapping found in city_list.txt for", city))
-        next
-    }
+    target_tiles_fetch <- unique(c(matches$tile_name, calc_tiles))
+    target_tiles_fetch <- target_tiles_fetch[!is.na(target_tiles_fetch) & target_tiles_fetch != ""]
 
-    if (nrow(matches) > 1) {
-        buf_centroid <- st_centroid(city_poly)
-        matches_sf <- matches |> st_as_sf(coords = c("lon", "lat"), crs = 4326)
-        dists <- st_distance(matches_sf, buf_centroid)
-        tile_name <- matches$tile_name[which.min(dists)]
-        cat(paste("    Multiple matches found for", city, "- Selected tile based on distance:", tile_name, "\n"))
-    } else {
-        tile_name <- matches$tile_name
-    }
-
-    if (is.na(tile_name) || tile_name == "") {
-        warning(paste("Invalid tile name found in city_list.txt for", city))
+    if (length(target_tiles_fetch) == 0) {
+        warning(paste("No tile mapping found for", city))
         next
     }
 
@@ -123,7 +166,7 @@ for (city in target_cities) {
     }
 
     cat("Fetching buildings...\n")
-    buildings <- fetch_building_points(city, bbox, tile_name)
+    buildings <- fetch_building_points(city, bbox, target_tiles_fetch)
 
     if (is.null(buildings) || nrow(buildings) == 0) {
         warning(paste("No buildings fetched for", city))
