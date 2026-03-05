@@ -275,6 +275,18 @@ micro_stress_dist <- feols(
 )
 etable(micro_stress_dist)
 
+# interruptions bins as split
+micro_interruptions_dist <- feols(
+  route_interruptions_count ~ ci_strong_km + ci_medium_km + ci_weak_km
+  # + ci_foot_km
+  | route_id + year,
+  data = route_lts1,
+  cluster = ~city,
+  split = ~dist_cat
+)
+etable(micro_interruptions_dist) # discontinuities
+# this is interesting for bike lanes, not so much for the other
+
 
 # ==========================================
 # STEP 4: PREPARE THE RESULTS FOR YOUR PAPER
@@ -448,6 +460,13 @@ coefplot(model_route_duration)
 coefplot(model_route_safety)
 
 
+
+
+
+# Plots -------------------------------------------------------------------
+
+
+
 library(ggplot2)
 library(dplyr)
 
@@ -512,3 +531,68 @@ stress_plot <- ggplot(plot_data_model, aes(x = Distance, y = Estimate, group = I
 
 # 4. Display the plot
 print(stress_plot)
+
+
+# other
+
+# ==========================================
+# PLOT 1: The Commuter Trade-off
+# ==========================================
+tradeoff_data <- data.frame(
+  Metric = c("Effective Duration", "Physical Circuity"),
+  Percentage = c(-1.3, 6.0) # Converted Log coefficients to percentages
+)
+
+plot_tradeoff <- ggplot(tradeoff_data, aes(x = Metric, y = Percentage, fill = Metric)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  geom_hline(yintercept = 0, color = "black", size = 1) +
+  coord_flip() + # Makes it horizontal
+  scale_fill_manual(values = c("Effective Duration" = "#1f78b4", "Physical Circuity" = "#e31a1c")) +
+  labs(
+    title = "The Commuter Trade-off (Per 1km Protected Infra)",
+    subtitle = "Cyclists accept a physical detour (+6%) to achieve an effectively faster trip (-1.3%).",
+    y = "Percentage Change (%)",
+    x = ""
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold"),
+        axis.text.y = element_text(face = "bold", size = 10))
+print(plot_tradeoff)
+
+ggsave("images/commuter_tradeoff.png", plot = plot_tradeoff, width = 8, height = 4, dpi = 300)
+
+# ==========================================
+# PLOT 2: The "Network Glue" (Interruptions)
+# ==========================================
+gaps_data <- data.frame(
+  Infra_Type = factor(c("Protected (Strong)", "Painted (Medium)", "Sharrows (Weak)"),
+                      levels = c("Sharrows (Weak)", "Painted (Medium)", "Protected (Strong)")),
+  Estimate = c(-0.084, -0.055, 0.055),
+  SE = c(0.030, 0.032, 0.060)
+) %>%
+  mutate(
+    Conf_Low = Estimate - (1.96 * SE),
+    Conf_High = Estimate + (1.96 * SE),
+    Significant = ifelse(Conf_Low > 0 | Conf_High < 0, "Yes", "No")
+  )
+
+plot_gaps <- ggplot(gaps_data, aes(x = Infra_Type, y = Estimate, fill = Significant)) +
+  geom_bar(stat = "identity", width = 0.6, color = "black") +
+  geom_errorbar(aes(ymin = Conf_Low, ymax = Conf_High), width = 0.2, size = 0.8) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
+  coord_flip() +
+  scale_fill_manual(values = c("Yes" = "#1a9850", "No" = "gray70")) +
+  labs(
+    title = "The 'Network Glue': Bridging Route Interruptions",
+    subtitle = "Only protected infrastructure significantly reduces network fragmentation.",
+    y = "Change in Route Interruptions (Count)",
+    x = "Infrastructure Built"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold"),
+        axis.text.y = element_text(face = "bold", size = 10))
+
+print(plot_gaps)
+ggsave("images/network_glue_gaps.png", plot = plot_gaps, width = 9, height = 5, dpi = 300)
