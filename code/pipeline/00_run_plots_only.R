@@ -14,6 +14,7 @@ all_cities <- target_cities
 plot_steps <- c(
     "code/pipeline/07b_analysis_plots.R",
     "code/pipeline/09_plot_metrics.R",
+    "code/pipeline/10c_od_hex_map.R",
     "code/pipeline/10_ci_maps.R"
 )
 
