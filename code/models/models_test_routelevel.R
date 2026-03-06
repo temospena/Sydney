@@ -145,7 +145,8 @@ library(plm)
 fixed = plm(log_circuity ~ total_ci_km, data= city_lts1, index = c("city", "year"), model = "within") 
 random = plm(log_circuity ~ total_ci_km, data= city_lts1, index = c("city", "year"), model = "random") 
 phtest(fixed,random) #Hausman test
-#p-value = 1.791e-05, so we cannot reject the null hypothesis (the preferred model is random effects )
+#p-value = 1.791e-05, for FE city + year so we cannot reject the null hypothesis (the preferred model is random effects )
+# p-value = 0.00011, for not FE year.
 rm(fixed, random)
 
 # USE THESE ONES!!! -----------------------------------------------------------
@@ -177,7 +178,9 @@ route_lts2 <- routing_stats_model |>
 
 # 1. Average Duration (Log-Log)
 macro_duration <- feols(
-  log(avg_duration_min) ~ log_total_ci_km + log_total_road_km | city + year,
+  log(avg_duration_min) ~ log_total_ci_km + log_total_road_km
+  | city + year,
+  # | city,
   data = city_lts1,
   # data = city_lts2,
   cluster = ~city # Cluster standard errors by city
@@ -201,7 +204,9 @@ macro_duration <- feols(
 # 4. Total Accessibility (Log-Log)
 # Does building total city infrastructure lower the AVERAGE city trip duration?
 macro_access <- feols(
-  log_access ~ log_total_ci_km + log_total_road_km | city + year,
+  log_access ~ log_total_ci_km + log_total_road_km
+  | city + year,
+  # | city,
   data = city_lts1,
   # data = city_lts2,
   cluster = ~city
@@ -216,6 +221,8 @@ micro_duration <- feols(
   log(total_duration) ~ ci_strong_km + ci_medium_km + ci_weak_km
   + ci_foot_km
    | route_id + year,
+  # | route_id + city^year, # interaction
+  # | route_id,
   data = route_lts1,
   # data = route_lts2,
   cluster = ~city 
@@ -226,6 +233,7 @@ micro_circuity <- feols(
   log(circuity) ~ ci_strong_km + ci_medium_km  + ci_weak_km
   + ci_foot_km
   | route_id + year,
+  # | route_id,
   data = route_lts1,
   # data = route_lts2,
   cluster = ~city
@@ -236,6 +244,7 @@ micro_safety <- feols(
   route_pct_safe ~ ci_strong_km + ci_medium_km  + ci_weak_km
   # + ci_foot_km
   | route_id + year,
+  # | route_id,
   data = route_lts1,
   # data = route_lts2,
   cluster = ~city
@@ -246,6 +255,7 @@ model_avg_wlts <- feols(
   route_avg_lts ~ ci_strong_km + ci_medium_km + ci_weak_km
   # + ci_foot_km 
   | route_id + year,
+  # | route_id,
   data = route_lts1,
   # data = route_lts2,
   cluster = ~city 
@@ -257,6 +267,7 @@ micro_interruptions <- feols(
   route_interruptions_count ~ ci_strong_km + ci_medium_km + ci_weak_km
   # + ci_foot_km
   | route_id + year,
+  # | route_id,
   data = route_lts1,
   # data = route_lts2,
   cluster = ~city 
@@ -269,6 +280,7 @@ micro_stress_dist <- feols(
   route_avg_lts ~  ci_strong_km + ci_medium_km + ci_weak_km
   # + ci_foot_km
   | route_id + year,
+  # | route_id,
   data = route_lts1,
   cluster = ~city,
   split = ~dist_cat
@@ -280,6 +292,7 @@ micro_interruptions_dist <- feols(
   route_interruptions_count ~ ci_strong_km + ci_medium_km + ci_weak_km
   # + ci_foot_km
   | route_id + year,
+  # | route_id,
   data = route_lts1,
   cluster = ~city,
   split = ~dist_cat
@@ -320,6 +333,17 @@ modelsummary(
   stars = TRUE,
   title = "Impact of 1km Infrastructure Expansion on Route Characteristics (LTS 1)",
   gof_omit = "IC|Log.Lik|F" # |RMSE ; Cleans up the bottom of the table
+)
+modelplot(
+  list("Log Duration" = micro_duration, 
+       "Log Circuity" = micro_circuity, 
+       # "% LTS1 Safe" = micro_safety,
+       "Stress Score" = model_avg_wlts,
+       "Interruptions" = micro_interruptions),
+  coef_rename = c("ci_strong_km" = "Protected cycling infra (added km)", 
+                  "ci_medium_km" = "Painted lane (added km)",
+                  "ci_weak_km" = "Sharrow type (added km)",
+                  "ci_foot_km" = "Shared with pedestrians (added km)")
 )
 
 # for distance and safety bins
