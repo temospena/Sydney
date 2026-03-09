@@ -6,22 +6,21 @@
 
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
-# target_cities <- c(
-# "Amsterdam", "Austin", #"Barcelona"
-# "Beijing", "Berlin", "Bogota",
-# "Bologna", "Brussels", "Buenos Aires",
-# "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
-# "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds", "Ljubljana",
-#  "London", "Lyon", "Madrid", "Melbourne", # "Lisbon",
-# "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
-# "Munich", "Nantes",  "Oslo",  "Portland", # "Paris", "New York",
-# "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
-# "Seville", "Shanghai", "Stockholm", "Strasbourg",  "Taipei", #"Sydney",
-# "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich",
-# "Sydney", "Paris", "New York", "Barcelona", "Lisbon" ## Here they are
-# ) #cairo, cape town,  hong kong (> 100km in 2026)
+target_cities <- c(
+  "Amsterdam", "Austin", # "Barcelona"
+  "Beijing", "Berlin", "Bogota",
+  "Bologna", "Brussels", "Buenos Aires",
+  "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
+  "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds", "Ljubljana",
+  "London", "Lyon", "Madrid", "Melbourne", # "Lisbon",
+  "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
+  "Munich", "Nantes", "Oslo", "Portland", # "Paris", "New York",
+  "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
+  "Seville", "Shanghai", "Stockholm", "Strasbourg", "Taipei", # "Sydney",
+  "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich",
+  # "Sydney", "Paris", "New York", "Barcelona", "Lisbon" ## Here they are
+) # cairo, cape town,  hong kong (> 100km in 2026)
 # target_cities <- "Lisbon"
-target_cities <- c("Hamburg","Taipei","Minneapolis","Melbourne","Kyoto")
 
 # Years (2-digit) and full version strings — keep these in sync
 years <- c("16", "19", "21", "24", "26")
@@ -31,7 +30,7 @@ versions <- c("160101", "190101", "210101", "240101", "260101")
 REROUTE_ONLY <- FALSE
 
 # Set TRUE to re-run all steps even if output files already exist, including donwload osm files
-FORCE_RERUN <- TRUE # default is FALSE
+FORCE_RERUN <- FALSE # default is FALSE
 
 # Routing settings
 n_od_pairs <- 20000
@@ -97,7 +96,7 @@ if (file.exists(.geofabrik_csv_path)) {
   .geofabrik_table$year <- as.character(.geofabrik_table$year)
   cat("[CONFIG] Loaded geofabrik_regions.csv with", nrow(.geofabrik_table), "rows.\n")
 } else {
-  warning("[CONFIG] data/geofabrik_regions.csv not found - falling back to hardcoded mapping.")
+  warning("[CONFIG] data/geofabrik_regions.csv not found. Region lookup will fail.")
   .geofabrik_table <- NULL
 }
 
@@ -107,89 +106,25 @@ get_geofabrik_region <- function(city, year_short) {
   year_short <- as.character(year_short)
   city_norm <- trimws(city)
 
-  # --- CSV lookup (preferred) ---
-  if (!is.null(.geofabrik_table)) {
-    row <- .geofabrik_table[
-      tolower(.geofabrik_table$city) == tolower(city_norm) &
-        .geofabrik_table$year == year_short,
-    ]
-    if (nrow(row) == 1L) {
-      return(row$geofabrik_region)
-    }
-    if (nrow(row) > 1L) {
-      warning(paste("Multiple rows in geofabrik_regions.csv for", city_norm, year_short, "- using first."))
-      return(row$geofabrik_region[1])
-    }
-    message(paste("[CONFIG] No CSV entry for", city_norm, year_short, "- using hardcoded fallback."))
+  if (is.null(.geofabrik_table)) {
+    stop("[CONFIG] data/geofabrik_regions.csv not loaded. Cannot look up region.")
   }
 
-  # --- Hardcoded fallback (legacy, for cities not yet in the CSV) ---
-  city_lower <- tolower(city_norm)
-  if (city_lower == "barcelona") {
-    prefix <- if (as.numeric(year_short) >= 22) "europe/spain/cataluna" else "europe/spain"
-  } else if (city_lower == "seville") {
-    prefix <- if (as.numeric(year_short) >= 21) "europe/spain/andalucia" else "europe/spain"
-  } else if (city_lower == "madrid") {
-    prefix <- if (as.numeric(year_short) >= 22) "europe/spain/madrid" else "europe/spain"
-  } else if (city_lower == "tokyo") {
-    prefix <- if (year_short == "16") "asia/japan" else "asia/japan/kanto"
-  } else if (city_lower == "kyoto") {
-    prefix <- if (year_short == "16") "asia/japan" else "asia/japan/kansai"
-  } else if (city_lower == "shanghai") {
-    prefix <- if (year_short == "26") "asia/china/shanghai" else "asia/china"
-  } else if (city_lower == "sao paulo") {
-    prefix <- if (year_short == "16") "south-america/brazil" else "south-america/brazil/sudeste"
-  } else if (city_lower == "curitiba") {
-    prefix <- if (year_short == "16") "south-america/brazil" else "south-america/brazil/sul"
-  } else {
-    mapping <- list(
-      "sydney"       = "australia-oceania/australia",
-      "lisbon"       = "europe/portugal",
-      "paris"        = "europe/france/ile-de-france",
-      "munich"       = "europe/germany/bayern/oberbayern",
-      "london"       = "europe/united-kingdom/england/greater-london",
-      "new york"     = "north-america/us/new-york",
-      "portland"     = "north-america/us/oregon",
-      "santiago"     = "south-america/chile",
-      "brussels"     = "europe/belgium",
-      "vancouver"    = "north-america/canada/british-columbia",
-      "milan"        = "europe/italy/nord-ovest",
-      "mexico city"  = "north-america/mexico",
-      "bogota"       = "south-america/colombia",
-      "montréal"     = "north-america/canada/quebec",
-      "minneapolis"  = "north-america/us/minnesota",
-      "berlin"       = "europe/germany/berlin",
-      "christchurch" = "australia-oceania/new-zealand",
-      "lyon"         = "europe/france/rhone-alpes",
-      "seoul"        = "asia/south-korea",
-      "cairo"        = "africa/egypt",
-      "bologna"      = "europe/italy/nord-est",
-      "cape town"    = "africa/south-africa-and-lesotho",
-      "melbourne"    = "australia-oceania/australia",
-      "vienna"       = "europe/austria",
-      "oslo"         = "europe/norway",
-      "dublin"       = "europe/ireland-and-northern-ireland",
-      "taipei"       = "asia/taiwan",
-      "turin"        = "europe/italy/nord-ovest",
-      "montpellier"  = "europe/france/languedoc-roussillon",
-      "stockholm"    = "europe/sweden",
-      "buenos aires" = "south-america/argentina",
-      "ljubljana"    = "europe/slovenia",
-      "leeds"        = "europe/united-kingdom/england/west-yorkshire",
-      "zurich"       = "europe/switzerland",
-      "warsaw"       = "europe/poland",
-      "chicago"      = "north-america/us/illinois",
-      "austin"       = "north-america/us/texas",
-      "strasbourg"   = "europe/france/alsace",
-      "seattle"      = "north-america/us/washington"
-    )
-    if (!city_lower %in% names(mapping)) {
-      stop(paste("No region mapping found for", city, "- add it to data/geofabrik_regions.csv"))
+  row <- .geofabrik_table[
+    tolower(.geofabrik_table$city) == tolower(city_norm) &
+      .geofabrik_table$year == year_short,
+  ]
+
+  if (nrow(row) >= 1L) {
+    if (nrow(row) > 1L) {
+      warning(paste("Multiple rows in geofabrik_regions.csv for", city_norm, year_short, "- using first."))
     }
-    prefix <- mapping[[city_lower]]
+    return(row$geofabrik_region[1])
   }
-  return(prefix)
+
+  stop(paste("No region mapping found for", city_norm, year_short, "- please add it to data/geofabrik_regions.csv"))
 }
+
 
 # Build the full Geofabrik download URL for a city/year
 get_geofabrik_url <- function(city, year_short) {
