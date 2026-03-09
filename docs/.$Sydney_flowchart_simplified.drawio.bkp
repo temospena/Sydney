@@ -1,0 +1,317 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0" version="29.5.3">
+  <diagram name="CI Pipeline Methodology" id="heGVqvV5hEyHDKX2RoZH">
+    <mxGraphModel dx="500" dy="1354" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-20" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-14" style="edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.75;entryDx=0;entryDy=0;jumpStyle=arc;" target="0VaDE9SKtsz2Nzm1nW1J-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="285" y="310" />
+              <mxPoint x="710" y="310" />
+              <mxPoint x="710" y="272" />
+            </Array>
+            <mxPoint x="800" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-88" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-84" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" target="0VaDE9SKtsz2Nzm1nW1J-37">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="490" />
+              <mxPoint x="510" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-67" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-35" style="edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="0VaDE9SKtsz2Nzm1nW1J-63">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="660" />
+              <mxPoint x="450" y="660" />
+              <mxPoint x="450" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-40" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-22" style="edgeStyle=orthogonalEdgeStyle;jumpStyle=gap;" target="0VaDE9SKtsz2Nzm1nW1J-37">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="845" y="480" />
+              <mxPoint x="670" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-66" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-43" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-63">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="840" />
+              <mxPoint x="650" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-65" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-42" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-63">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="467" y="768" />
+              <mxPoint x="560" y="768" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-52" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-23" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-48">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1017" y="500" />
+              <mxPoint x="690" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-85" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-84" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" target="0VaDE9SKtsz2Nzm1nW1J-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="160" />
+              <mxPoint x="320" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-1" parent="1" style="text;html=1;fontSize=20;fontStyle=1;align=center;" value="Cycling Infrastructure Historical Analysis Pipeline" vertex="1">
+          <mxGeometry height="40" width="1000" x="110" y="-70" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-2" parent="1" style="text;html=1;fontSize=11;fontStyle=1;align=left;" value="Legend" vertex="1">
+          <mxGeometry height="20" width="120" x="30" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" value="Pipeline Step" vertex="1">
+          <mxGeometry height="30" width="110" x="30" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-4" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="Data / File" vertex="1">
+          <mxGeometry height="30" width="110" x="30" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-5" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" value="Key Output" vertex="1">
+          <mxGeometry height="30" width="110" x="30" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="External Source" vertex="1">
+          <mxGeometry height="30" width="110" x="30" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-7" parent="1" style="text;html=1;fontSize=10;align=left;fontStyle=2;" value="Loops over Cities × Years × LTS" vertex="1">
+          <mxGeometry height="30" width="160" x="30" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="city_list.txt&#10;(city, lat, lon, population)" vertex="1">
+          <mxGeometry height="50" width="160" x="220" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Geofabrik OSM.pbf&lt;br&gt;(Historical: 2016, 2021, 2026)" vertex="1">
+          <mxGeometry height="50" width="170" x="580" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Global Building Atlas&lt;br&gt;(LOD1 heights)" vertex="1">
+          <mxGeometry height="50" width="170" x="900" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="01_city_buffers.R" vertex="1">
+          <mxGeometry height="50" width="200" x="220" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-13" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-8" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="160" />
+              <mxPoint x="320" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-14" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="city_10km.gpkg" vertex="1">
+          <mxGeometry height="30" width="130" x="220" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-15" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="city_bbox.txt" vertex="1">
+          <mxGeometry height="30" width="120" x="365" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-16" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-11" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-17" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-11" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="02_od_data.R" vertex="1">
+          <mxGeometry height="50" width="200" x="820" y="234" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-19" parent="1" style="text;html=1;fontSize=9;align=left;" value="• Fetch buildings from S3 parquet (DuckDB)&lt;br&gt;• Clip to city polygon&lt;br&gt;• Sample 20k origins (uniform) &amp;amp; destinations&lt;br&gt;  (weighted by volume [m³])&lt;br&gt;• Export as .gpkg" vertex="1">
+          <mxGeometry height="74" width="190" x="1040" y="222" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-21" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-10" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-22" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="origins.gpkg&#10;(20k points + volume)" vertex="1">
+          <mxGeometry height="40" width="150" x="770" y="336" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-23" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="destinations.gpkg&#10;(20k points + volume)" vertex="1">
+          <mxGeometry height="40" width="155" x="940" y="336" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-24" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-18" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-25" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-18" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-26" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="03_historical_osm.R" vertex="1">
+          <mxGeometry height="50" width="220" x="500" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-28" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-15" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="580" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-29" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-9" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="665" y="300" />
+              <mxPoint x="665" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-89" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="0VaDE9SKtsz2Nzm1nW1J-32" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-30" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="city_YY.osm.pbf&#10;(cropped, per year)" vertex="1">
+          <mxGeometry height="40" width="160" x="530" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-31" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-26" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-32" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="04_ci_osmactive.R" vertex="1">
+          <mxGeometry height="50" width="200" x="225" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-33" parent="1" style="text;html=1;fontSize=9;align=left;fontStyle=2;" value="• Run osmactive on each city PBF&#10;• Extract cycling infrastructure (CI) edges&#10;• Classify CI type: Separated / Painted /&#10;  Mixed / Pedestrian (infra5)&#10;→ Loop: 3 years per city" vertex="1">
+          <mxGeometry height="70" width="180" x="30" y="415" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-35" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="city_ci_osmactive_YYMMDD.gpkg&#10;(CI edges + infra5 type)" vertex="1">
+          <mxGeometry height="40" width="210" x="220" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-36" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-32" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-37" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="05_r5r_routing.R" vertex="1">
+          <mxGeometry height="50" width="220" x="500" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-38" parent="1" style="text;html=1;fontSize=9;align=left;fontStyle=2;" value="• Build r5r network from cropped .pbf&lt;br&gt;• Run detailed_itineraries() on 20k OD pairs&lt;br&gt;• Export LTS network edges (.gpkg)&lt;br&gt;• Log found_routes to routing_summary.csv&lt;br&gt;→ Loop: 3 years × 4 LTS levels per city" vertex="1">
+          <mxGeometry height="70" width="280" x="877.5" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-39" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-30" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-41" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-23" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-37">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1017" y="480" />
+              <mxPoint x="670" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-42" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="trips_city_YY_ltsN.rds&#10;(detailed itineraries, sf)" vertex="1">
+          <mxGeometry height="40" width="175" x="380" y="605" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-43" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="city_YY_lts.gpkg&#10;(LTS edge network)" vertex="1">
+          <mxGeometry height="40" width="160" x="570" y="605" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-44" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="routing_summary.csv&#10;(city, year, lts, found_routes)" vertex="1">
+          <mxGeometry height="40" width="200" x="748" y="605" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-45" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-37" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-46" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-37" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-47" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-37" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-48" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="06_accessibility.R" vertex="1">
+          <mxGeometry height="50" width="220" x="500" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-49" parent="1" style="text;html=1;fontSize=9;align=left;fontStyle=2;" value="• Run r5r::accessibility() for 4 LTS levels&lt;br&gt;• Opportunities: building volume, cutoff = 15 min&lt;br&gt;• Add access_15min_vol to routing_summary.csv&lt;br&gt;→ Loop: 3 years × 4 LTS levels per city" vertex="1">
+          <mxGeometry height="70" width="285" x="740" y="695" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-50" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-42" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-48">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-53" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-44" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-48">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="848" y="660" />
+              <mxPoint x="720" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-54" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="routing_summary.csv (updated)&#10;+ access_15min_vol per city/year/lts" vertex="1">
+          <mxGeometry height="40" width="220" x="500" y="785" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-55" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-48" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-54">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-56" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="07_analysis.R" vertex="1">
+          <mxGeometry height="50" width="200" x="220" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-57" parent="1" style="text;html=1;fontSize=9;align=left;fontStyle=2;" value="• Combine trips across years per LTS&#10;• Calculate circuity (route/linear distance)&#10;• Filter to OD pairs found in ALL years&#10;→ Loop: 4 LTS levels per city" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-58" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-42" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-56">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-60" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" value="routing_differences_ltsN.csv" vertex="1">
+          <mxGeometry height="30" width="190" x="319" y="785" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-62" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-56" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-63" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="08_final_metrics.R" vertex="1">
+          <mxGeometry height="50" width="220" x="500" y="876" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-64" parent="1" style="text;html=1;fontSize=9;align=left;fontStyle=2;" value="• Load itineraries + LTS edge network + CI layer&#10;• Pre-calc linear distances (OD pairs lookup)&#10;• Compute: avg_distance, avg_circuity, avg_dist_change_pct&#10;• Compute: pct_ci_route, pct_ltsN (route-level)&#10;• Compute: total_road_m, total_ci_m, pct_ci_total&#10;• Join routing_summary (found_routes + access_15min_vol)&#10;• Incremental upsert into final_city_estimations.csv&#10;→ Loop: 3 years × 4 LTS levels per city" vertex="1">
+          <mxGeometry height="100" width="315" x="740" y="861" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-68" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-54" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-63">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="610" y="860" />
+              <mxPoint x="610" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-69" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" value="final_city_estimations.csv&lt;br&gt;(per city)" vertex="1">
+          <mxGeometry height="45" width="270" x="475" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-70" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-63" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-69">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-81" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" value="11_tidy_up.R" vertex="1">
+          <mxGeometry height="50" width="220" x="500" y="1146" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-82" parent="1" style="text;html=1;fontSize=9;align=left;" value="• Remove large temporary files&lt;br&gt;  (cropped .pbf, mapdb caches)&lt;br&gt;• Compress .rds outputs" vertex="1">
+          <mxGeometry height="50" width="200" x="740" y="1146" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-83" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-69" style="edgeStyle=orthogonalEdgeStyle;" target="0VaDE9SKtsz2Nzm1nW1J-81">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-84" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" value="config.R&lt;br&gt;(cities, years, n_od_pairs)" vertex="1">
+          <mxGeometry height="50" width="180" x="420" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-86" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-84" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" target="0VaDE9SKtsz2Nzm1nW1J-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="870" y="60" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-87" edge="1" parent="1" source="0VaDE9SKtsz2Nzm1nW1J-84" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;" target="0VaDE9SKtsz2Nzm1nW1J-26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="290" />
+              <mxPoint x="540" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-27" parent="1" style="text;html=1;fontSize=9;align=left;labelBackgroundColor=default;" value="• For each city × year:&lt;br&gt;• Download historical Geofabrik .pbf (if missing)&lt;br&gt;• Crop to city bbox via osmium&lt;br&gt;→ Loop: 3 years per city" vertex="1">
+          <mxGeometry height="60" width="260" x="287" y="345" as="geometry" />
+        </mxCell>
+        <mxCell id="0VaDE9SKtsz2Nzm1nW1J-12" parent="1" style="text;html=1;fontSize=9;align=left;fillColor=default;" value="• Read city coords from city_list.txt&#10;• Create 10 km buffer polygon (EPSG:3857)&#10;• Export bounding box (.txt)" vertex="1">
+          <mxGeometry height="50" width="190" x="440" y="180" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
