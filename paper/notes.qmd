@@ -178,7 +178,7 @@ Bikeability curve with pareto frontier routes.
 
 @schon2026 assesses the impact of a new cycling infrastructure segment (a bridge in Norway) in terms of betweenness and route link density improvements, and estimate the increase in cycling probabilities.
 
-![](images/clipboard-3285979495.png)
+![](../images/clipboard-3285979495.png)
 
 A very recent paper from @wang2026 provides a framework for generating and prioritizing "core" cycling network designs.
 
@@ -202,7 +202,7 @@ Hierarchical road prioritization and arterial weighing:
 Key performance metrics assess Network Cohesion and Connectivity, Demand Alignment, Origin-Destination Accessibility, Directness and Efficiency.
 (*read more about the ones of interest*)
 
-![](images/clipboard-2027430881.png)
+![](../images/clipboard-2027430881.png)
 
 It is well suited for places without cycling network, or to compare the results with places with already implemented networks.
 They also discuss the problems with raw OSM data (topological, miss-classification, cycling and pedestrian as separated lines from the road network).
@@ -315,7 +315,12 @@ Cities, city centers coordinates from list, buffer of 10 km - to be more compara
 
 Also, because some places do not have a good definition of "city" or "metropolitan area" as an administrative area (polygon).
 
-List of +700 cities worldwide, with population, lat and lon from the historical city center or CBD (<https://gist.github.com/nkrusch/848e4d6ca0be879e2e03b78b051f17da>)
+List of +700 cities worldwide, with \> 1 million residents, lat and lon from the historical city center or CBD (<https://gist.github.com/nkrusch/848e4d6ca0be879e2e03b78b051f17da>)
+
+List of +48k cities worldwide (World Cities Database[^1] - <https://simplemaps.com/data/world-cities> )
+
+[^1]: We're proud to offer a simple, accurate and up-to-date database of the world's cities and towns.
+    We've built it from the ground up using authoritative sources such as the NGIA, US Geological Survey, US Census Bureau, and NASA.
 
 List from People for Bikes with city ratings regarding a score of cycling friendly cities, as 2025 (<https://cityratings.peopleforbikes.org/ratings>)
 
@@ -336,7 +341,7 @@ The 50 cities are as follows:
 \[table with city, contry, population\]
 
 ```{r}
-city_list = read.csv("data/city_list.txt")
+city_list = read.csv("../data/city_list.txt")
 names(city_list) = c("city", "lat", "lon", "population", "country", "countrycode", "building_tile")
 selected_cities = c(
     "Sydney", "Lisbon", "Paris", "Barcelona",
@@ -384,11 +389,11 @@ Use OD jittering [@lovelace2022], with subpoints as buildings, weighted by their
 Data from buildings' height was retrieved from @zhu2025, and the number of floors was estimated assuming an average of 3 meters per floor.
 (we could also use volume!)
 
-![Lisbon buildings's estimated number of floors (mean: 2.94)](images/Screenshot_20260217_172324.png){width="450"}
+![Lisbon buildings's estimated number of floors (mean: 2.94)](../images/Screenshot_20260217_172324.png)
 
-![Sydney buildings's estimated number of floors (mean: 3.21)](images/Screenshot_20260217_173136.png){width="450"}
+![Sydney buildings's estimated number of floors (mean: 3.21)](../images/Screenshot_20260217_173136.png){width="450"}
 
-![Paris buildings's estimated number of floors (mean: 3.92)](images/Screenshot_20260217_172645.png){width="450"}
+![Paris buildings's estimated number of floors (mean: 3.92)](../images/Screenshot_20260217_172645.png){width="450"}
 
 ## Routing
 
@@ -494,7 +499,7 @@ This can be verified with the size of the extracted osm.pbf files from [geofabri
 # library(stringr)
 # library(knitr)
 # 
-# file_list <- list.files(path = "data/osm_pbf/", full.names = TRUE)
+# file_list <- list.files(path = "../data/osm_pbf/", full.names = TRUE)
 # # file_list
 # # file_list = file_list
 # 
@@ -514,7 +519,7 @@ This can be verified with the size of the extracted osm.pbf files from [geofabri
 #     total_files = n()
 #   )
 
-summary_table = read.csv("data/osm_file_size_summary.csv")
+summary_table = read.csv("../data/osm_file_size_summary.csv")
 
 kable(summary_table |> filter(year != "20NA") |> select(-total_files), # there is one more irrelevant for now
       digits = 0, 
@@ -547,11 +552,11 @@ Nevertheless, for the purpose of the study, to address cycling infrastructure im
 
 Further developments of this research include the use a common trip-length distribution in urban environments, such as distributions described by [@wang2025]
 
-![](images/clipboard-384952838.png)
+![](../images/clipboard-384952838.png)
 
 Empirical one for Freiburg [@schneider2023]
 
-![](images/clipboard-2639027703.png)
+![](../images/clipboard-2639027703.png)
 
 There is also analysis from bike sharing data from 7 cities in the US [@kou2019], with the set parameters for commuting trips (in miles)
 
