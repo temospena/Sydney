@@ -1,5 +1,5 @@
 ---
-title: "Cycling networks' performance indicators"
+title: " Quantifying the evolution of cycling network performance: A 50-city panel data analysis using open data"
 subtitle: "notes"
 date: "`r format(Sys.Date(), '%B %d, %Y')`" # %B for locale full month name
 
@@ -26,11 +26,10 @@ header-includes:
   - \usepackage{apacite}
     
 abstract: |
-    Despite growing investments in cycling infrastructure, current planning approaches lack systematic methods to assess or simulate the potential impacts on cycling safety, trip performance and accessibility, besides the typical ex-ante and ex-post cycling volume comparison at each place. The network performance itself is often not assessed.
-  This research addresses this gap by integrating geospatial and accessibility analysis to develop a replicable methodology for evaluating cycling networks at different stages.
-  A systematic and reproducible methodology was developed to assess changes in safety, trip performance and accessibility in 3 different years, and across 50 cities, based on their existing OpenStreetMap data for each period. 20 thousand OD pairs were generated based on the recently available Global Building Atlas LoD1.
-  A panel data modeling was conducted to estimate the elasticities between the investments in different types of cycling infrastructure and trip performances for each city and year, quantifying the impacts of network improvements on potential cycling benefits.
-  Findings suggest that … 
+    Despite significant investments in active transport, planning approaches often lack systematic methods to assess or simulate the potential impacts of new cycling infrastructure on trip performance, safety, and accessibility. Consequently, the holistic performance of the cycling network remains under-evaluated. This research addresses this gap by integrating geospatial and accessibility analysis into a replicable framework for evaluating cycling networks across various stages of development.
+    Using open data, including historical OpenStreetMap networks and the Global Building Atlas (LoD1), a systematic methodology was developed to assess longitudinal changes in safety, performance and accessibility across 50 cities over five distinct periods over the last decade (2016-2026). For each city, 20,000 OD pairs were generated based on buildings to simulate realistic travel patterns, creating a massive panel dataset.
+    A fixed-effects panel data model was employed to estimate the elasticities between specific types of cycling infrastructure investments and trip performance metrics at both the macro (city-wide) and micro (route) levels, to quantify how incremental network improvements translate into tangible cycling benefits.
+    This research will explore preliminary results from these models, highlighting potential behavioral trade-offs between route circuity, safety, and travel time. Furthermore, the methodological nuances of the framework will be critically examined - particularly the OD data generation and the deterrence assumptions embedded in the routing algorithms - and outline current limitations.
 ---
 
 ```{r setup, include=FALSE}
@@ -448,6 +447,38 @@ Each city took, on average, **22 minutes** to process data, in a i9 32 core comp
 
 # Results
 
+\begingroup
+\centering
+\begin{tabular}{lcccccccccccccccc}
+   \tabularnewline \midrule \midrule
+   Dependent Variables: & \multicolumn{4}{c}{log\_circuity} & \multicolumn{4}{c}{log\_distance} & \multicolumn{4}{c}{log\_lts1} & \multicolumn{4}{c}{log\_access}\\
+   lts                    & 1             & 2                     & 3             & 4              & 1              & 2              & 3        & 4             & 1              & 2              & 3             & 4             & 1              & 2              & 3              & 4 \\   
+   Model:                 & (1)           & (2)                   & (3)           & (4)            & (5)            & (6)            & (7)      & (8)           & (9)            & (10)           & (11)          & (12)          & (13)           & (14)           & (15)           & (16)\\  
+   \midrule
+   \emph{Variables}\\
+   log\_ci\_strong\_km    & 0.0132$^{**}$ & 0.0065                & -0.0031       & 0.0027         & 0.0647$^{***}$ & 0.0525$^{*}$   & 0.0106   & -0.0029       & 0.1723$^{***}$ & 0.1552$^{**}$  & 0.1758$^{**}$ & 0.1477$^{**}$ & 0.2620$^{***}$ & 0.3341$^{***}$ & 0.1746$^{***}$ & 0.0925$^{**}$\\   
+                          & (0.0057)      & (0.0073)              & (0.0067)      & (0.0095)       & (0.0216)       & (0.0269)       & (0.0101) & (0.0059)      & (0.0641)       & (0.0683)       & (0.0747)      & (0.0707)      & (0.0693)       & (0.0868)       & (0.0568)       & (0.0404)\\   
+   log\_ci\_medium\_km    & 0.0026        & $4.11\times 10^{-5}$  & -0.0064$^{*}$ & -0.0072$^{**}$ & 0.0241$^{**}$  & 0.0332$^{***}$ & 0.0037   & -0.0055$^{*}$ & 0.0245         & 0.0019         & 0.0103        & -0.0031       & -0.0033        & 0.0204         & 0.0489$^{**}$  & 0.0495$^{**}$\\   
+                          & (0.0034)      & (0.0040)              & (0.0035)      & (0.0030)       & (0.0094)       & (0.0100)       & (0.0048) & (0.0027)      & (0.0174)       & (0.0204)       & (0.0301)      & (0.0390)      & (0.0323)       & (0.0397)       & (0.0233)       & (0.0186)\\   
+   log\_ci\_weak\_km      & 0.0022        & 0.0031                & 0.0005        & 0.0022         & 0.0088         & 0.0098$^{*}$   & -0.0010  & 0.0005        & 0.0164         & 0.0092         & 0.0185        & 0.0248        & 0.0130         & 0.0150         & 0.0209         & -0.0038\\   
+                          & (0.0028)      & (0.0027)              & (0.0024)      & (0.0027)       & (0.0054)       & (0.0054)       & (0.0026) & (0.0019)      & (0.0127)       & (0.0153)       & (0.0257)      & (0.0285)      & (0.0236)       & (0.0255)       & (0.0156)       & (0.0161)\\   
+   log\_ci\_foot\_km      & 0.0033        & 0.0050                & -0.0015       & -0.0006        & 0.0131         & 0.0083         & 0.0088   & -0.0017       & 0.0270         & 0.0689$^{***}$ & 0.0158        & 0.0370        & 0.0270         & -0.0212        & 0.0443$^{*}$   & 0.0215\\   
+                          & (0.0038)      & (0.0048)              & (0.0038)      & (0.0026)       & (0.0108)       & (0.0135)       & (0.0081) & (0.0023)      & (0.0170)       & (0.0216)       & (0.0349)      & (0.0337)      & (0.0371)       & (0.0483)       & (0.0255)       & (0.0151)\\   
+   \midrule
+   \emph{Fixed-effects}\\
+   city                   & Yes           & Yes                   & Yes           & Yes            & Yes            & Yes            & Yes      & Yes           & Yes            & Yes            & Yes           & Yes           & Yes            & Yes            & Yes            & Yes\\  
+   year                   & Yes           & Yes                   & Yes           & Yes            & Yes            & Yes            & Yes      & Yes           & Yes            & Yes            & Yes           & Yes           & Yes            & Yes            & Yes            & Yes\\  
+   \midrule
+   \emph{Fit statistics}\\
+   Observations           & 156           & 156                   & 156           & 156            & 156            & 156            & 156      & 156           & 156            & 156            & 156           & 156           & 156            & 156            & 156            & 156\\  
+   R$^2$                  & 0.91065       & 0.90626               & 0.91336       & 0.92096        & 0.96328        & 0.95268        & 0.99216  & 0.99628       & 0.89564        & 0.87758        & 0.88969       & 0.92570       & 0.98852        & 0.98406        & 0.99306        & 0.99455\\  
+   Within R$^2$           & 0.07090       & 0.04571               & 0.04851       & 0.05871        & 0.34246        & 0.27444        & 0.05719  & 0.05370       & 0.34086        & 0.21339        & 0.10014       & 0.06204       & 0.13579        & 0.18321        & 0.18917        & 0.10923\\  
+   \midrule \midrule
+   \multicolumn{17}{l}{\emph{Clustered (city) standard-errors in parentheses}}\\
+   \multicolumn{17}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+\par\endgroup
+
 # Discussion
 
 ## The use of OpenStreetMap data
@@ -524,14 +555,21 @@ Empirical one for Freiburg [@schneider2023]
 
 There is also analysis from bike sharing data from 7 cities in the US [@kou2019], with the set parameters for commuting trips (in miles)
 
-| City | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
-|----|----|----|----|----|----|----|----|----|
-| Percentage of round trips | 8.40% | 10.60% | 2.60% | 8.10% | 3.10% | 4.60% | 4.20% | 2.06% |
-| Percentage of commuting trips | 58.43% | 63.61% | 75.55% | 68.59% | 68.98% | 58.56% | 60.78% | 62.32% |
-| Commuting trips | Distance (miles) | Maximum | 7.85 | 3.14 | 3.37 | 7.30 | 8.77 | 27.21 |
-| Median | 1.16 | 0.91 | 1.23 | 1.39 | 1.46 | 1.43 | 1.39 | 1.31 |
-| Average | 1.27 | 1.02 | 1.24 | 1.56 | 1.70 | 1.72 | 1.71 | 1.68 |
-| Standard deviation | 0.74 | 0.50 | 0.53 | 0.79 | 1.02 | 1.14 | 1.14 | 1.21 |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| City                          | Seattle          | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
++===============================+==================+=============+==========+==============+========+================+=========+==========+
+| Percentage of round trips     | 8.40%            | 10.60%      | 2.60%    | 8.10%        | 3.10%  | 4.60%          | 4.20%   | 2.06%    |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Percentage of commuting trips | 58.43%           | 63.61%      | 75.55%   | 68.59%       | 68.98% | 58.56%         | 60.78%  | 62.32%   |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Commuting trips               | Distance (miles) | Maximum     | 7.85     | 3.14         | 3.37   | 7.30           | 8.77    | 27.21    |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Median                        | 1.16             | 0.91        | 1.23     | 1.39         | 1.46   | 1.43           | 1.39    | 1.31     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Average                       | 1.27             | 1.02        | 1.24     | 1.56         | 1.70   | 1.72           | 1.71    | 1.68     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
+| Standard deviation            | 0.74             | 0.50        | 0.53     | 0.79         | 1.02   | 1.14           | 1.14    | 1.21     |
++-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
 
 <table>
 <tbody>
@@ -786,7 +824,7 @@ criteria</p></td>
 </table>
 
 |  |  |  |  |  |  |  |  |  |  |
-|----|----|----|----|----|----|----|----|----|----|
+|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
 | Empty Cell | Empty Cell | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
 | Commuting trip distance (mile) | Right side cut-off^1^ | 1.14 | 0.67 | 1.26 | 0.99 | 1.05 | 0.86 | 0.77 | 0.86 |
 | K–S statistic | 0.0518 | 0.0711 | 0.1330 | **0.0243**^\*^ | **0.0347**^\*^ | **0.0287**^\*^ | **0.0176**^\*^ | **0.0347**^\*^ |  |
