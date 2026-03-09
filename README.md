@@ -6,16 +6,17 @@ This repository contains an automated, scalable pipeline designed to analyze the
 
 - [**code/pipeline/**](code/pipeline/): Core R scripts for data extraction, historical routing (`r5r`), accessibility analysis, and visualization.
 - [**data/pipeline/**](data/pipeline/): Processed spatial datasets, city-specific results, and the master aggregated metrics table.
-- [**docs/**](docs/): Technical documentation, including pipeline flowcharts (`.drawio`) and project development plans.
+- [**docs/**](docs/): Technical documentation, including all the AI prompts used to scale up the pipeline, pipeline flowcharts (`.drawio`) and project development plans.
 - [**images/**](images/): High-level visualizations, research snapshots, and consolidated plots for all studied cities.
 - [**paper/**](paper/): Manuscript and research note source files (`.qmd`, `.bib`).
 
 ## Key Features
 
 - **Multi-Year Analysis:** Tracks infrastructure growth across 2016, 2019, 2021, 2024, and 2026.
-- **Stress-Based Routing:** Utilizes Level of Traffic Stress (LTS 1-4) thresholds to evaluate route quality.
+- **Stress-Based Routing:** Utilizes Level of Traffic Stress (LTS 1-4) thresholds.
 - **Accessibility Metrics:** Computes 15-minute building-weighted accessibility volumes.
-- **Automated Visualization:** Generates facet maps, overline density plots, and infrastructure evolution charts.
+- **Modelling:** Prepares panel data for modelling.
+- **Automated Visualization:** Generates infrastructure evolution charts, facet maps, and overline density plots.
 
 ## Getting Started
 
@@ -46,6 +47,8 @@ For detailed documentation on data structure and script functions, please refer 
       <b>CERIS - Instituto Superior Técnico</b>
       <br />
       University of Lisbon
+      <br />
+      Rosa Félix
     </td>
     <td align="center" width="50%">
       <img src="https://transportlab.sydney.edu.au/wp-content/uploads/2021/04/transportlab_logo_v2.png" alt="TransportLab Logo" width="250" />
@@ -53,6 +56,8 @@ For detailed documentation on data structure and script functions, please refer 
       <b>TransportLab</b>
       <br />
       University of Sydney
+      <br />
+      David Levinson
     </td>
   </tr>
 </table>
