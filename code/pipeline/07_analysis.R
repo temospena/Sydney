@@ -59,8 +59,8 @@ for (city in target_cities) {
         }
 
         # Combine all
-        trips_combined <- do.call(rbind, trips_list) %>%
-            mutate(year = as.factor(year)) %>%
+        trips_combined <- do.call(rbind, trips_list) |>
+            mutate(year = as.factor(year)) |>
             st_as_sf()
         if (inherits(trips_combined, "sf")) st_geometry(trips_combined) <- "geometry"
 

@@ -58,7 +58,7 @@ for (city in target_cities) {
     } else {
         cat("  Loading city-wide land use grid for true accessibility...\n")
         land_use_sf <- st_read(land_use_path, quiet = TRUE)
-        dest_land_use <- st_drop_geometry(land_use_sf) %>% mutate(id = as.character(id))
+        dest_land_use <- st_drop_geometry(land_use_sf) |> mutate(id = as.character(id))
         land_use_r5 <- data.frame(
             id = dest_land_use$id,
             lon = st_coordinates(st_centroid(land_use_sf))[, 1],
@@ -194,8 +194,8 @@ for (city in target_cities) {
                     # Check config for lts override, default to TRUE if not defined
                     use_lts_1 <- if (exists("lts1_for_ci")) lts1_for_ci else TRUE
                     if ("osm_id" %in% names(ci) && use_lts_1) {
-                        new_lts_ci <- st_drop_geometry(ci) %>%
-                            select(osm_id) %>%
+                        new_lts_ci <- st_drop_geometry(ci) |>
+                            select(osm_id) |>
                             mutate(
                                 osm_id = as.numeric(osm_id),
                                 lts = 1L
@@ -279,11 +279,11 @@ for (city in target_cities) {
 
                         # Defensive: Ensure standard column names for legacy files
                         trips <- trips_already_loaded
-                        if (!"from_id" %in% names(trips) && "id" %in% names(trips)) trips <- trips %>% rename(from_id = id)
-                        if (!"to_id" %in% names(trips) && "id" %in% names(trips)) trips <- trips %>% rename(to_id = id)
+                        if (!"from_id" %in% names(trips) && "id" %in% names(trips)) trips <- trips |> rename(from_id = id)
+                        if (!"to_id" %in% names(trips) && "id" %in% names(trips)) trips <- trips |> rename(to_id = id)
 
                         # Ensure ID types match unique_id/trip_id format
-                        trips <- trips %>%
+                        trips <- trips |>
                             mutate(
                                 from_id = as.character(from_id),
                                 to_id = as.character(to_id)
@@ -333,12 +333,12 @@ for (city in target_cities) {
 
                         # Target for metrics calculation: unique_trips if new, otherwise trips (deduplicated for speed if possible)
                         target_for_metrics <- if (nrow(unique_trips) > 0) {
-                            unique_trips %>% mutate(from_id = as.character(from_id), to_id = as.character(to_id))
+                            unique_trips |> mutate(from_id = as.character(from_id), to_id = as.character(to_id))
                         } else if (nrow(trips) > 0) {
-                            trips %>%
-                                mutate(from_id = as.character(from_id), to_id = as.character(to_id)) %>%
-                                group_by(from_id, to_id) %>%
-                                slice(1) %>%
+                            trips |>
+                                mutate(from_id = as.character(from_id), to_id = as.character(to_id)) |>
+                                group_by(from_id, to_id) |>
+                                slice(1) |>
                                 ungroup()
                         } else {
                             data.frame()
@@ -346,7 +346,7 @@ for (city in target_cities) {
 
                         if (nrow(target_for_metrics) > 0 && inherits(target_for_metrics, "sf")) {
                             # Calculate Euclidean distance
-                            target_for_metrics <- target_for_metrics %>%
+                            target_for_metrics <- target_for_metrics |>
                                 mutate(
                                     euclidean_distance = as.numeric(st_distance(
                                         lwgeom::st_startpoint(geometry),
@@ -363,16 +363,16 @@ for (city in target_cities) {
                                 edge_index = as.numeric(unlist(edge_list))
                             )
 
-                            route_stats <- route_edges_mapping %>%
-                                left_join(edges, by = "edge_index") %>%
+                            route_stats <- route_edges_mapping |>
+                                left_join(edges, by = "edge_index") |>
                                 mutate(
                                     is_strong = osm_id %in% ci_ids$strong,
                                     is_medium = osm_id %in% ci_ids$medium,
                                     is_weak   = osm_id %in% ci_ids$weak,
                                     is_foot   = osm_id %in% ci_ids$foot,
                                     is_any_ci = is_strong | is_medium | is_weak | is_foot
-                                ) %>%
-                                group_by(row_idx) %>%
+                                ) |>
+                                group_by(row_idx) |>
                                 summarise(
                                     route_ci_strong_m = sum(length[is_strong], na.rm = TRUE),
                                     route_ci_medium_m = sum(length[is_medium], na.rm = TRUE),
@@ -407,33 +407,33 @@ for (city in target_cities) {
                                         }
                                     },
                                     .groups = "drop"
-                                ) %>%
+                                ) |>
                                 mutate(
                                     route_pct_lts1 = round(lts1_m / pmax(total_edge_len, 1) * 100, 2),
                                     route_pct_lts2 = round(lts2_m / pmax(total_edge_len, 1) * 100, 2),
                                     route_pct_lts3 = round(lts3_m / pmax(total_edge_len, 1) * 100, 2),
                                     route_pct_lts4 = round(lts4_m / pmax(total_edge_len, 1) * 100, 2)
-                                ) %>%
+                                ) |>
                                 select(-lts1_m, -lts2_m, -lts3_m, -lts4_m, -total_edge_len)
 
-                            target_for_metrics <- target_for_metrics %>%
-                                mutate(row_idx = row_number()) %>%
-                                left_join(route_stats, by = "row_idx") %>%
-                                select(-row_idx) %>%
+                            target_for_metrics <- target_for_metrics |>
+                                mutate(row_idx = row_number()) |>
+                                left_join(route_stats, by = "row_idx") |>
+                                select(-row_idx) |>
                                 mutate(across(starts_with("route_"), ~ replace_na(., 0)))
 
                             if (!enriching) {
                                 # Expand unique_trips to 20k rows
-                                trips <- target_for_metrics %>%
-                                    inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") %>%
-                                    mutate(from_id = trip_id, to_id = trip_id) %>%
+                                trips <- target_for_metrics |>
+                                    inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") |>
+                                    mutate(from_id = trip_id, to_id = trip_id) |>
                                     select(-trip_id)
                             } else {
                                 # Re-join metrics to existing 20k rows
-                                metric_cols <- st_drop_geometry(target_for_metrics) %>%
+                                metric_cols <- st_drop_geometry(target_for_metrics) |>
                                     select(from_id, to_id, starts_with("route_"), euclidean_distance)
-                                trips <- trips %>%
-                                    left_join(metric_cols, by = c("from_id", "to_id")) %>%
+                                trips <- trips |>
+                                    left_join(metric_cols, by = c("from_id", "to_id")) |>
                                     mutate(across(starts_with("route_"), ~ replace_na(., 0)))
                             }
                         } else {
@@ -444,9 +444,9 @@ for (city in target_cities) {
                         # No exposure needed AND not enriching => unique_trips was empty (no routes found)
                         # Expand to trips anyway (will be 0 rows)
                         if (nrow(unique_trips) > 0) {
-                            trips <- unique_trips %>%
-                                inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") %>%
-                                mutate(from_id = trip_id, to_id = trip_id) %>%
+                            trips <- unique_trips |>
+                                inner_join(expansion_map, by = c("from_id" = "unique_id"), relationship = "many-to-many") |>
+                                mutate(from_id = trip_id, to_id = trip_id) |>
                                 select(-trip_id)
                         } else {
                             trips <- unique_trips
@@ -488,7 +488,7 @@ for (city in target_cities) {
                                 # r5r returns travel_time_p50 by default, but accessibility::cumulative_cutoff
                                 # checks for the string passed to travel_cost, which is "travel_time"
                                 if ("travel_time_p50" %in% names(ttm)) {
-                                    ttm <- ttm %>% rename(travel_time = travel_time_p50)
+                                    ttm <- ttm |> rename(travel_time = travel_time_p50)
                                 }
 
                                 acc <- accessibility::cumulative_cutoff(
@@ -501,26 +501,26 @@ for (city in target_cities) {
 
                                 if (nrow(acc) > 0) {
                                     # Handle expansion carefully to not lose sf class
-                                    acc_to_join <- acc %>%
-                                        select(unique_id = id, access_15min_vol = volume) %>%
+                                    acc_to_join <- acc |>
+                                        select(unique_id = id, access_15min_vol = volume) |>
                                         mutate(unique_id = as.character(unique_id))
 
                                     # we join to 'trips' (which is the full 20k rows)
                                     # mapping back: trip_id is in from_id.
-                                    trips_meta_acc <- all_pairs %>%
-                                        select(trip_id, unique_id) %>%
+                                    trips_meta_acc <- all_pairs |>
+                                        select(trip_id, unique_id) |>
                                         mutate(trip_id = as.character(trip_id))
 
                                     # Backup geometry and class
                                     is_sf <- inherits(trips, "sf")
                                     if (is_sf) geom_backup <- st_geometry(trips)
 
-                                    trips_enriched <- trips %>%
-                                        st_drop_geometry() %>%
-                                        mutate(from_id = as.character(from_id)) %>%
-                                        left_join(trips_meta_acc, by = c("from_id" = "trip_id")) %>%
-                                        left_join(acc_to_join, by = "unique_id") %>%
-                                        mutate(access_15min_vol = replace_na(access_15min_vol, 0)) %>%
+                                    trips_enriched <- trips |>
+                                        st_drop_geometry() |>
+                                        mutate(from_id = as.character(from_id)) |>
+                                        left_join(trips_meta_acc, by = c("from_id" = "trip_id")) |>
+                                        left_join(acc_to_join, by = "unique_id") |>
+                                        mutate(access_15min_vol = replace_na(access_15min_vol, 0)) |>
                                         select(-unique_id)
 
                                     # Re-attribute geometry if it was sf

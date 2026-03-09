@@ -3,7 +3,7 @@ library(fixest)
 
 # 1. Create the Placebo Dataset (Set seed so you get the exact same random shuffle every time)
 set.seed(2026) 
-placebo_data <- route_lts1 %>%
+placebo_data <- route_lts1 |>
   mutate(
     # Scramble the infrastructure variables randomly across the 5 million rows
     fake_ci_strong = sample(ci_strong_km),

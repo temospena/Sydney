@@ -1,15 +1,15 @@
 library(dplyr)
 
 # Assuming your data is in a dataframe called 'df'
-geofabrik_expanded <- geofabrik %>%
+geofabrik_expanded <- geofabrik |>
   # Create rows for year 19 using year 16 data
   bind_rows(
-    geofabrik %>% filter(year == 16) %>% mutate(year = 19)
-  ) %>%
+    geofabrik |> filter(year == 16) |> mutate(year = 19)
+  ) |>
   # Create rows for year 24 using year 21 data
   bind_rows(
-    geofabrik %>% filter(year == 21) %>% mutate(year = 24)
-  ) %>%
+    geofabrik |> filter(year == 21) |> mutate(year = 24)
+  ) |>
   # Sort the results by city and year
   arrange(city, year)
 

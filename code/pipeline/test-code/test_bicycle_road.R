@@ -22,7 +22,7 @@ lines_sf <- oe_read(
 cat("Total lines read:", nrow(lines_sf), "\n")
 
 # Similar logic as osmactive::get_travel_network
-osm_network <- lines_sf %>%
+osm_network <- lines_sf |>
     filter(!is.na(highway))
 
 cycle_net <- osmactive::get_cycling_network(osm_network)

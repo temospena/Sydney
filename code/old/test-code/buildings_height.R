@@ -53,7 +53,7 @@ dbDisconnect(con)
 
 # 1. Convert the raw data to an 'sf' object (Polygons)
 # DuckDB returns geom as a list of raw bytes; st_as_sfc handles the conversion
-building_centroids <- raw_data %>%
+building_centroids <- raw_data |>
   mutate(     # Simple mid-point calculation
     lon = (bbox$xmin + bbox$xmax) / 2,
     lat = (bbox$ymin + bbox$ymax) / 2,

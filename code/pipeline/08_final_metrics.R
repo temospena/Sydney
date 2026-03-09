@@ -435,9 +435,9 @@ if (length(final_dataset) == 0) {
 
     # Filter out existing rows that match the new keys
     # This effectively "replaces" them with the latest version
-    existing_df <- existing_df %>%
-      mutate(temp_key = paste(city, year, lts, sep = "_")) %>%
-      filter(!(temp_key %in% new_keys)) %>%
+    existing_df <- existing_df |>
+      mutate(temp_key = paste(city, year, lts, sep = "_")) |>
+      filter(!(temp_key %in% new_keys)) |>
       select(-temp_key)
 
     # Merge new data with filtered old data

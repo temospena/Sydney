@@ -105,8 +105,8 @@ ggplot(trips_lisbon_diferences, aes(x = distance_2021, y = distance_2026)) +
   theme_minimal()
 
 # What is the average distance reduction?
-trips_lisbon_diferences %>%
-  mutate(change_pct = (distance_2021 - distance_2016) / distance_2016) %>%
+trips_lisbon_diferences |>
+  mutate(change_pct = (distance_2021 - distance_2016) / distance_2016) |>
   summarise(avg_reduction = mean(change_pct, na.rm = TRUE) * 100)
 
 # 2016 - 2026 : -5.37%
@@ -114,12 +114,12 @@ trips_lisbon_diferences %>%
 # 2016 - 2021 : -2.26%
 
 # 
-# trips_lisbon_diferences %>%
+# trips_lisbon_diferences |>
 #   # Filter NAs and sort by the biggest gains
-#   filter(!is.na(dif_2126)) %>%
-#   arrange(dif_2126) %>%
-#   mutate(cumulative_gain = cumsum(dif_2126) / 1000) %>% # Convert to km
-#   mutate(index = row_number()) %>%
+#   filter(!is.na(dif_2126)) |>
+#   arrange(dif_2126) |>
+#   mutate(cumulative_gain = cumsum(dif_2126) / 1000) |> # Convert to km
+#   mutate(index = row_number()) |>
 #   ggplot(aes(x = index, y = cumulative_gain)) +
 #   geom_line(size = 1.2, color = "#2ecc71") +
 #   labs(title = "Cumulative Infrastructure Efficiency (2021-2026)",
@@ -130,9 +130,9 @@ trips_lisbon_diferences %>%
 
 
 # Pivot data to compare the two periods easily
-gains_long <- trips_lisbon_diferences %>%
-  select(dif_1621, dif_2126) %>%
-  pivot_longer(everything(), names_to = "period", values_to = "diff") %>%
+gains_long <- trips_lisbon_diferences |>
+  select(dif_1621, dif_2126) |>
+  pivot_longer(everything(), names_to = "period", values_to = "diff") |>
   mutate(period = recode(period, 
                          "dif_1621" = "2016 to 2021", 
                          "dif_2126" = "2021 to 2026"))
@@ -156,21 +156,21 @@ ggplot(gains_long, aes(x = diff, fill = period)) +
 # identify segments -------------------------------------------------------
 
 # 1. Identify the OD pairs with the biggest distance savings (the 'Gains')
-top_gains_ids <- trips_lisbon_diferences %>%
-  filter(dif_2126 < 0) %>% # Only look at improvements
-  slice_min(dif_2126, n = 1000) %>% # Look at the top 1000 'improved' trips
+top_gains_ids <- trips_lisbon_diferences |>
+  filter(dif_2126 < 0) |> # Only look at improvements
+  slice_min(dif_2126, n = 1000) |> # Look at the top 1000 'improved' trips
   select(from_id, to_id)
 
 # 2. Extract the geometries for these specific efficient trips from your 2026 results
 efficient_geometries <- trips_lisbon_combined_lts2 |> 
-  filter(year == 2026) %>%
+  filter(year == 2026) |>
   inner_join(top_gains_ids, by = c("from_id", "to_id"))
 
 # 3. Break the routes into individual segments and count usage
 lisbon_ci_2026 = st_read("data/lisbon/lisbon_ci_osmactive_260101.gpkg")
-infra_usage <- st_join(lisbon_ci_2026, efficient_geometries, join = st_intersects) %>%
-  group_by(osm_id) %>% # infrastructure segment
-  summarise(trip_count = n()) %>%
+infra_usage <- st_join(lisbon_ci_2026, efficient_geometries, join = st_intersects) |>
+  group_by(osm_id) |> # infrastructure segment
+  summarise(trip_count = n()) |>
   arrange(desc(trip_count))
 
 # 4. View the Top 10 Segments

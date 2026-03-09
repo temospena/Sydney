@@ -22,10 +22,10 @@ for (city in target_cities) {
   dest_land_use <- NULL
   if (file.exists(dests_path)) {
     cat("  Loading destinations for potential accessibility backfill...\n")
-    dest_land_use <- st_read(dests_path, quiet = TRUE) %>%
-      st_drop_geometry() %>%
-      select(id, volume) %>%
-      mutate(id = as.character(id)) %>%
+    dest_land_use <- st_read(dests_path, quiet = TRUE) |>
+      st_drop_geometry() |>
+      select(id, volume) |>
+      mutate(id = as.character(id)) |>
       filter(!duplicated(id))
   }
 
@@ -51,10 +51,10 @@ for (city in target_cities) {
 
           # detailed_itineraries can return multiple rows per OD pair (segments)
           # We take the first row per OD pair since total_duration/total_distance are route-level constants in r5r output
-          stats <- trips %>%
-            st_drop_geometry() %>%
-            mutate(from_id = as.character(from_id), to_id = as.character(to_id)) %>%
-            group_by(from_id, to_id) %>%
+          stats <- trips |>
+            st_drop_geometry() |>
+            mutate(from_id = as.character(from_id), to_id = as.character(to_id)) |>
+            group_by(from_id, to_id) |>
             summarise(
               total_duration = first(total_duration),
               total_distance = first(total_distance),
@@ -70,18 +70,18 @@ for (city in target_cities) {
               route_pct_lts4 = first(route_pct_lts4),
               route_interruptions_count = first(route_interruptions_count),
               .groups = "drop"
-            ) %>%
+            ) |>
             mutate(year = yr, lts = lts_level)
 
           # Ensure access_15min_vol is preserved if present
           if ("access_15min_vol" %in% names(trips)) {
             # trips has trip_id as from_id, we need to join the stats
-            acc_data <- trips %>%
-              st_drop_geometry() %>%
-              group_by(from_id, to_id) %>%
+            acc_data <- trips |>
+              st_drop_geometry() |>
+              group_by(from_id, to_id) |>
               summarise(access_15min_vol = first(access_15min_vol), .groups = "drop")
 
-            stats <- stats %>%
+            stats <- stats |>
               left_join(acc_data, by = c("from_id", "to_id"))
           } else {
             stats$access_15min_vol <- 0
@@ -105,7 +105,7 @@ for (city in target_cities) {
 
     # Save a pivot_wider CSV for easier verification/spreadsheet use
     # Format: dist_16_lts1, dur_16_lts1, etc.
-    df_wide <- df_combined %>%
+    df_wide <- df_combined |>
       pivot_wider(
         names_from = c(year, lts),
         values_from = c(total_duration, total_distance),

@@ -509,7 +509,7 @@ plot_data_model <- data.frame(
 )
 
 # 2. Clean up factors for plotting order and calculate 95% Confidence Intervals
-plot_data_model <- plot_data_model %>%
+plot_data_model <- plot_data_model |>
   mutate(
     Distance = factor(Distance, levels = c("1_Short (<2km)", "2_Medium (2-5km)", "3_Long (5-8km)", "4_VeryLong (>8km)")),
     # Order the legend from highest stress to lowest stress
@@ -594,7 +594,7 @@ gaps_data <- data.frame(
                       levels = c("Sharrows (Weak)", "Painted (Medium)", "Protected (Strong)")),
   Estimate = c(-0.084, -0.055, 0.055),
   SE = c(0.030, 0.032, 0.060)
-) %>%
+) |>
   mutate(
     Conf_Low = Estimate - (1.96 * SE),
     Conf_High = Estimate + (1.96 * SE),

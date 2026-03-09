@@ -46,10 +46,10 @@ fetch_building_points <- function(city_name, bbox_list, parket_file_dir) {
   }
   
   # 4. Transform to SF points
-  buildings_centroids <- raw_data %>%
-    filter(!is.na(geom_wkb)) %>% # remove non-geometric entries
-    mutate(geometry = st_as_sfc(geom_wkb, crs = 4326)) %>%  # Convert to sf object so st_area works correctly
-    st_as_sf() %>%
+  buildings_centroids <- raw_data |>
+    filter(!is.na(geom_wkb)) |> # remove non-geometric entries
+    mutate(geometry = st_as_sfc(geom_wkb, crs = 4326)) |>  # Convert to sf object so st_area works correctly
+    st_as_sf() |>
     mutate(
       # Transform to metric (3857) to get area in square meters
       footprint_m2 = round(as.numeric(st_area(st_transform(., 3857)))), #A0
@@ -59,10 +59,10 @@ fetch_building_points <- function(city_name, bbox_list, parket_file_dir) {
       # Midpoints for the final point geometry
       lon = (bbox$xmin + bbox$xmax) / 2,
       lat = (bbox$ymin + bbox$ymax) / 2
-    ) %>%
+    ) |>
     # Convert polygons to points using the midpoints calculated
-    st_drop_geometry() %>% 
-    st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
+    st_drop_geometry() |> 
+    st_as_sf(coords = c("lon", "lat"), crs = 4326) |>
     select(source, id, height, var, est_floors, footprint_m2, total_floor_area_m2, volume_m3)
   
   return(buildings_centroids)

@@ -106,13 +106,13 @@ get_city_coords <- function(city) {
 city_coords_df <- do.call(rbind, lapply(target_cities, get_city_coords))
 
 # Maps package fallback for missing
-missing <- city_coords_df %>% filter(is.na(lon))
+missing <- city_coords_df |> filter(is.na(lon))
 if (nrow(missing) > 0) {
     data(world.cities)
     for (i in 1:nrow(missing)) {
-        match <- world.cities %>%
-            filter(name == missing$city[i]) %>%
-            arrange(desc(pop)) %>%
+        match <- world.cities |>
+            filter(name == missing$city[i]) |>
+            arrange(desc(pop)) |>
             head(1)
         if (nrow(match) > 0) {
             city_coords_df$lon[city_coords_df$city == missing$city[i]] <- match$long
@@ -123,7 +123,7 @@ if (nrow(missing) > 0) {
 
 # Plot 1: Map
 world <- map_data("world")
-city_coords_df <- city_coords_df %>%
+city_coords_df <- city_coords_df |>
     mutate(in_model = city %in% target_cities_clean)
 
 p1 <- ggplot() +
@@ -154,20 +154,20 @@ ggsave(file.path(proj_root, "images/city_map_points.png"), p1, width = 14, heigh
 # Plot 2: CI evolution colored by continent
 final_estimations <- read.csv(file.path(data_dir, "final_city_estimations.csv"))
 
-ci_data <- final_estimations %>%
-    filter(city %in% target_cities_clean) %>%
-    mutate(total_ci_km = total_ci_m / 1000) %>%
+ci_data <- final_estimations |>
+    filter(city %in% target_cities_clean) |>
+    mutate(total_ci_km = total_ci_m / 1000) |>
     # Convert year to numeric and handle if it's short (e.g., 16) or full (e.g., 2016)
-    mutate(year_val = as.numeric(as.character(year))) %>%
-    mutate(year_num = ifelse(year_val < 100, 2000 + year_val, year_val)) %>%
-    group_by(city, year_num) %>%
-    summarise(total_ci_km = mean(total_ci_km, na.rm = TRUE), .groups = "drop") %>%
+    mutate(year_val = as.numeric(as.character(year))) |>
+    mutate(year_num = ifelse(year_val < 100, 2000 + year_val, year_val)) |>
+    group_by(city, year_num) |>
+    summarise(total_ci_km = mean(total_ci_km, na.rm = TRUE), .groups = "drop") |>
     left_join(continent_lookup, by = "city")
 
-ci_avg <- ci_data %>%
-    group_by(year_num) %>%
-    summarise(avg_ci_km = mean(total_ci_km, na.rm = TRUE), .groups = "drop") %>%
-    arrange(year_num) %>%
+ci_avg <- ci_data |>
+    group_by(year_num) |>
+    summarise(avg_ci_km = mean(total_ci_km, na.rm = TRUE), .groups = "drop") |>
+    arrange(year_num) |>
     mutate(
         prev_avg = lag(avg_ci_km),
         growth_pct = (avg_ci_km / prev_avg - 1) * 100,

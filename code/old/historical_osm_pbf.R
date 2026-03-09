@@ -25,7 +25,7 @@ create_bbox_poly <- function(coords, label) {
     coords[1], coords[2]  # Close back at Bottom-Left
   ), ncol = 2, byrow = TRUE)
   
-  st_sfc(st_polygon(list(mat)), crs = 4326) %>%
+  st_sfc(st_polygon(list(mat)), crs = 4326) |>
     st_sf(City = label, row.names = label)
 }
 

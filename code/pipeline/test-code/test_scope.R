@@ -5,7 +5,7 @@ current_timestamp <- "123"
 duration_mins <- 10.5
 
 update_df <- function() {
-  df %>% mutate(processing_time_minutes = if_else(
+  df |> mutate(processing_time_minutes = if_else(
     city == city_name & run_timestamp == current_timestamp,
     round(duration_mins, 2),
     as.numeric(processing_time_minutes)

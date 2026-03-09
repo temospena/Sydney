@@ -19,14 +19,14 @@ bike_data = bike_data |> filter(!city %in% city_discard)
 # Assuming your dataframe is called 'bike_data'
 # Variables used: city_id, year, infra_protected_km
 
-variation_check <- bike_data %>%
+variation_check <- bike_data |>
   # 1. Isolate the city-level infrastructure data 
   # (This drops the 20k routes and leaves just 135 rows: 45 cities x 3 years)
-  distinct(city, year, total_ci_m) %>% 
+  distinct(city, year, total_ci_m) |> 
   
   # 2. Group by city and sort by year to calculate changes over time
-  group_by(city) %>%
-  arrange(year) %>%
+  group_by(city) |>
+  arrange(year) |>
   
   # 3. Calculate baseline, total built, and percentage increase
   summarise(
@@ -36,14 +36,14 @@ variation_check <- bike_data %>%
     
     # Adding +1 to denominator to avoid division by zero if baseline was 0
     pct_increase = (total_built_km / (baseline_km + 0.1)) * 100 
-  ) %>%
+  ) |>
   arrange(desc(total_built_km)) # Sort to see the cities that built the most at the top
 
 # View the results for individual cities
 head(variation_check, 10)
 
 # 4. The Moment of Truth: How many cities actually built new infrastructure?
-summary_stats <- variation_check %>%
+summary_stats <- variation_check |>
   summarise(
     cities_with_no_change = sum(total_built_km == 0),
     cities_with_growth = sum(total_built_km > 0),
@@ -58,7 +58,7 @@ print(summary_stats)
 
 
 # To get elasticities, we create log transformations. 
-bike_data_model <- bike_data %>%
+bike_data_model <- bike_data |>
   filter(lts %in% c(1,2)) |> 
   mutate(
     log_circuity = log(avg_circuity),
@@ -274,7 +274,7 @@ extract_plot_data <- function(model_list, outcome_name) {
 plot_data <- extract_plot_data(models_interruptions, "Network Interruptions")
 
 # 3. Clean up the variable names so they look professional on the chart
-plot_data <- plot_data %>%
+plot_data <- plot_data |>
   mutate(
     Infra_Type = case_when(
       Variable == "log_ci_strong_km" ~ "1. Strong (Protected)",
@@ -284,7 +284,7 @@ plot_data <- plot_data %>%
   )
 
 # 4. Filter to just LTS 1 and LTS 2 (The target demographics for these policies)
-plot_data_filtered <- plot_data %>% filter(LTS_Level %in% c("LTS 1", "LTS 2"))
+plot_data_filtered <- plot_data |> filter(LTS_Level %in% c("LTS 1", "LTS 2"))
 
 # 5. Build the ggplot!
 forest_plot <- ggplot(plot_data_filtered, aes(x = Estimate, y = Infra_Type, color = LTS_Level)) +
@@ -368,7 +368,7 @@ extract_plot_data_1km <- function(model_list, outcome_name) {
 plot_data_1km <- extract_plot_data_1km(models_interruptions, "Network Interruptions")
 
 # Clean up names for the chart
-plot_data_1km <- plot_data_1km %>%
+plot_data_1km <- plot_data_1km |>
   mutate(
     Infra_Type = case_when(
       Variable == "ci_strong_km" ~ "1. Strong (Protected)",
@@ -376,7 +376,7 @@ plot_data_1km <- plot_data_1km %>%
       Variable == "ci_weak_km"   ~ "3. Weak (Mixed morotized/Sharrows)",
       Variable == "ci_foot_km"  ~ "4. Foot (Pedestrian infra"
     )
-  ) %>% filter(LTS_Level %in% c("LTS 1", "LTS 2"))
+  ) |> filter(LTS_Level %in% c("LTS 1", "LTS 2"))
 
 # Build the chart!
 ggplot(plot_data_1km, aes(x = Estimate_Pct, y = Infra_Type, color = LTS_Level)) +

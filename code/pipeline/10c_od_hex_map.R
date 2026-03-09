@@ -40,23 +40,23 @@ for (city in target_cities) {
     cat("    Aggregating by H3 cell...\n")
 
     # For Origins
-    orig_counts_raw <- origins %>%
-        st_drop_geometry() %>%
-        group_by(h3_address) %>%
+    orig_counts_raw <- origins |>
+        st_drop_geometry() |>
+        group_by(h3_address) |>
         summarise(n = n(), .groups = "drop")
 
     orig_hex <- cell_to_polygon(orig_counts_raw$h3_address, simple = FALSE)
-    orig_counts <- orig_hex %>%
+    orig_counts <- orig_hex |>
         left_join(orig_counts_raw, by = "h3_address")
 
     # For Destinations
-    dest_counts_raw <- destinations %>%
-        st_drop_geometry() %>%
-        group_by(h3_address) %>%
+    dest_counts_raw <- destinations |>
+        st_drop_geometry() |>
+        group_by(h3_address) |>
         summarise(n = n(), .groups = "drop")
 
     dest_hex <- cell_to_polygon(dest_counts_raw$h3_address, simple = FALSE)
-    dest_counts <- dest_hex %>%
+    dest_counts <- dest_hex |>
         left_join(dest_counts_raw, by = "h3_address")
 
     # Common theme settings

@@ -75,10 +75,10 @@ summary(trips_lisbon_26_lts3$total_duration)
 
 # Combine datasets and add a year identifier
 trips_lisbon_combined_lts3 <- bind_rows(
-  trips_lisbon_16_lts3 %>% mutate(year = "2016"),
-  trips_lisbon_21_lts3 %>% mutate(year = "2021"),
-  trips_lisbon_26_lts3 %>% mutate(year = "2026")
-) %>%
+  trips_lisbon_16_lts3 |> mutate(year = "2016"),
+  trips_lisbon_21_lts3 |> mutate(year = "2021"),
+  trips_lisbon_26_lts3 |> mutate(year = "2026")
+) |>
   mutate(year = as.factor(year))
 
 saveRDS(trips_lisbon_combined_lts3, "networks/results_ttm/trips_lisbon_lts3_geo.rds")
@@ -157,10 +157,10 @@ summary(trips_lisbon_26$total_duration)
 
 # Combine datasets and add a year identifier
 trips_lisbon_combined_lts2 <- bind_rows(
-  trips_lisbon_16_lts2 %>% mutate(year = "2016"),
-  trips_lisbon_21_lts2 %>% mutate(year = "2021"),
-  trips_lisbon_26_lts2 %>% mutate(year = "2026")
-) %>%
+  trips_lisbon_16_lts2 |> mutate(year = "2016"),
+  trips_lisbon_21_lts2 |> mutate(year = "2021"),
+  trips_lisbon_26_lts2 |> mutate(year = "2026")
+) |>
   mutate(year = as.factor(year))
 
 saveRDS(trips_lisbon_combined_lts2, "networks/results_ttm/trips_lisbon_lts2_geo.rds")
@@ -179,10 +179,10 @@ tmap_mode("view")
 trips_overline = trips_lisbon_combined_lts2 |> mutate(trips = 1)
 # trips_overline = trips_lisbon_combined_lts3 |> mutate(trips = 1)
 
-map_data <- trips_overline %>%
-  group_split(year) %>%
+map_data <- trips_overline |>
+  group_split(year) |>
   map_dfr(function(year_data) {
-    overline2(year_data, attrib = "trips") %>%
+    overline2(year_data, attrib = "trips") |>
       mutate(year = unique(year_data$year))
   }) |> 
   filter(trips > 1)

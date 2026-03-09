@@ -104,21 +104,21 @@ fetch_building_points <- function(city_name, city_bbox, tile_names) {
     raw_data <- bind_rows(all_raw_data) |>
         distinct(id, .keep_all = TRUE) # ensure no duplicates if tiles overlap
 
-    buildings_centroids <- raw_data %>%
+    buildings_centroids <- raw_data |>
         mutate(
             geometry = st_as_sfc(geom_wkb, crs = 4326),
             lon = (bbox$xmin + bbox$xmax) / 2,
             lat = (bbox$ymin + bbox$ymax) / 2
-        ) %>%
-        st_as_sf() %>%
+        ) |>
+        st_as_sf() |>
         mutate(
             footprint_m2 = round(as.numeric(st_area(st_transform(., 3857)))),
             est_floors = pmax(1, round(height / 3)),
             total_floor_area_m2 = round(footprint_m2 * est_floors),
             volume_m3 = round(footprint_m2 * height)
-        ) %>%
-        st_drop_geometry() %>%
-        st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
+        ) |>
+        st_drop_geometry() |>
+        st_as_sf(coords = c("lon", "lat"), crs = 4326) |>
         select(id, height, est_floors, footprint_m2, total_floor_area_m2, volume_m3)
 
     return(buildings_centroids)
