@@ -359,6 +359,18 @@ modelsummary(
 )
 
 
+### fixed effects estimators
+fixef(macro_duration)
+fixef(macro_access)
+fixef(micro_circuity)[2]
+fixef(micro_safety)[2]
+fixef(model_avg_wlts)[2]
+fixef(micro_interruptions)[2]
+
+
+
+
+
 # other interactions ------------------------------------------------------
 
 # Distance bins interaction
