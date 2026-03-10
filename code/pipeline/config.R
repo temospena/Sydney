@@ -7,6 +7,7 @@
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
 target_cities <- c(
+"Sydney", "Paris", "New York", "Barcelona", "Lisbon", ## Here they are
 "Amsterdam", "Austin", # "Barcelona"
 "Beijing", "Berlin", "Bogota",
 "Bologna", "Brussels", "Buenos Aires",
@@ -17,8 +18,7 @@ target_cities <- c(
 "Munich", "Nantes", "Oslo", "Portland", # "Paris", "New York",
 "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
 "Seville", "Shanghai", "Stockholm", "Strasbourg", "Taipei", # "Sydney",
-"Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich",
-"Sydney", "Paris", "New York", "Barcelona", "Lisbon" ## Here they are
+"Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
 ) # cairo, cape town,  hong kong (> 100km in 2026)
 # target_cities <- "Lisbon"
 

@@ -99,8 +99,15 @@ routing_stats_model = routing_stats_all |>
                        2 * route_pct_lts2 + 
                        3 * route_pct_lts3 +
                        4 * route_pct_lts4) / 100,     # Weighted Average LTS (Scale 1.0 to 4.0)
-    route_pct_safe = route_pct_lts1 + route_pct_lts2 # Total "Safe" Percentage (LTS 1 + LTS 2)
-  ) |>
+    route_pct_safe = route_pct_lts1, # Total "Safe" Percentage (LTS 1)
+    
+    # alternatives
+    route_avg_lts_alternative = (1 * route_pct_lts1_alternative +
+                     2 * route_pct_lts2_alternative + 
+                     3 * route_pct_lts3_alternative +
+                     4 * route_pct_lts4_alternative) / 100,     # Weighted Average LTS (Scale 1.0 to 4.0)
+    route_pct_safe_alternative = route_pct_lts1_alternative # Total "Safe" Percentage (LTS 1)
+) |>
   filter(circuity >= 1 & !is.na(total_duration)) |>  # clean wered results
   mutate(log_access = log(access_15min_vol+1), # log
          log_duration = log(total_duration+1)) |> 
@@ -239,6 +246,7 @@ micro_circuity <- feols(
   cluster = ~city
 )
 
+## Original
 # 3. Trip Safety (Does it increase the completely safe portion of the ride?)
 micro_safety <- feols(
   route_pct_safe ~ ci_strong_km + ci_medium_km  + ci_weak_km
@@ -249,6 +257,7 @@ micro_safety <- feols(
   # data = route_lts2,
   cluster = ~city
 )
+etable(micro_safety)
 
 # Trip safety LTS composite: Does infrastructure lower the average stress score? (Level-Level)
 model_avg_wlts <- feols(
@@ -262,6 +271,56 @@ model_avg_wlts <- feols(
 )
 etable(model_avg_wlts)
 
+# distance bins as split
+micro_stress_dist <- feols(
+  route_avg_lts ~  ci_strong_km + ci_medium_km + ci_weak_km
+  # + ci_foot_km
+  | route_id + year,
+  # | route_id,
+  data = route_lts1,
+  cluster = ~city,
+  split = ~dist_cat
+)
+etable(micro_stress_dist)
+
+
+## Alternative
+# 3. Trip Safety alternative (Does it increase the completely safe portion of the ride?) - woth ci as 1
+micro_safety_alternative <- feols(
+  route_pct_safe_alternative ~ ci_strong_km + ci_medium_km  + ci_weak_km
+  # + ci_foot_km
+  | route_id + year,
+  # | route_id,
+  data = route_lts1,
+  # data = route_lts2,
+  cluster = ~city
+)
+
+# Trip safety LTS composite: Does infrastructure lower the average stress score? (Level-Level)
+model_avg_wlts_alternative <- feols(
+  route_avg_lts_alternative ~ ci_strong_km + ci_medium_km + ci_weak_km
+  # + ci_foot_km 
+  | route_id + year,
+  # | route_id,
+  data = route_lts1,
+  # data = route_lts2,
+  cluster = ~city 
+)
+etable(model_avg_wlts)
+
+# distance bins as split
+micro_stress_dist_alternative <- feols(
+  route_avg_lts_alternative ~  ci_strong_km + ci_medium_km + ci_weak_km
+  # + ci_foot_km
+  | route_id + year,
+  # | route_id,
+  data = route_lts1,
+  cluster = ~city,
+  split = ~dist_cat
+)
+etable(micro_stress_dist)
+
+
 # Trip interruptions: Does infrastructure lower the average interruptions (over 100m without ci)? (Level-Level)
 micro_interruptions <- feols(
   route_interruptions_count ~ ci_strong_km + ci_medium_km + ci_weak_km
@@ -274,18 +333,6 @@ micro_interruptions <- feols(
 )
 etable(micro_interruptions) # discontinuities
 
-
-# distance bins as split
-micro_stress_dist <- feols(
-  route_avg_lts ~  ci_strong_km + ci_medium_km + ci_weak_km
-  # + ci_foot_km
-  | route_id + year,
-  # | route_id,
-  data = route_lts1,
-  cluster = ~city,
-  split = ~dist_cat
-)
-etable(micro_stress_dist)
 
 # interruptions bins as split
 micro_interruptions_dist <- feols(
@@ -358,13 +405,30 @@ modelsummary(
   gof_omit = "IC|Log.Lik|F" # |RMSE ; Cleans up the bottom of the table
 )
 
+# for safety original and alternative
+modelsummary(
+  list("% LTS1 Safe" = micro_safety,
+       "% LTS1 Safe - CI=1" = micro_safety_alternative,
+       "Stress Score" = model_avg_wlts,
+       "Stress Score - CI=1" = model_avg_wlts_alternative),
+  coef_rename = c("ci_strong_km" = "Protected cycling infra (added km)", 
+                  "ci_medium_km" = "Painted lane (added km)",
+                  "ci_weak_km" = "Sharrow type (added km)",
+                  "ci_foot_km" = "Shared with pedestrians (added km)"),
+  stars = TRUE,
+  title = "Impact of 1km Infrastructure Expansion on Route Characteristics (LTS 1)",
+  gof_omit = "IC|Log.Lik|F" # |RMSE ; Cleans up the bottom of the table
+)
+
 
 ### fixed effects estimators
 fixef(macro_duration)
 fixef(macro_access)
 fixef(micro_circuity)[2]
 fixef(micro_safety)[2]
+fixef(micro_safety_alternative)[2]
 fixef(model_avg_wlts)[2]
+fixef(model_avg_wlts_alternative)[2]
 fixef(micro_interruptions)[2]
 
 
