@@ -45,6 +45,30 @@ for (current_city in unique(final_df$city)) {
     theme_minimal()
   
   ggsave(file.path(results_dir, "plot_route_lts_usage.png"), p1, width = 8, height = 4)
+
+  # 1b. Plot: stacked horizontal bar for the pct of LTS used for the routes (alternative)
+  if ("pct_lts1_alternative" %in% names(city_df)) {
+    lts4_routes_alt <- city_df |>
+      filter(lts == 4) |>
+      select(year, pct_lts1_alternative, pct_lts2_alternative, pct_lts3_alternative, pct_lts4_alternative) |>
+      pivot_longer(-year, names_to = "LTS", values_to = "pct") |>
+      mutate(LTS = str_replace(LTS, "pct_(lts[1-4])_alternative", "\\1")) |>
+      mutate(year = as.factor(year))
+
+    p1b <- ggplot(lts4_routes_alt, aes(y = fct_rev(year), x = pct, fill = LTS)) +
+      geom_bar(stat = "identity", position = "stack") +
+      scale_fill_viridis_d(option = "cividis", direction = -1) +
+      labs(
+        title = paste(current_city, "- Route Usage by LTS (Alt)"),
+        subtitle = "Percentage of road types driven on routes (LTS 4 max, CI=1)",
+        x = "Percentage (%)",
+        y = "Year",
+        fill = "Network LTS Level"
+      ) +
+      theme_minimal()
+
+    ggsave(file.path(results_dir, "plot_route_lts_usage_alternative.png"), p1b, width = 8, height = 4)
+  }
   
   # 2. Plot: stacked horizontal bar for the pct of LTS in total regarding the existing road network.
   overall_lts <- city_df |>

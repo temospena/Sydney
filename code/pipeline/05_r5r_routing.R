@@ -370,7 +370,8 @@ for (city in target_cities) {
                                     is_medium = osm_id %in% ci_ids$medium,
                                     is_weak   = osm_id %in% ci_ids$weak,
                                     is_foot   = osm_id %in% ci_ids$foot,
-                                    is_any_ci = is_strong | is_medium | is_weak | is_foot
+                                    is_any_ci = is_strong | is_medium | is_weak | is_foot,
+                                    bicycle_lts_alt = if_else(is_any_ci, 1, bicycle_lts)
                                 ) |>
                                 group_by(row_idx) |>
                                 summarise(
@@ -382,6 +383,10 @@ for (city in target_cities) {
                                     lts2_m = sum(length[bicycle_lts == 2], na.rm = TRUE),
                                     lts3_m = sum(length[bicycle_lts == 3], na.rm = TRUE),
                                     lts4_m = sum(length[bicycle_lts == 4], na.rm = TRUE),
+                                    lts1_alt_m = sum(length[bicycle_lts_alt == 1], na.rm = TRUE),
+                                    lts2_alt_m = sum(length[bicycle_lts_alt == 2], na.rm = TRUE),
+                                    lts3_alt_m = sum(length[bicycle_lts_alt == 3], na.rm = TRUE),
+                                    lts4_alt_m = sum(length[bicycle_lts_alt == 4], na.rm = TRUE),
                                     total_edge_len = sum(length, na.rm = TRUE),
                                     route_interruptions_count = {
                                         ci_flag <- is_any_ci
@@ -412,9 +417,13 @@ for (city in target_cities) {
                                     route_pct_lts1 = round(lts1_m / pmax(total_edge_len, 1) * 100, 2),
                                     route_pct_lts2 = round(lts2_m / pmax(total_edge_len, 1) * 100, 2),
                                     route_pct_lts3 = round(lts3_m / pmax(total_edge_len, 1) * 100, 2),
-                                    route_pct_lts4 = round(lts4_m / pmax(total_edge_len, 1) * 100, 2)
+                                    route_pct_lts4 = round(lts4_m / pmax(total_edge_len, 1) * 100, 2),
+                                    route_pct_lts1_alternative = round(lts1_alt_m / pmax(total_edge_len, 1) * 100, 2),
+                                    route_pct_lts2_alternative = round(lts2_alt_m / pmax(total_edge_len, 1) * 100, 2),
+                                    route_pct_lts3_alternative = round(lts3_alt_m / pmax(total_edge_len, 1) * 100, 2),
+                                    route_pct_lts4_alternative = round(lts4_alt_m / pmax(total_edge_len, 1) * 100, 2)
                                 ) |>
-                                select(-lts1_m, -lts2_m, -lts3_m, -lts4_m, -total_edge_len)
+                                select(-lts1_m, -lts2_m, -lts3_m, -lts4_m, -lts1_alt_m, -lts2_alt_m, -lts3_alt_m, -lts4_alt_m, -total_edge_len)
 
                             target_for_metrics <- target_for_metrics |>
                                 mutate(row_idx = row_number()) |>

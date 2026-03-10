@@ -2238,3 +2238,94 @@ code/pipeline/config.R
 :
 Set target_cities to focus exactly on the five affected cities: Hamburg, Taipei, Minneapolis, Melbourne, and Kyoto.
 Set FORCE_RERUN <- TRUE to ensure the OD sampling and routing are regenerated from scratch.
+
+
+## Prompt 54
+
+I would like to create an alternative variable for the pct_ltsX - the % of the route length that has lts 1,2,3 or 4. for each route.
+The difference of this variable is that I want it to consider all the osm_ids from the ci_custom list, for each year, as lts=1.
+So, in the 07_analysis.R, when we are calculating the metrics, we should also calculate this new variable, as pct_ltsX_alternative.
+I would like to add it to the script, so those 4 new variables show up in the city:routing_stats_all.rds file.
+
+To extract those variables for all the already processed cities, do I need to run all the scipts again, or is it worth to have a standaloe script only to add this variables for now? The rds files are on the server, I can run it from there.
+
+I would also like to create the alternative lts plots (plot_route_lts_usage.png) with these alternative lts. should it go to the 12_add... R script so I can run now for the cities, and also to the corresponding script where the previous plot was being generated?
+
+
+### Response
+To address your question directly: No, you do not need to rerun all scripts! Rerunning the routing pipeline (
+
+05_r5r_routing.R
+) takes a lot of computational time. Since the geometries and edges of your previously generated routes are already saved, it's highly recommended to use a standalone script for already processed cities.
+
+I've gone ahead and done two things for you to make this work exactly as requested:
+
+1. Created a Standalone Script (
+
+12_add_lts_alternative.R
+)
+I created a script at 
+
+code/pipeline/12_add_lts_alternative.R
+ which you can run directly on the server right now. What it does:
+
+Loops through your target_cities.
+Loads the cycling infrastructure list (the OSM IDs used as your ci / ci_custom list).
+Opens the trips_*_ltsX.rds output from the already run routing.
+Identifies which edges belong to the CI list and forces them to act as LTS=1 for the alternative calculation explicitly.
+Computes route_pct_lts1_alternative through route_pct_lts4_alternative.
+Resaves over your cityX_routing_stats_all.rds, appending the 4 new metrics without erasing the old ones.
+2. Modified the Pipeline for Future Runs
+Note: Your routing files are created in 
+
+05_r5r_routing.R
+ and consolidated into 
+
+routing_stats_all.rds
+ by 
+
+11_tidy_up.R
+. Wait, what about 07? 
+
+08_final_metrics.R
+ averages them over the city limits (internally labeled as 07_final_metrics in the header, which is likely where the name confusion came from!)
+
+I have already updated these three core pipeline scripts so that future full-runs will natively record the alternative metrics:
+
+
+05_r5r_routing.R
+: It now computes the route_pct_ltsX_alternative for every route immediately after the route finding finishes.
+
+11_tidy_up.R
+: It will natively scoop up these new variables when creating future 
+
+routing_stats_all.rds
+ files.
+
+08_final_metrics.R
+: It will now evaluate city-level aggregates (pct_lts1_alternative, etc.) and export them to your final estimation CSV files.
+
+I've gone ahead and added the new plot_route_lts_usage_alternative.png plot generation to three locations:
+
+
+12_add_lts_alternative.R
+: This standalone script will now automatically calculate the city-level summary from the newly created route_pct_ltsX_alternative columns and create the alternative plot as soon as it's done updating the route RDS file for each processed city. You can run it on the server right now to get those updated 
+
+routing_stats_all.rds
+ and your new alternative plot generated instantly.
+
+
+09_plot_metrics.R
+: For future new cities, the plot script will now look for the pct_lts1_alternative column within the final_city_estimations.csv and seamlessly build your new alternate plot right alongside the original ones.
+
+
+09b_plot_metrics_nooverline.R
+: Just to be safe, I also patched the nooverline version of the metrics plotter script so that the logic remains completely synchronized across your toolkit.
+
+If you give 
+
+12_add_lts_alternative.R
+ a run on your server it should output the updated 
+
+.rds
+ file as well as the alternate .png chart inside the results folder all in one stroke!

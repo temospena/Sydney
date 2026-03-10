@@ -208,6 +208,10 @@ for (city in target_cities) {
         pct_lts2 = NA,
         pct_lts3 = NA,
         pct_lts4 = NA,
+        pct_lts1_alternative = NA,
+        pct_lts2_alternative = NA,
+        pct_lts3_alternative = NA,
+        pct_lts4_alternative = NA,
         total_road_m = total_road_m,
         total_ci_m = total_ci_m,
         pct_ci_total = pct_ci_total,
@@ -290,6 +294,10 @@ for (city in target_cities) {
                   lts2_len = sum(length[bicycle_lts == 2], na.rm = TRUE),
                   lts3_len = sum(length[bicycle_lts == 3], na.rm = TRUE),
                   lts4_len = sum(length[bicycle_lts == 4], na.rm = TRUE),
+                  lts1_alt_len = sum(length[if_else(osm_id %in% ci_osm_ids, 1, bicycle_lts) == 1], na.rm = TRUE),
+                  lts2_alt_len = sum(length[if_else(osm_id %in% ci_osm_ids, 1, bicycle_lts) == 2], na.rm = TRUE),
+                  lts3_alt_len = sum(length[if_else(osm_id %in% ci_osm_ids, 1, bicycle_lts) == 3], na.rm = TRUE),
+                  lts4_alt_len = sum(length[if_else(osm_id %in% ci_osm_ids, 1, bicycle_lts) == 4], na.rm = TRUE),
                   .groups = "drop"
                 )
 
@@ -305,7 +313,11 @@ for (city in target_cities) {
                   pct_lts1 = lts1_len / pmax(total_edge_len, 1),
                   pct_lts2 = lts2_len / pmax(total_edge_len, 1),
                   pct_lts3 = lts3_len / pmax(total_edge_len, 1),
-                  pct_lts4 = lts4_len / pmax(total_edge_len, 1)
+                  pct_lts4 = lts4_len / pmax(total_edge_len, 1),
+                  pct_lts1_alternative = lts1_alt_len / pmax(total_edge_len, 1),
+                  pct_lts2_alternative = lts2_alt_len / pmax(total_edge_len, 1),
+                  pct_lts3_alternative = lts3_alt_len / pmax(total_edge_len, 1),
+                  pct_lts4_alternative = lts4_alt_len / pmax(total_edge_len, 1)
                 )
 
               row_data$pct_ci_route <- round(mean(final_trips$pct_ci, na.rm = TRUE) * 100, 2)
@@ -317,6 +329,10 @@ for (city in target_cities) {
               row_data$pct_lts2 <- round(mean(final_trips$pct_lts2, na.rm = TRUE) * 100, 2)
               row_data$pct_lts3 <- round(mean(final_trips$pct_lts3, na.rm = TRUE) * 100, 2)
               row_data$pct_lts4 <- round(mean(final_trips$pct_lts4, na.rm = TRUE) * 100, 2)
+              row_data$pct_lts1_alternative <- round(mean(final_trips$pct_lts1_alternative, na.rm = TRUE) * 100, 2)
+              row_data$pct_lts2_alternative <- round(mean(final_trips$pct_lts2_alternative, na.rm = TRUE) * 100, 2)
+              row_data$pct_lts3_alternative <- round(mean(final_trips$pct_lts3_alternative, na.rm = TRUE) * 100, 2)
+              row_data$pct_lts4_alternative <- round(mean(final_trips$pct_lts4_alternative, na.rm = TRUE) * 100, 2)
 
               # CI Interruptions: count non-CI gaps > 100m per route
               # For each route, walk edges in order. When consecutive non-CI edges

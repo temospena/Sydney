@@ -68,6 +68,10 @@ for (city in target_cities) {
               route_pct_lts2 = first(route_pct_lts2),
               route_pct_lts3 = first(route_pct_lts3),
               route_pct_lts4 = first(route_pct_lts4),
+              route_pct_lts1_alternative = if("route_pct_lts1_alternative" %in% names(trips)) first(route_pct_lts1_alternative) else NA,
+              route_pct_lts2_alternative = if("route_pct_lts2_alternative" %in% names(trips)) first(route_pct_lts2_alternative) else NA,
+              route_pct_lts3_alternative = if("route_pct_lts3_alternative" %in% names(trips)) first(route_pct_lts3_alternative) else NA,
+              route_pct_lts4_alternative = if("route_pct_lts4_alternative" %in% names(trips)) first(route_pct_lts4_alternative) else NA,
               route_interruptions_count = first(route_interruptions_count),
               .groups = "drop"
             ) |>
