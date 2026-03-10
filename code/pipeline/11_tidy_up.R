@@ -30,7 +30,7 @@ for (city in target_cities) {
   }
 
   for (yr in years) {
-    for (lts_level in 1:4) {
+    for (lts_level in lts_levels) {
       res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
       if (file.exists(res_file)) {
         cat("  Extracting stats from:", basename(res_file), "\n")

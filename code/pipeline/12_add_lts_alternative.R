@@ -43,7 +43,7 @@ for (city in target_cities) {
         select(edge_index, osm_id, bicycle_lts, length)
     }
 
-    for (lts_level in 1:4) {
+    for (lts_level in lts_levels) {
       res_file <- file.path(city_dir, paste0("trips_", city_lower, "_", yr, "_lts", lts_level, ".rds"))
       res_file_long <- file.path(city_dir, paste0("trips_", city_lower, "_20", yr, "_lts", lts_level, ".rds"))
 
@@ -152,37 +152,70 @@ for (city in target_cities) {
     saveRDS(df_combined, long_path)
     cat("  Saved updated routing stats with alternative metrics to:", basename(long_path), "\n")
 
-    # Generate alternative plot immediately for convenience
-    lts4_data <- df_combined |> filter(lts == 4)
-    if (nrow(lts4_data) > 0) {
-      city_summary <- lts4_data |>
-        mutate(year = as.factor(paste0("20", year))) |>
-        group_by(year) |>
-        summarise(
-          lts1 = mean(route_pct_lts1_alternative, na.rm = TRUE),
-          lts2 = mean(route_pct_lts2_alternative, na.rm = TRUE),
-          lts3 = mean(route_pct_lts3_alternative, na.rm = TRUE),
-          lts4 = mean(route_pct_lts4_alternative, na.rm = TRUE),
-          .groups = "drop"
-        ) |>
-        pivot_longer(-year, names_to = "LTS", values_to = "pct")
+    # Generate alternative and regular plots immediately for convenience
+    for (lts_val in lts_levels) {
+      lts_data <- df_combined |> filter(lts == lts_val)
+      if (nrow(lts_data) > 0) {
+        # Regular Plot
+        city_summary_reg <- lts_data |>
+          mutate(year = as.factor(paste0("20", year))) |>
+          group_by(year) |>
+          summarise(
+            lts1 = mean(route_pct_lts1, na.rm = TRUE),
+            lts2 = mean(route_pct_lts2, na.rm = TRUE),
+            lts3 = mean(route_pct_lts3, na.rm = TRUE),
+            lts4 = mean(route_pct_lts4, na.rm = TRUE),
+            .groups = "drop"
+          ) |>
+          pivot_longer(-year, names_to = "LTS", values_to = "pct")
+          
+        p_reg <- ggplot(city_summary_reg, aes(y = fct_rev(year), x = pct, fill = LTS)) +
+          geom_bar(stat = "identity", position = "stack") +
+          scale_fill_viridis_d(option = "cividis", direction = -1) +
+          labs(
+            title = paste(tools::toTitleCase(city), "- Route Usage by LTS"),
+            subtitle = paste("Percentage of LTS road types driven upon along recommended routes (LTS", lts_val, "max)"),
+            x = "Percentage (%)",
+            y = "Year",
+            fill = "Network LTS Level"
+          ) +
+          theme_minimal()
+          
+        results_dir <- file.path(city_dir, "results")
+        dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
+        ggsave(file.path(results_dir, paste0("plot_route_lts_usage_lts", lts_val, ".png")), p_reg, width = 8, height = 4)
+        cat("  Saved regular route LTS usage plot (LTS =", lts_val, ") to results folder.\n")
 
-      p_alt <- ggplot(city_summary, aes(y = fct_rev(year), x = pct, fill = LTS)) +
-        geom_bar(stat = "identity", position = "stack") +
-        scale_fill_viridis_d(option = "cividis", direction = -1) +
-        labs(
-          title = paste(tools::toTitleCase(city), "- Route Usage by LTS (Alternative)"),
-          subtitle = "Percentage of LTS road types driven on routes (LTS 1-4, CI=1)",
-          x = "Percentage (%)",
-          y = "Year",
-          fill = "Network LTS Level"
-        ) +
-        theme_minimal()
-
-      results_dir <- file.path(city_dir, "results")
-      dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
-      ggsave(file.path(results_dir, "plot_route_lts_usage_alternative.png"), p_alt, width = 8, height = 4)
-      cat("  Saved alternative route LTS usage plot to results folder.\n")
+        # Alternative Plot
+        city_summary <- lts_data |>
+          mutate(year = as.factor(paste0("20", year))) |>
+          group_by(year) |>
+          summarise(
+            lts1 = mean(route_pct_lts1_alternative, na.rm = TRUE),
+            lts2 = mean(route_pct_lts2_alternative, na.rm = TRUE),
+            lts3 = mean(route_pct_lts3_alternative, na.rm = TRUE),
+            lts4 = mean(route_pct_lts4_alternative, na.rm = TRUE),
+            .groups = "drop"
+          ) |>
+          pivot_longer(-year, names_to = "LTS", values_to = "pct")
+          
+        p_alt <- ggplot(city_summary, aes(y = fct_rev(year), x = pct, fill = LTS)) +
+          geom_bar(stat = "identity", position = "stack") +
+          scale_fill_viridis_d(option = "cividis", direction = -1) +
+          labs(
+            title = paste(tools::toTitleCase(city), "- Route Usage by LTS (Alternative)"),
+            subtitle = paste0("Percentage of LTS road types driven on routes (LTS ", lts_val, " max, CI=1)"),
+            x = "Percentage (%)",
+            y = "Year",
+            fill = "Network LTS Level"
+          ) +
+          theme_minimal()
+          
+        results_dir <- file.path(city_dir, "results")
+        dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
+        ggsave(file.path(results_dir, paste0("plot_route_lts_usage_alternative_lts", lts_val, ".png")), p_alt, width = 8, height = 4)
+        cat("  Saved alternative route LTS usage plot (LTS =", lts_val, ") to results folder.\n")
+      }
     }
   }
 }
