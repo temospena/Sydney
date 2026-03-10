@@ -61,6 +61,7 @@ for (city in target_cities) {
         if (nrow(trips) > 0 && !is.null(edges)) {
           # We only need one row per OD to get the edge list
           target_for_metrics <- trips |>
+            st_drop_geometry() |>
             mutate(from_id = as.character(from_id), to_id = as.character(to_id)) |>
             group_by(from_id, to_id) |>
             slice(1) |>
