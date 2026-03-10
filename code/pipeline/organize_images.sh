@@ -17,6 +17,7 @@ mkdir -p "$IMAGES_DIR/cumulative_distance"
 mkdir -p "$IMAGES_DIR/distance_comparison"
 mkdir -p "$IMAGES_DIR/overline_maps"
 mkdir -p "$IMAGES_DIR/od_hex_map"
+mkdir -p "$IMAGES_DIR/route_lts_pct"
 
 # Helper function to copy and rename
 # Usage: copy_plots "original_filename.png" "target_subdir"
@@ -25,8 +26,8 @@ copy_plots() {
     local subdir="$2"
     echo "  Refreshing images/$subdir/ (clearing old files first)"
     
-    # Optional: Clear the subdirectory to avoid having both [city]_[file].png and [file]_[city].png
-    rm -f "$IMAGES_DIR/$subdir"/*.png
+    # Clear old files matching this specific pattern to avoid deleting other plots in the same folder
+    rm -f "$IMAGES_DIR/$subdir"/*"${pattern}"
     
     find "$DATA_DIR" -maxdepth 4 -name "$pattern" | while read -r filepath; do
         # Extract city name from data/pipeline/[city]/results/...
@@ -46,10 +47,14 @@ copy_plots "distance_comparison_16_26_lts1.png" "distance_comparison"
 copy_plots "overline_map_lts1.png" "overline_maps"
 copy_plots "overline_map_lts2.png" "overline_maps"
 copy_plots "od_hex_map.png" "od_hex_map"
+copy_plots "plot_route_lts_usage_lts1.png" "route_lts_pct"
+copy_plots "plot_route_lts_usage_lts2.png" "route_lts_pct"
+copy_plots "plot_route_lts_usage_alternative_lts1.png" "route_lts_pct"
+copy_plots "plot_route_lts_usage_alternative_lts2.png" "route_lts_pct"
 
 # 3. Ensure .gitignore is up to date
 echo "Checking .gitignore entries..."
-for entry in "images/ci_evolution" "images/circuity_density" "images/cumulative_distance" "images/distance_comparison" "images/overline_maps" "images/od_hex_map"; do
+for entry in "images/ci_evolution" "images/circuity_density" "images/cumulative_distance" "images/distance_comparison" "images/overline_maps" "images/od_hex_map" "images/route_lts_pct"; do
     if ! grep -q "^$entry" .gitignore 2>/dev/null; then
         echo "$entry" >> .gitignore
         echo "  Added $entry to .gitignore"
