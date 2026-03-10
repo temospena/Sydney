@@ -171,8 +171,8 @@ for (city in target_cities) {
         geom_bar(stat = "identity", position = "stack") +
         scale_fill_viridis_d(option = "cividis", direction = -1) +
         labs(
-          title = paste(tools::toTitleCase(city), "- Route Usage by LTS (Alt)"),
-          subtitle = "Percentage of road types driven on routes (LTS 1-4, CI=1)",
+          title = paste(tools::toTitleCase(city), "- Route Usage by LTS (Alternative)"),
+          subtitle = "Percentage of LTS road types driven on routes (LTS 1-4, CI=1)",
           x = "Percentage (%)",
           y = "Year",
           fill = "Network LTS Level"
