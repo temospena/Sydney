@@ -17,11 +17,11 @@ Before running the pipeline, review and modify the user settings in `config.R`:
 - `years`: Target years (e.g., `c("16", "21", "26")`).
 - `lts_levels`: LTS thresholds to route (e.g., `1:4`).
 - `n_od_pairs`: Number of random O/D pairs to sample (standard is `20000`).
-- `h3_res`: H3 resolution used for spatial aggregation and OD sampling (default is `9`).
-- `mu_log` & `sd_log`: Parameters for the log-normal trip distance decay (v4 sampling approach).
-- `ci_colors`: Shared color palette for the 4 custom CI categories (Separated, Painted, Mixed, Pedestrian).
 - `FORCE_RERUN`: If `TRUE`, it will re-process everything even if files exist.
 - `REROUTE_ONLY`: If `TRUE`, it only re-runs the routing step.
+- `h3_res`: H3 resolution used for spatial aggregation and OD sampling (default is `9`).
+- `mu_log` & `sd_log`: Parameters for the log-normal trip distance decay (v4 sampling approach).
+- `ci_colors`: Shared color palette and names for the 4 custom CI categories (Separated, Painted, Mixed, Pedestrian).
 
 > [!IMPORTANT]
 > **Adding a New City:**
