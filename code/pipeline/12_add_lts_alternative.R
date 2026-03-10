@@ -168,19 +168,19 @@ for (city in target_cities) {
             .groups = "drop"
           ) |>
           pivot_longer(-year, names_to = "LTS", values_to = "pct")
-          
+
         p_reg <- ggplot(city_summary_reg, aes(y = fct_rev(year), x = pct, fill = LTS)) +
           geom_bar(stat = "identity", position = "stack") +
           scale_fill_viridis_d(option = "cividis", direction = -1) +
           labs(
-            title = paste(tools::toTitleCase(city), "- Route Usage by LTS"),
-            subtitle = paste("Percentage of LTS road types driven upon along recommended routes (LTS", lts_val, "max)"),
+            title = paste(tools::toTitleCase(city), "- Route Usage by LTS (Original)"),
+            subtitle = paste("Percentage of LTS road types driven on routes (LTS", lts_val, "max)"),
             x = "Percentage (%)",
             y = "Year",
             fill = "Network LTS Level"
           ) +
           theme_minimal()
-          
+
         results_dir <- file.path(city_dir, "results")
         dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
         ggsave(file.path(results_dir, paste0("plot_route_lts_usage_lts", lts_val, ".png")), p_reg, width = 8, height = 4)
@@ -198,7 +198,7 @@ for (city in target_cities) {
             .groups = "drop"
           ) |>
           pivot_longer(-year, names_to = "LTS", values_to = "pct")
-          
+
         p_alt <- ggplot(city_summary, aes(y = fct_rev(year), x = pct, fill = LTS)) +
           geom_bar(stat = "identity", position = "stack") +
           scale_fill_viridis_d(option = "cividis", direction = -1) +
@@ -210,7 +210,7 @@ for (city in target_cities) {
             fill = "Network LTS Level"
           ) +
           theme_minimal()
-          
+
         results_dir <- file.path(city_dir, "results")
         dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
         ggsave(file.path(results_dir, paste0("plot_route_lts_usage_alternative_lts", lts_val, ".png")), p_alt, width = 8, height = 4)
