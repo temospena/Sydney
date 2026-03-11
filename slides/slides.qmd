@@ -18,6 +18,8 @@ execute:
   echo: false
 bibliography: ../paper/references.bib
 link-citations: true
+editor: 
+  render-on-save: true
 ---
 
 #  {.unlisted background-image="other_template/img/gray.png"}
@@ -133,45 +135,46 @@ Funded by FCT Mobility (Portuguese Science Foundation)
 
 ![](../images/city_map_points.png){.nostretch fig-align="center" width="1200" style="margin-top: 0px; margin-left: -75px; max-width: none;"}
 
-::: {.absolute top="600" left="30" style="background-color: rgba(255, 255, 255, 0.9); padding: 12px; border-radius: 8px; width: 150px; font-size: 14px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); text-align: left; z-index: 100;"}
-**Coords sources:** NGIA, USGS, US Census, NASA.
+::: {.absolute top="550" left="20" style="background-color: rgba(255, 255, 255, 0.9); padding: 12px; border-radius: 8px; width: 150px; font-size: 14px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); text-align: left; z-index: 100;"}
+**Coords sources:** National Geospatial Intelligence Agency, USGS, US Census, NASA ([simplemaps.com/data/world-cities](https://simplemaps.com/data/world-cities)).
 :::
 
 ## Excluded Cities
 
 ::::: {.columns}
-::: {.column width="50%"}
+::: {.column width="55%"}
 **8 cities excluded** due to:
 
 -   **Scale**: < 100 km of CI by 2026
--   **Quality**: OSM tagging variability causing unreliable CI classification
 -   **Growth**: < 10% CI expansion in 2016–2026
+-   **Quality**: OSM tagging variability
+<br><br>
 
-![Munich – major OSM tagging change 2021→2026, not a real infra change](../images/ci_evolution/munich_plot_ci_types_absolute.png){width="1000"}
+![Munich, Lisbon, Ljubljana](../images/ci_evolution/munich_plot_ci_types_absolute.png){width="1000"}
 :::
 
-::: {.column width="50%"}
+::: {.column width="45%"}
 ::: {layout-nrow="2"}
-![Cairo – insufficient CI scale](../images/ci_evolution/cairo_plot_ci_types_absolute.png){width="1000"}
+![Cairo, Cape Town, Hong Kong (no data)](../images/ci_evolution/cairo_plot_ci_types_absolute.png){width="1000"}
 
-![Amsterdam – very high baseline, minimal relative growth](../images/ci_evolution/amsterdam_plot_ci_types_absolute.png){width="1000"}
+![Amsterdam, Stockholm](../images/ci_evolution/amsterdam_plot_ci_types_absolute.png){width="1000"}
 :::
 :::
 :::::
 
 ## Cycling Infrastructure Evolution
 
-Evolution of absolute cycling infrastructure across the **50 target cities** (2016–2026)
+Evolution of absolute cycling infrastructure across the **50 cities** (2016–2026)
 
 ![](images/ci_evolution_km_continent.png){fig-align="center"}
 
 ::: {style="font-size: 0.7em; color: #555; text-align: center;"}
-Each point = one city × one year. Line = continental average. Strong growth especially in Europe and Americas.
+<!-- Each point = one city × one year. Line = continental average. Strong growth especially in Europe and Americas. -->
 :::
 
 # Data Processing {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
 
-## Methods Overview
+## Methods Overview 
 
 ::: {style="text-align: center;"}
 ![](images/pipeline_methods_v2.svg){fig-align="center" width="1050"}
@@ -197,19 +200,49 @@ Efficient and reproducible pipeline:
 
 :::::::
 
-## OD Pairs Generation
+## OD Pairs Sampling
 
--   **10km** buffer from city center coords
+::::: {.columns}
+::: {.column width="60%"}
+
+-   **10km** buffer from city center coordinates
 -   **20,000 OD pairs** generated per city
--   Destinations sampled weighted by **building volume** (proxy for trip attraction)
--   Distance follows a **log-normal function** calibrated for cycling trips [@schneider2023; @wang2025]
--   Origin hexagons sampled using **H3 resolution 9**
 
-::: {layout-ncol="2"}
-![Sydney OD hex map](../images/od_hex_map/sydney_od_hex_map.png)
-
-![Lisbon OD hex map](../images/od_hex_map/lisbon_od_hex_map.png)
+-   Destinations randomly sampled, weighted by **building volume** (proxy for trip attraction)
+-   Distance follows a **log-normal function** calibrated for cycling trips [@kou2019]
+-   Origin hexagons (with buildings) sampled using **[H3](https://h3geo.org/) resolution 9** [(~200m edge length, ~400m "diameter", ~0.105 km²)]{style="font-size: 0.8em"}
 :::
+
+::: {.column width="40%"}
+
+![H3 res9 in Sydney](/images/sydney_hex9.png){fig-align="center"}
+
+:::
+:::::
+
+---
+
+![Sydney OD hex map](../images/od_hex_map/sydney_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+![London OD hex map](../images/od_hex_map/london_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+![Santiago OD hex map](../images/od_hex_map/santiago_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+![Tokyo OD hex map](../images/od_hex_map/tokyo_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+![São Paulo OD hex map](../images/od_hex_map/sao-paulo_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+![Shanghai OD hex map](../images/od_hex_map/shanghai_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
@@ -217,65 +250,298 @@ Efficient and reproducible pipeline:
 
 -   Log-normal calibration ensures routes resemble **realistic urban cycling** trips.
 
-::: {layout-ncol="1"}
-![Cumulative distance distribution](../images/cumulative_distance_distribution_v4.png){width="700" fig-align="center"}
+::: {layout-ncol="2"}
+![Random OD](../images/Lisbon_traveldistance_lts2.png){width="700" fig-align="center"}
+
+![Calibrated random OD](../images/cumulative_distance/sao paulo_cumulative_distance_lts1.png){width="700" fig-align="center"}
 :::
 
-::: {style="font-size: 0.7em; color: #555;"}
-Without log-normal sampling, trips are too long. With calibration, the distribution matches observed cycling patterns.
+<!-- Arrow overlay -->
+::: {.absolute top="65%" left="45%" style="transform: translate(-50%, -50%); font-size: 160px; color: rgba(219, 58, 58, 0.86); z-index: 100;"}
+→
+:::
+
+::: {style="font-size: 0.7em; color: #555; text-align: right;"}
+<!-- With calibration, the distribution matches urban cycling patterns. -->
+About 75% of trips are below 5 km. This already accounts for ~40% circuity.
 :::
 
 ## CI Classification in 4 types
 
-Based in `osmactive`custom classification of CI, we re-categorised OSM tags into 4 simplified types to assess infrastructure quality:
+With `osmactive` custom classification of CI, we classified OSM segments into **4 simplified types** to assess infrastructure quality, based on OSM tags:
 
-| Type | OSM examples | Symbol |
-|------|------|------|
-| **Protected** (separated) | `highway=cycleway`, separated tracks | 🟢 |
-| **Painted** (medium) | `cycleway=lane`, bike lanes on road | 🟡 |
-| **Sharrows** (weak/mixed) | `cycleway=shared_lane`, advisory | 🟠 |
-| **Foot** (shared pedestrian) | `highway=pedestrian`, shared paths | 🔵 |
+::: {style="font-size: 0.8em;"}
+| Type | OSM examples |
+|----|--------|
+| **Protected** (separated) | `highway:cycleway` → separated tracks |
+| **Painted** (medium) | `cycleway:lane` → bike lanes on road |
+| **Sharrows** (weak/mixed) | `cycleway:shared_lane` → advisory |
+| **Foot** (shared w/pedestrian) | `highway:pedestrian` & `bicycle:yes` → shared paths |
+:::
+
+<br>
 
 ```sql
--- Conceptual query (simplified)
-CASE WHEN highway = 'cycleway' THEN 'Protected'
-     WHEN cycleway IN ('lane','opposite_lane') THEN 'Painted'
-     WHEN cycleway IN ('shared_lane','shared') THEN 'Sharrows'
-     WHEN highway IN ('pedestrian','path') THEN 'Foot'
+-- Conceptual query (based on osmactive logic)
+CASE WHEN highway = 'cycleway' OR cycleway IN ('track', 'opposite_track') THEN 'Protected'
+     WHEN cycleway IN ('lane', 'opposite_lane') THEN 'Painted'
+     WHEN cycleway IN ('share_busway', 'shared_lane') OR bicycle_road = 'yes' THEN 'Sharrows'
+     WHEN highway IN ('path', 'footway', 'pedestrian') AND bicycle IN ('yes', 'designated')
+          THEN 'Foot'
 END AS ci_type
 ```
 
 ---
 
-### CI evolution by type – selected cities
+### CI Type examples
+
+1. Protected CI
+
+![](images/protected.png){fig-align="center"}
+
+[Source: *Definitions for cycling infrastructure* [@unece26]]{style="font-size: 0.7em"}
+
+---
+
+### CI Type examples
+
+2. Painted CI
+
+![](images/painted_lane.png){fig-align="center"}
+
+[Source: *Definitions for cycling infrastructure* [@unece26]]{style="font-size: 0.7em"}
+
+---
+
+### CI Type examples
+
+3. Mixed / Shared with motor traffic CI
+
+![](images/Sharrow_in_Malaga.jpg){fig-align="center"}
+
+[Source: *Daniel Capilla, [Wikimedia](https://commons.wikimedia.org/wiki/File:Sharrow_in_M%C3%A1laga.jpg)*]{style="font-size: 0.7em"}
+
+---
+
+### CI Type examples
+
+4. Shared with pedestrians CI
+
+![](images/footpath.png){fig-align="center"}
+
+[Source: *Definitions for cycling infrastructure* [@unece26]]{style="font-size: 0.7em"}
+
+---
+
+### CI evolution by type
 
 ::: {layout-ncol="2"}
 ![Paris – strong growth in painted & protected](../images/ci_evolution/paris_plot_ci_types_absolute.png)
 
-![Sydney – growing protected CI after 2019](../images/ci_evolution/sydney_plot_ci_types_absolute.png)
+![Sydney – growing mixed CI after 2019](../images/ci_evolution/sydney_plot_ci_types_absolute.png)
 
-![Bogotá – mostly sharrows / mixed](../images/ci_evolution/bogota_plot_ci_types_absolute.png)
+![Bogotá – mostly protected CI](../images/ci_evolution/bogota_plot_ci_types_absolute.png)
 
-![Tokyo – mainly foot/shared paths](../images/ci_evolution/tokyo_plot_ci_types_absolute.png)
+![Tokyo – mostly sharrows / mixed](../images/ci_evolution/tokyo_plot_ci_types_absolute.png)
 :::
 
-## Routing & LTS
+---
 
-### Level of Traffic Stress (LTS)
+### CI evolution – Santiago
 
--   Classification from [Mineta Transport Institute](https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity), adapted by Conveyal [@conway2015].
--   Applied to every OSM edge:
+![](../data/pipeline/santiago/results/ci_evolution_facet_map.png)
 
-```
+::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
+![](../images/ci_evolution/santiago_plot_ci_types_absolute.png)
+:::
+
+---
+
+### CI evolution – London
+
+![](../data/pipeline/london/results/ci_evolution_facet_map.png)
+
+::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
+![](../images/ci_evolution/london_plot_ci_types_absolute.png)
+:::
+
+---
+
+### CI evolution – Brussels
+
+![](../data/pipeline/brussels/results/ci_evolution_facet_map.png)
+
+::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
+![](../images/ci_evolution/brussels_plot_ci_types_absolute.png)
+:::
+
+---
+
+### CI evolution – Christchurch
+
+![](../data/pipeline/christchurch/results/ci_evolution_facet_map.png)
+
+::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
+![](../images/ci_evolution/christchurch_plot_ci_types_absolute.png)
+:::
+
+---
+
+### CI evolution – Montréal
+
+![](../data/pipeline/montréal/results/ci_evolution_facet_map.png)
+
+::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
+![](../images/ci_evolution/montréal_plot_ci_types_absolute.png)
+:::
+
+---
+
+### CI evolution – São Paulo
+
+![](../data/pipeline/sao%20paulo/results/ci_evolution_facet_map.png)
+
+::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
+![](../images/ci_evolution/sao%20paulo_plot_ci_types_absolute.png)
+:::
+
+
+## Level of Traffic Stress (LTS)
+
+-   Classification from [Mineta Transport Institute](https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity) (2012)
+
+![LTS - [Alta Planning](https://blog.altaplanning.com/level-of-traffic-stress-what-it-means-for-building-better-bike-networks-c4af9800b4ee)](https://miro.medium.com/v2/resize:fit:2000/format:webp/1*0ijfn6V7MYZuuA5wM0zeIw.jpeg)
+
+::: fragment
+-   Adapted by Conveyal [@conway2015] to applied to every OSM **edge** as:
+
+```{.javascript code-line-numbers="1-2|3-4|5|6"}
 If way does not allow cars → LTS 1
-If highway=residential / living_street → LTS 1
+If highway:residential / living_street → LTS 1
 If maxspeed < 40 km/h AND lanes < 4 → LTS 2
-If tertiary/unclassified + cycleway tag → LTS 2
+If highway:tertiary/unclassified + cycleway tag → LTS 2
 If cycleway tag on busier road → LTS 3
 Otherwise → LTS 4
 ```
 
--   Each year's CI classification is used to **override LTS to 1** on newly classified CI segments.
+:::
+
+---
+
+### LTS classification - examples
+
+![](../data/pipeline/sydney/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+### LTS classification - examples
+
+![](../data/pipeline/melbourne/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+### LTS classification - examples
+
+![](../data/pipeline/paris/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+### LTS classification - examples
+
+![](../data/pipeline/kyoto/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+### LTS classification - examples
+
+![](../data/pipeline/san%20francisco/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+### LTS classification - examples
+
+![](../data/pipeline/london/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+---
+
+### LTS problem for bicycle routing
+
+But... 
+
+::: {layout-ncol=2}
+![Residential - LTS 1](images/resdisential.jpg){width="90%"}
+
+![Residential - LTS 1, with "CI"](images/residential2.jpg){width="80%"}
+
+:::
+
+[Source: *Author*]{style="font-size: 0.7em"}
+
+### LTS problem for bicycle routing
+
+Or... 
+
+::: {layout-ncol=2}
+![Residential - LTS 1](https://i0.wp.com/amensagem.pt/wp-content/uploads/2023/01/Arroios-12-scaled.jpg)
+
+![Terciary - LTS 2, with "CI"](https://www.emel.pt/fotos/editor2/ruadaestefania_003.jpg)
+
+:::
+
+[Source: [A Mensagem](https://amensagem.pt/2025/06/25/estacionamento-lisboa-habitacao-transporte-mobilidade/) / [EMEL](https://www.emel.pt/pt/noticias/rumo-a-uma-lisboa-mais-ciclavel/)]{style="font-size: 0.7em"}
+
+
+### LTS problem for bicycle routing
+
+Or even... 
+
+::: {layout-ncol=2}
+![Residential - LTS 1](images/resdisential.jpg){width="90%"}
+
+![Secondary - LTS 3 / 4, with CI](images/seattle_lane.jpg)
+
+:::
+
+[Source: *Author* / [nickfalbo/flickr](https://www.flickr.com/photos/83492056@N00/17434162236/in/photolist-syAD35-sATUsr-sjjvsW-8KbN4C-rE5rEz-qYkFe4-X4a7xW-ABhUWE-eEGZNh-gZJTRx-gZJeJv-X4aFoq-g7hEp-fzRmFb-ei9HWA-oPUx6e-sLZnd7-6vr9he-bpJMJw-ADu1wH-fzBbzn-XE8Fix-X78CBD-oPULtV-oR36tQ-qYiTBD-WJ3ajU-co6Vzs-78xMQG-6vvkB7-W5DDVT-XiU8pD-W5DUkp-7TH39Z-XiVmoH-huv7eA-niLc5d-rfDKC4-Sd66ti-W5Emmn-6vD8w1-co5vc9-ey66XR-PURan-ocZz9c-eEHM7A-eECESz-6vyWor-dZN813-6BxbCm)]{style="font-size: 0.7em"}
+
+---
+
+### LTS problem for bicycle routing
+
+::: {layout-ncol=2}
+![Schematic LTS and CI grid](images/network_lts_final_base.png)
+
+
+
+:::
+
+---
+
+### LTS problem for bicycle routing
+
+::: {layout-ncol=2}
+![LTS 1 prefered, despite CI (longer route)](images/ex1a_lts.png)
+
+![CI and shorter route preferred](images/ex1b_ci.png)
+
+:::
+
+---
+
+### LTS problem for bicycle routing
+
+::: {layout-ncol=2}
+![Shorter despite CI](images/ex2a_lts.png)
+
+![CI route preferred (same length)](images/ex2b_ci.png)
+
+:::
+
+---
+
+### LTS alternative
+
+-   Each year's CI classification is used to **override LTS to 1** on newly classified CI segments (tryed with [LTS = 0](https://github.com/ipeaGIT/r5r/issues/553)...).
 
 ::: {style="font-size: 0.75em; color: #555; margin-top:0.5em;"}
 **Note:** Protected CI is drawn as a *separate segment* in OSM; painted lanes are *tags* on the road. Both approaches are modelled correctly here.
@@ -305,6 +571,9 @@ trips <- detailed_itineraries(
 -   **Same 20,000 OD pairs used across all years** → clean panel comparisons.
 
 ## Overline Maps (Used Routes)
+
+stplanr overline
+
 
 Highlighting the most frequently used network segments for LTS 1 routing.
 

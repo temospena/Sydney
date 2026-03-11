@@ -424,7 +424,7 @@
 <div>
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="2" style="margin-top: 3em; align-items: flex-start;">
+<div class="quarto-layout-panel" style="margin-top: 3em; align-items: flex-start;" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div id="rosa" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><strong>Rosa Félix</strong></p>
@@ -524,7 +524,7 @@
 <ul>
 <li>Avoiding census or travel survey data → global reproducibility.</li>
 <li>Used Global Building Atlas – LoD1 <span class="citation" data-cites="zhu2025">(<a href="#/references" role="doc-biblioref" onclick="">Zhu et al. 2025</a>)</span>.</li>
-<li>Buildings weighted by estimated volume as a proxy for trip attraction.</li>
+<li>Buildings weighted by estimated <strong>volume</strong> as a proxy for trip attraction.</li>
 </ul>
 <div>
 
@@ -562,34 +562,34 @@
 <h2>Selected Cities</h2>
 <ul>
 <li><strong>N = 50 cities</strong> with &gt; 1 million residents, balanced across continents.</li>
-<li>Cities with varying degrees of <strong>infrastructure expansion</strong> (2016–2026).</li>
+<li>Cities with <strong>cycling infrastructure expansion</strong> (2016–2026).</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="../images/city_map_points.png" class="quarto-figure quarto-figure-center" style="margin-top: 0px; margin-left: -75px; max-width: none;" width="1200"></p>
 </figure>
 </div>
-<div class="absolute" style="background-color: rgba(255, 255, 255, 0.9); padding: 12px; border-radius: 8px; width: 150px; font-size: 14px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); text-align: left; z-index: 100;top: 600px; left: 30px; ">
-<p><strong>Coords sources:</strong> NGIA, USGS, US Census, NASA.</p>
+<div class="absolute" style="background-color: rgba(255, 255, 255, 0.9); padding: 12px; border-radius: 8px; width: 150px; font-size: 14px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); text-align: left; z-index: 100;top: 550px; left: 20px; ">
+<p><strong>Coords sources:</strong> National Geospatial Intelligence Agency, USGS, US Census, NASA (<a href="https://simplemaps.com/data/world-cities">simplemaps.com/data/world-cities</a>).</p>
 </div>
 </section>
 <section id="excluded-cities" class="slide level2 center">
 <h2>Excluded Cities</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
+<div class="column" style="width:55%;">
 <p><strong>8 cities excluded</strong> due to:</p>
 <ul>
 <li><strong>Scale</strong>: &lt; 100 km of CI by 2026</li>
-<li><strong>Quality</strong>: OSM tagging variability causing unreliable CI classification</li>
 <li><strong>Growth</strong>: &lt; 10% CI expansion in 2016–2026</li>
+<li><strong>Quality</strong>: OSM tagging variability <br><br></li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="../images/ci_evolution/munich_plot_ci_types_absolute.png" width="1000"></p>
-<figcaption>Munich – major OSM tagging change 2021→2026, not a real infra change</figcaption>
+<figcaption>Munich, Lisbon, Ljubljana</figcaption>
 </figure>
 </div>
-</div><div class="column" style="width:50%;">
+</div><div class="column" style="width:45%;">
 <div>
 
 </div>
@@ -599,7 +599,7 @@
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="../images/ci_evolution/cairo_plot_ci_types_absolute.png" width="1000"></p>
-<figcaption>Cairo – insufficient CI scale</figcaption>
+<figcaption>Cairo, Cape Town, Hong Kong (no data)</figcaption>
 </figure>
 </div>
 </div>
@@ -609,7 +609,7 @@
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="../images/ci_evolution/amsterdam_plot_ci_types_absolute.png" width="1000"></p>
-<figcaption>Amsterdam – very high baseline, minimal relative growth</figcaption>
+<figcaption>Amsterdam, Stockholm</figcaption>
 </figure>
 </div>
 </div>
@@ -619,10 +619,10 @@
 </section>
 <section id="cycling-infrastructure-evolution" class="slide level2 center">
 <h2>Cycling Infrastructure Evolution</h2>
-<p>Evolution of absolute cycling infrastructure across the <strong>50 target cities</strong> (2016–2026)</p>
+<p>Evolution of absolute cycling infrastructure across the <strong>50 cities</strong> (2016–2026)</p>
 
 <img data-src="images/ci_evolution_km_continent.png" class="quarto-figure quarto-figure-center r-stretch"><div style="font-size: 0.7em; color: #555; text-align: center;">
-<p>Each point = one city × one year. Line = continental average. Strong growth especially in Europe and Americas.</p>
+<!-- Each point = one city × one year. Line = continental average. Strong growth especially in Europe and Americas. -->
 </div>
 </section></section>
 <section>
@@ -655,7 +655,7 @@
 <div class="quarto-layout-panel" data-layout="[[25,25,25,25]]">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 25.0%;justify-content: flex-start;">
-<p><img data-src="https://www.r-project.org/logo/Rlogo.png" class="quarto-figure quarto-figure-center" width="150"><br> <strong>R</strong> <br> <code>sf</code>, <code>r5r</code>, <code>stplanr</code>, <code>fixest</code>, etc.</p>
+<p><img data-src="https://www.r-project.org/logo/Rlogo.png" class="quarto-figure quarto-figure-center" width="150"><br> <strong>R</strong> <br> <code>sf</code>, <code>h3jsr</code>, <code>osmactive</code>, <code>r5r</code>, <code>stplanr</code>, <code>fixest</code></p>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 25.0%;justify-content: flex-start;">
 <p><img data-src="https://duckdb.org/images/favicon/apple-touch-icon.png" class="quarto-figure quarto-figure-center" width="150"><br> <strong>DuckDB</strong> <br> Global Building Atlas data connection</p>
@@ -669,37 +669,78 @@
 </div>
 </div>
 </section>
-<section id="od-pairs-generation" class="slide level2 center">
-<h2>OD Pairs Generation</h2>
+<section id="od-pairs-sampling" class="slide level2 center">
+<h2>OD Pairs Sampling</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <ul>
-<li><strong>10km</strong> buffer from city center coords</li>
-<li><strong>20,000 OD pairs</strong> generated per city</li>
-<li>Destinations sampled weighted by <strong>building volume</strong> (proxy for trip attraction)</li>
-<li>Distance follows a <strong>log-normal function</strong> calibrated for cycling trips <span class="citation" data-cites="schneider2023 wang2025">(<a href="#/references" role="doc-biblioref" onclick="">Schneider et al. 2023</a>; <a href="#/references" role="doc-biblioref" onclick="">Wang et al. 2025</a>)</span></li>
-<li>Origin hexagons sampled using <strong>H3 resolution 9</strong></li>
+<li><p><strong>10km</strong> buffer from city center coordinates</p></li>
+<li><p><strong>20,000 OD pairs</strong> generated per city</p></li>
+<li><p>Destinations randomly sampled, weighted by <strong>building volume</strong> (proxy for trip attraction)</p></li>
+<li><p>Distance follows a <strong>log-normal function</strong> calibrated for cycling trips <span class="citation" data-cites="kou2019">(<a href="#/references" role="doc-biblioref" onclick="">Kou and Cai 2019</a>)</span></p></li>
+<li><p>Origin hexagons (with buildings) sampled using <strong><a href="https://h3geo.org/">H3</a> resolution 9</strong> <span style="font-size: 0.8em">(~200m edge length, ~400m “diameter”, ~0.105 km²)</span></p></li>
 </ul>
-<div>
-
-</div>
-<div class="quarto-layout-panel" data-layout-ncol="2">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+</div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../images/od_hex_map/sydney_od_hex_map.png"></p>
+<p><img data-src="./images/sydney_hex9.png"></p>
+<figcaption>H3 res9 in Sydney</figcaption>
+</figure>
+</div>
+</div></div>
+</section>
+<section class="slide level2 center">
+
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/od_hex_map/sydney_od_hex_map.png" class="" width="1250"></p>
 <figcaption>Sydney OD hex map</figcaption>
 </figure>
 </div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
+</section>
+<section class="slide level2 center">
+
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
 <figure>
-<p><img data-src="../images/od_hex_map/lisbon_od_hex_map.png"></p>
-<figcaption>Lisbon OD hex map</figcaption>
+<p><img data-src="../images/od_hex_map/london_od_hex_map.png" class="" width="1250"></p>
+<figcaption>London OD hex map</figcaption>
 </figure>
 </div>
+</section>
+<section class="slide level2 center">
+
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/od_hex_map/santiago_od_hex_map.png" class="" width="1250"></p>
+<figcaption>Santiago OD hex map</figcaption>
+</figure>
 </div>
+</section>
+<section class="slide level2 center">
+
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/od_hex_map/tokyo_od_hex_map.png" class="" width="1250"></p>
+<figcaption>Tokyo OD hex map</figcaption>
+</figure>
 </div>
+</section>
+<section class="slide level2 center">
+
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/od_hex_map/sao-paulo_od_hex_map.png" class="" width="1250"></p>
+<figcaption>São Paulo OD hex map</figcaption>
+</figure>
+</div>
+</section>
+<section class="slide level2 center">
+
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/od_hex_map/shanghai_od_hex_map.png" class="" width="1250"></p>
+<figcaption>Shanghai OD hex map</figcaption>
+</figure>
 </div>
 </section>
 <section class="slide level2 center">
@@ -711,71 +752,118 @@
 <div>
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="1">
+<div class="quarto-layout-panel" data-layout-ncol="2">
 <div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: flex-start;">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../images/cumulative_distance_distribution_v4.png" width="700"></p>
-<figcaption>Cumulative distance distribution</figcaption>
+<p><img data-src="../images/Lisbon_traveldistance_lts2.png" width="700"></p>
+<figcaption>Random OD</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../images/cumulative_distance/sao%20paulo_cumulative_distance_lts1.png" width="700"></p>
+<figcaption>Calibrated random OD</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div style="font-size: 0.7em; color: #555;">
-<p>Without log-normal sampling, trips are too long. With calibration, the distribution matches observed cycling patterns.</p>
+<!-- Arrow overlay -->
+<div class="absolute" style="transform: translate(-50%, -50%); font-size: 160px; color: rgba(219, 58, 58, 0.86); z-index: 100;top: 65%; left: 45%; ">
+<p>→</p>
+</div>
+<div style="font-size: 0.7em; color: #555; text-align: right;">
+<!-- With calibration, the distribution matches urban cycling patterns. -->
+<p>About 75% of trips are below 5 km. This already accounts for ~40% circuity.</p>
 </div>
 </section>
 <section id="ci-classification-in-4-types" class="slide level2 center">
 <h2>CI Classification in 4 types</h2>
-<p>We re-categorised OSM tags into 4 simplified types to assess infrastructure quality:</p>
+<p>With <code>osmactive</code> custom classification of CI, we classified OSM segments into <strong>4 simplified types</strong> to assess infrastructure quality, based on OSM tags:</p>
+<div style="font-size: 0.8em;">
 <table class="caption-top">
 <colgroup>
 <col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 66%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Type</th>
 <th>OSM examples</th>
-<th>Symbol</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Protected</strong> (separated)</td>
-<td><code>highway=cycleway</code>, separated tracks</td>
-<td>🟢</td>
+<td><code>highway:cycleway</code> → separated tracks</td>
 </tr>
 <tr class="even">
 <td><strong>Painted</strong> (medium)</td>
-<td><code>cycleway=lane</code>, bike lanes on road</td>
-<td>🟡</td>
+<td><code>cycleway:lane</code> → bike lanes on road</td>
 </tr>
 <tr class="odd">
 <td><strong>Sharrows</strong> (weak/mixed)</td>
-<td><code>cycleway=shared_lane</code>, advisory</td>
-<td>🟠</td>
+<td><code>cycleway:shared_lane</code> → advisory</td>
 </tr>
 <tr class="even">
-<td><strong>Foot</strong> (shared pedestrian)</td>
-<td><code>highway=pedestrian</code>, shared paths</td>
-<td>🔵</td>
+<td><strong>Foot</strong> (shared w/pedestrian)</td>
+<td><code>highway:pedestrian</code> &amp; <code>bicycle:yes</code> → shared paths</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href=""></a><span class="co">-- Conceptual query (simplified)</span></span>
-<span id="cb1-2"><a href=""></a><span class="cf">CASE</span> <span class="cf">WHEN</span> highway <span class="op">=</span> <span class="st">'cycleway'</span> <span class="cf">THEN</span> <span class="st">'Protected'</span></span>
-<span id="cb1-3"><a href=""></a>     <span class="cf">WHEN</span> cycleway <span class="kw">IN</span> (<span class="st">'lane'</span>,<span class="st">'opposite_lane'</span>) <span class="cf">THEN</span> <span class="st">'Painted'</span></span>
-<span id="cb1-4"><a href=""></a>     <span class="cf">WHEN</span> cycleway <span class="kw">IN</span> (<span class="st">'shared_lane'</span>,<span class="st">'shared'</span>) <span class="cf">THEN</span> <span class="st">'Sharrows'</span></span>
-<span id="cb1-5"><a href=""></a>     <span class="cf">WHEN</span> highway <span class="kw">IN</span> (<span class="st">'pedestrian'</span>,<span class="st">'path'</span>) <span class="cf">THEN</span> <span class="st">'Foot'</span></span>
-<span id="cb1-6"><a href=""></a><span class="cf">END</span> <span class="kw">AS</span> ci_type</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href=""></a><span class="co">-- Conceptual query (based on osmactive logic)</span></span>
+<span id="cb1-2"><a href=""></a><span class="cf">CASE</span> <span class="cf">WHEN</span> highway <span class="op">=</span> <span class="st">'cycleway'</span> <span class="kw">OR</span> cycleway <span class="kw">IN</span> (<span class="st">'track'</span>, <span class="st">'opposite_track'</span>) <span class="cf">THEN</span> <span class="st">'Protected'</span></span>
+<span id="cb1-3"><a href=""></a>     <span class="cf">WHEN</span> cycleway <span class="kw">IN</span> (<span class="st">'lane'</span>, <span class="st">'opposite_lane'</span>) <span class="cf">THEN</span> <span class="st">'Painted'</span></span>
+<span id="cb1-4"><a href=""></a>     <span class="cf">WHEN</span> cycleway <span class="kw">IN</span> (<span class="st">'share_busway'</span>, <span class="st">'shared_lane'</span>) <span class="kw">OR</span> bicycle_road <span class="op">=</span> <span class="st">'yes'</span> <span class="cf">THEN</span> <span class="st">'Sharrows'</span></span>
+<span id="cb1-5"><a href=""></a>     <span class="cf">WHEN</span> highway <span class="kw">IN</span> (<span class="st">'path'</span>, <span class="st">'footway'</span>, <span class="st">'pedestrian'</span>) <span class="kw">AND</span> bicycle <span class="kw">IN</span> (<span class="st">'yes'</span>, <span class="st">'designated'</span>)</span>
+<span id="cb1-6"><a href=""></a>          <span class="cf">THEN</span> <span class="st">'Foot'</span></span>
+<span id="cb1-7"><a href=""></a><span class="cf">END</span> <span class="kw">AS</span> ci_type</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section class="slide level2 center">
 
-<h3 id="ci-evolution-by-type-selected-cities">CI evolution by type – selected cities</h3>
+<h3 id="ci-type-examples">CI Type examples</h3>
+<ol type="1">
+<li>Protected CI</li>
+</ol>
+
+<img data-src="images/protected.png" class="quarto-figure quarto-figure-center r-stretch"><p><span style="font-size: 0.7em">Source: <em>Definitions for cycling infrastructure</em> <span class="citation" data-cites="unece26">(<a href="#/references" role="doc-biblioref" onclick="">United Nations Economic Commission for Europe 2026</a>)</span></span></p>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-type-examples-1">CI Type examples</h3>
+<ol start="2" type="1">
+<li>Painted CI</li>
+</ol>
+
+<img data-src="images/painted_lane.png" class="quarto-figure quarto-figure-center r-stretch"><p><span style="font-size: 0.7em">Source: <em>Definitions for cycling infrastructure</em> <span class="citation" data-cites="unece26">(<a href="#/references" role="doc-biblioref" onclick="">United Nations Economic Commission for Europe 2026</a>)</span></span></p>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-type-examples-2">CI Type examples</h3>
+<ol start="3" type="1">
+<li>Mixed / Shared with motor traffic CI</li>
+</ol>
+
+<img data-src="images/Sharrow_in_Malaga.jpg" class="quarto-figure quarto-figure-center r-stretch"><p><span style="font-size: 0.7em">Source: <em>Daniel Capilla, <a href="https://commons.wikimedia.org/wiki/File:Sharrow_in_M%C3%A1laga.jpg">Wikimedia</a></em></span></p>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-type-examples-3">CI Type examples</h3>
+<ol start="4" type="1">
+<li>Shared with pedestrians CI</li>
+</ol>
+
+<img data-src="images/footpath.png" class="quarto-figure quarto-figure-center r-stretch"><p><span style="font-size: 0.7em">Source: <em>Definitions for cycling infrastructure</em> <span class="citation" data-cites="unece26">(<a href="#/references" role="doc-biblioref" onclick="">United Nations Economic Commission for Europe 2026</a>)</span></span></p>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-evolution-by-type">CI evolution by type</h3>
 <div>
 
 </div>
@@ -793,7 +881,7 @@
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="../images/ci_evolution/sydney_plot_ci_types_absolute.png"></p>
-<figcaption>Sydney – growing protected CI after 2019</figcaption>
+<figcaption>Sydney – growing mixed CI after 2019</figcaption>
 </figure>
 </div>
 </div>
@@ -803,7 +891,7 @@
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="../images/ci_evolution/bogota_plot_ci_types_absolute.png"></p>
-<figcaption>Bogotá – mostly sharrows / mixed</figcaption>
+<figcaption>Bogotá – mostly protected CI</figcaption>
 </figure>
 </div>
 </div>
@@ -811,28 +899,292 @@
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><img data-src="../images/ci_evolution/tokyo_plot_ci_types_absolute.png"></p>
-<figcaption>Tokyo – mainly foot/shared paths</figcaption>
+<figcaption>Tokyo – mostly sharrows / mixed</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="routing-lts" class="slide level2 center">
-<h2>Routing &amp; LTS</h2>
-<h3 id="level-of-traffic-stress-lts">Level of Traffic Stress (LTS)</h3>
+<section class="slide level2 center">
+
+<h3 id="ci-evolution-santiago">CI evolution – Santiago</h3>
+<p><img data-src="../data/pipeline/santiago/results/ci_evolution_facet_map.png"></p>
+<div class="absolute" style="width: 500px;bottom: -25%; right: 0%; ">
+<p><img data-src="../images/ci_evolution/santiago_plot_ci_types_absolute.png"></p>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-evolution-london">CI evolution – London</h3>
+<p><img data-src="../data/pipeline/london/results/ci_evolution_facet_map.png"></p>
+<div class="absolute" style="width: 500px;bottom: -25%; right: 0%; ">
+<p><img data-src="../images/ci_evolution/london_plot_ci_types_absolute.png"></p>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-evolution-brussels">CI evolution – Brussels</h3>
+<p><img data-src="../data/pipeline/brussels/results/ci_evolution_facet_map.png"></p>
+<div class="absolute" style="width: 500px;bottom: -25%; right: 0%; ">
+<p><img data-src="../images/ci_evolution/brussels_plot_ci_types_absolute.png"></p>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-evolution-christchurch">CI evolution – Christchurch</h3>
+<p><img data-src="../data/pipeline/christchurch/results/ci_evolution_facet_map.png"></p>
+<div class="absolute" style="width: 500px;bottom: -25%; right: 0%; ">
+<p><img data-src="../images/ci_evolution/christchurch_plot_ci_types_absolute.png"></p>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-evolution-montréal">CI evolution – Montréal</h3>
+<p><img data-src="../data/pipeline/montréal/results/ci_evolution_facet_map.png"></p>
+<div class="absolute" style="width: 500px;bottom: -25%; right: 0%; ">
+<p><img data-src="../images/ci_evolution/montréal_plot_ci_types_absolute.png"></p>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="ci-evolution-são-paulo">CI evolution – São Paulo</h3>
+<p><img data-src="../data/pipeline/sao%20paulo/results/ci_evolution_facet_map.png"></p>
+<div class="absolute" style="width: 500px;bottom: -25%; right: 0%; ">
+<p><img data-src="../images/ci_evolution/sao%20paulo_plot_ci_types_absolute.png"></p>
+</div>
+</section>
+<section id="level-of-traffic-stress-lts" class="slide level2 center">
+<h2>Level of Traffic Stress (LTS)</h2>
 <ul>
-<li>Classification from <a href="https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity">Mineta Transport Institute</a>, adapted by Conveyal <span class="citation" data-cites="conway2015">(<a href="#/references" role="doc-biblioref" onclick="">Conway 2015</a>)</span>.</li>
-<li>Applied to every OSM edge:</li>
+<li>Classification from <a href="https://transweb.sjsu.edu/research/Low-Stress-Bicycling-and-Network-Connectivity">Mineta Transport Institute</a> (2012)</li>
 </ul>
-<pre><code>If way does not allow cars → LTS 1
-If highway=residential / living_street → LTS 1
-If maxspeed &lt; 40 km/h AND lanes &lt; 4 → LTS 2
-If tertiary/unclassified + cycleway tag → LTS 2
-If cycleway tag on busier road → LTS 3
-Otherwise → LTS 4</code></pre>
+
+<img data-src="https://miro.medium.com/v2/resize:fit:2000/format:webp/1*0ijfn6V7MYZuuA5wM0zeIw.jpeg" class="r-stretch quarto-figure-center"><p class="caption">LTS - <a href="https://blog.altaplanning.com/level-of-traffic-stress-what-it-means-for-building-better-bike-networks-c4af9800b4ee">Alta Planning</a></p><div class="fragment">
 <ul>
-<li>Each year’s CI classification is used to <strong>override LTS to 1</strong> on newly classified CI segments.</li>
+<li>Adapted by Conveyal <span class="citation" data-cites="conway2015">(<a href="#/references" role="doc-biblioref" onclick="">Conway 2015</a>)</span> to applied to every OSM <strong>edge</strong> as:</li>
+</ul>
+<div class="sourceCode" id="cb2" data-code-line-numbers="1-2|3-4|5|6"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href=""></a>If way does not allow cars → LTS <span class="dv">1</span></span>
+<span id="cb2-2"><a href=""></a>If highway<span class="op">:</span>residential <span class="op">/</span> living_street → LTS <span class="dv">1</span></span>
+<span id="cb2-3"><a href=""></a>If maxspeed <span class="op">&lt;</span> <span class="dv">40</span> km<span class="op">/</span>h AND lanes <span class="op">&lt;</span> <span class="dv">4</span> → LTS <span class="dv">2</span></span>
+<span id="cb2-4"><a href=""></a>If highway<span class="op">:</span>tertiary<span class="op">/</span>unclassified <span class="op">+</span> cycleway tag → LTS <span class="dv">2</span></span>
+<span id="cb2-5"><a href=""></a>If cycleway tag on busier road → LTS <span class="dv">3</span></span>
+<span id="cb2-6"><a href=""></a>Otherwise → LTS <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-classification---examples">LTS classification - examples</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../data/pipeline/sydney/results/lts_evolution_facet_map.png" class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;" width="1250"></p>
+</figure>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-classification---examples-1">LTS classification - examples</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../data/pipeline/melbourne/results/lts_evolution_facet_map.png" class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;" width="1250"></p>
+</figure>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-classification---examples-2">LTS classification - examples</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../data/pipeline/paris/results/lts_evolution_facet_map.png" class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;" width="1250"></p>
+</figure>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-classification---examples-3">LTS classification - examples</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../data/pipeline/kyoto/results/lts_evolution_facet_map.png" class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;" width="1250"></p>
+</figure>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-classification---examples-4">LTS classification - examples</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../data/pipeline/san%20francisco/results/lts_evolution_facet_map.png" class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;" width="1250"></p>
+</figure>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-classification---examples-5">LTS classification - examples</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../data/pipeline/london/results/lts_evolution_facet_map.png" class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;" width="1250"></p>
+</figure>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-problem-for-bicycle-routing">LTS problem for bicycle routing</h3>
+<p>But…</p>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/resdisential.jpg" style="width:90.0%"></p>
+<figcaption>Residential - LTS 1</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/residential2.jpg" style="width:80.0%"></p>
+<figcaption>Residential - LTS 1, with “CI”</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p><span style="font-size: 0.7em">Source: <em>Author</em></span></p>
+<h3 id="lts-problem-for-bicycle-routing-1">LTS problem for bicycle routing</h3>
+<p>Or…</p>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://i0.wp.com/amensagem.pt/wp-content/uploads/2023/01/Arroios-12-scaled.jpg"></p>
+<figcaption>Residential - LTS 1</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://www.emel.pt/fotos/editor2/ruadaestefania_003.jpg"></p>
+<figcaption>Terciary - LTS 2, with “CI”</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p><span style="font-size: 0.7em">Source: <a href="https://amensagem.pt/2025/06/25/estacionamento-lisboa-habitacao-transporte-mobilidade/">A Mensagem</a> / <a href="https://www.emel.pt/pt/noticias/rumo-a-uma-lisboa-mais-ciclavel/">EMEL</a></span></p>
+<h3 id="lts-problem-for-bicycle-routing-2">LTS problem for bicycle routing</h3>
+<p>Or even…</p>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/resdisential.jpg" style="width:90.0%"></p>
+<figcaption>Residential - LTS 1</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/seattle_lane.jpg"></p>
+<figcaption>Secondary - LTS 3 / 4, with CI</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p><span style="font-size: 0.7em">Source: <em>Author</em> / <a href="https://www.flickr.com/photos/83492056@N00/17434162236/in/photolist-syAD35-sATUsr-sjjvsW-8KbN4C-rE5rEz-qYkFe4-X4a7xW-ABhUWE-eEGZNh-gZJTRx-gZJeJv-X4aFoq-g7hEp-fzRmFb-ei9HWA-oPUx6e-sLZnd7-6vr9he-bpJMJw-ADu1wH-fzBbzn-XE8Fix-X78CBD-oPULtV-oR36tQ-qYiTBD-WJ3ajU-co6Vzs-78xMQG-6vvkB7-W5DDVT-XiU8pD-W5DUkp-7TH39Z-XiVmoH-huv7eA-niLc5d-rfDKC4-Sd66ti-W5Emmn-6vD8w1-co5vc9-ey66XR-PURan-ocZz9c-eEHM7A-eECESz-6vyWor-dZN813-6BxbCm">nickfalbo/flickr</a></span></p>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-problem-for-bicycle-routing-3">LTS problem for bicycle routing</h3>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/network_lts_final_base.png"></p>
+<figcaption>Schematic LTS and CI grid</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-problem-for-bicycle-routing-4">LTS problem for bicycle routing</h3>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/ex1a_lts.png"></p>
+<figcaption>LTS 1 prefered, despite CI (longer route)</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/ex1b_ci.png"></p>
+<figcaption>CI and shorter route preferred</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-problem-for-bicycle-routing-5">LTS problem for bicycle routing</h3>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/ex2a_lts.png"></p>
+<figcaption>Shorter despite CI</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/ex2b_ci.png"></p>
+<figcaption>CI route preferred (same length)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 id="lts-alternative">LTS alternative</h3>
+<ul>
+<li>Each year’s CI classification is used to <strong>override LTS to 1</strong> on newly classified CI segments (tryed with <a href="https://github.com/ipeaGIT/r5r/issues/553">LTS = 0</a>…).</li>
 </ul>
 <div style="font-size: 0.75em; color: #555; margin-top:0.5em;">
 <p><strong>Note:</strong> Protected CI is drawn as a <em>separate segment</em> in OSM; painted lanes are <em>tags</em> on the road. Both approaches are modelled correctly here.</p>
@@ -860,6 +1212,7 @@ Otherwise → LTS 4</code></pre>
 </section>
 <section id="overline-maps-used-routes" class="slide level2 center">
 <h2>Overline Maps (Used Routes)</h2>
+<p>stplanr overline</p>
 <p>Highlighting the most frequently used network segments for LTS 1 routing.</p>
 <div>
 
@@ -1372,14 +1725,14 @@ Infrastructure works. But <strong>isolated corridors without gap-closing</strong
 <div id="ref-conway2015" class="csl-entry" role="listitem">
 Conway, Mathew. 2015. <span>“Better Measures of Bike Accessibility.”</span> <a href="https://medium.com/conveyal-blog/better-measures-of-bike-accessibility-d875ae5ed831">https://medium.com/conveyal-blog/better-measures-of-bike-accessibility-d875ae5ed831</a>.
 </div>
+<div id="ref-kou2019" class="csl-entry" role="listitem">
+Kou, Zhaoyu, and Hua Cai. 2019. <span>“Understanding Bike Sharing Travel Patterns: An Analysis of Trip Data from Eight Cities.”</span> <em>Physica A: Statistical Mechanics and Its Applications</em> 515 (February): 785–97. <a href="https://doi.org/10.1016/j.physa.2018.09.123">https://doi.org/10.1016/j.physa.2018.09.123</a>.
+</div>
 <div id="ref-pereira2021" class="csl-entry" role="listitem">
 Pereira, Rafael H. M., Marcus Saraiva, Daniel Herszenhut, Carlos Kaue Vieira Braga, and Matthew Wigginton Conway. 2021. <span>“R5r: Rapid Realistic Routing on Multimodal Transport Networks with R<span><sup>5</sup></span> in R.”</span> <em>Findings</em>, March, 21262. <a href="https://doi.org/10.32866/001c.21262">https://doi.org/10.32866/001c.21262</a>.
 </div>
-<div id="ref-schneider2023" class="csl-entry" role="listitem">
-Schneider, Florian, Anders Fjendbo Jensen, Winnie Daamen, and Serge Hoogendoorn. 2023. <span>“Empirical Analysis of Cycling Distances in Three of Europe<span>’</span>s Most Bicycle-Friendly Regions Within an Accessibility Framework.”</span> <em>International Journal of Sustainable Transportation</em> 17 (7): 775–89. <a href="https://doi.org/10.1080/15568318.2022.2095945">https://doi.org/10.1080/15568318.2022.2095945</a>.
-</div>
-<div id="ref-wang2025" class="csl-entry" role="listitem">
-Wang, Feiyang, Chaoying Yin, Ximing Chang, Xinyu Zhang, and Zhengbing He. 2025. <span>“Exploring the Relationship Between Built Environment and Bike-Sharing Demand: Does the Trip Length Matter?”</span> <em>Transportation Planning and Technology</em> 48 (5): 826–52. <a href="https://doi.org/10.1080/03081060.2024.2400281">https://doi.org/10.1080/03081060.2024.2400281</a>.
+<div id="ref-unece26" class="csl-entry" role="listitem">
+United Nations Economic Commission for Europe, UNECE -. 2026. <span>“Definitions for Infrastructure for Cycling.”</span> United Nations. <a href="https://unece.org/transport/publications/definitions-cycling-infrastructure">https://unece.org/transport/publications/definitions-cycling-infrastructure</a>.
 </div>
 <div id="ref-zhu2025" class="csl-entry" role="listitem">
 Zhu, Xiao Xiang, Sining Chen, Fahong Zhang, Yilei Shi, and Yuanyuan Wang. 2025. <span>“GlobalBuildingAtlas: An Open Global and Complete Dataset of Building Polygons, Heights and LoD1 3D Models.”</span> <em>Earth System Science Data</em> 17 (12): 6647–68. <a href="https://doi.org/10.5194/essd-17-6647-2025">https://doi.org/10.5194/essd-17-6647-2025</a>.
