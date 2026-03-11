@@ -424,7 +424,7 @@
 <div>
 
 </div>
-<div class="quarto-layout-panel" style="margin-top: 3em; align-items: flex-start;" data-layout-ncol="2">
+<div class="quarto-layout-panel" data-layout-ncol="2" style="margin-top: 3em; align-items: flex-start;">
 <div class="quarto-layout-row">
 <div id="rosa" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><strong>Rosa Félix</strong></p>
@@ -1179,7 +1179,7 @@
 </div>
 </div>
 </div>
-<p>Even with a CI at Main St, the routing algorithm “preffers” the <strong>lower LTS route</strong>, as long as it is not 3 times longer. <br> In real life this is usually not the cyclist preference (more direct and still safe).</p>
+<p>Even with a CI at Main St, the routing algorithm “preffers” the <strong>lower LTS route</strong>, as long as it is not 3x longer. <br> In real life this is usually not the cyclist preference (more direct and still safe).</p>
 </section>
 <section class="slide level2 center">
 
@@ -1266,41 +1266,52 @@
 <section id="overline-maps-used-routes" class="slide level2 center">
 <h2>Overline Maps (Used Routes)</h2>
 <p>Using the <code>stplanr::overline()</code> we can visualize the segments with high frequency of use by the 20,000 routes.</p>
-
-<!-- ![Paris LTS 1](../images/overline_maps/paris_overline_map_lts1.png)
-
-![Brussels LTS 1](../images/overline_maps/brussels_overline_map_lts1.png)
-
-![Bogotá LTS 1](../images/overline_maps/bogota_overline_map_lts1.png) -->
-<img data-src="../images/overline_maps/milan_overline_map_lts1.png" class="r-stretch quarto-figure-center"><p class="caption">Milan LTS 1</p></section>
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/overline_maps/sydney_overline_map_lts1_x3.png" class="" width="1250"></p>
+<figcaption>Sydney, max LTS 1</figcaption>
+</figure>
+</div>
+</section>
+<section id="overline-maps-used-routes-1" class="slide level2 center">
+<h2>Overline Maps (Used Routes)</h2>
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/overline_maps/mexico_overline_map_lts1_x3.png" class="" width="1250"></p>
+<figcaption>Mexico City, max LTS 1</figcaption>
+</figure>
+</div>
+</section>
+<section id="overline-maps-used-routes-2" class="slide level2 center">
+<h2>Overline Maps (Used Routes)</h2>
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/overline_maps/brussels_overline_map_lts1_x3.png" class="" width="1250"></p>
+<figcaption>Brussels, max LTS 1</figcaption>
+</figure>
+</div>
+</section>
+<section id="overline-maps-used-routes-3" class="slide level2 center">
+<h2>Overline Maps (Used Routes)</h2>
+<div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
+<figure>
+<p><img data-src="../images/overline_maps/milan_overline_map_lts1_x3.png" class="" width="1250"></p>
+<figcaption>Milan, max LTS 1</figcaption>
+</figure>
+</div>
+</section>
 <section id="accessibility-15-min-potential" class="slide level2 center">
 <h2>Accessibility – 15-min potential</h2>
 <ul>
 <li>For each origin (H3 hex), we compute the <strong>sum of building volumes</strong> reachable within a 15-minute cycling trip.</li>
 <li>Increases when more destinations become reachable, or existing destinations become fast enough to reach with low stress.</li>
 </ul>
+<p>Image with cuttof 15min accessibility - if faster more accesibility</p>
 <div>
 
 </div>
 <div class="quarto-layout-panel" data-layout-ncol="2">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="../images/overline_maps/lisbon_overline_map_lts2.png"></p>
-<figcaption>Lisbon LTS 2 overline – more routes reachable with better CI</figcaption>
-</figure>
-</div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="../images/overline_maps/melbourne_overline_map_lts1.png"></p>
-<figcaption>Melbourne LTS 1 – sparse CI → limited connectivity</figcaption>
-</figure>
-</div>
-</div>
-</div>
+
 </div>
 </section></section>
 <section>

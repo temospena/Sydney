@@ -552,7 +552,7 @@ Or even...
 
 :::
 
-Even with a CI at Main St, the routing algorithm "preffers" the **lower LTS route**, as long as it is not 3 times longer. <br>
+Even with a CI at Main St, the routing algorithm "preffers" the **lower LTS route**, as long as it is not 3x longer. <br>
 In real life this is usually not the cyclist preference (more direct and still safe).
 
 ---
@@ -609,23 +609,29 @@ trips <- detailed_itineraries(
 Using the `stplanr::overline()` we can visualize the segments with high frequency of use by the 20,000 routes.
 
 
-![Milan LTS 1](../images/overline_maps/milan_overline_map_lts1.png)
+![Sydney, max LTS 1](../images/overline_maps/sydney_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
-<!-- ![Paris LTS 1](../images/overline_maps/paris_overline_map_lts1.png)
 
-![Brussels LTS 1](../images/overline_maps/brussels_overline_map_lts1.png)
+## Overline Maps (Used Routes)
 
-![Bogotá LTS 1](../images/overline_maps/bogota_overline_map_lts1.png) -->
+![Mexico City, max LTS 1](../images/overline_maps/mexico_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+## Overline Maps (Used Routes)
+
+![Brussels, max LTS 1](../images/overline_maps/brussels_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+
+## Overline Maps (Used Routes)
+
+![Milan, max LTS 1](../images/overline_maps/milan_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ## Accessibility – 15-min potential
 
 -   For each origin (H3 hex), we compute the **sum of building volumes** reachable within a 15-minute cycling trip.
 -   Increases when more destinations become reachable, or existing destinations become fast enough to reach with low stress.
 
-::: {layout-ncol="2"}
-![Lisbon LTS 2 overline – more routes reachable with better CI](../images/overline_maps/lisbon_overline_map_lts2.png)
+Image with cuttof 15min accessibility - if faster  more accesibility
 
-![Melbourne LTS 1 – sparse CI → limited connectivity](../images/overline_maps/melbourne_overline_map_lts1.png)
+::: {layout-ncol="2"}
 :::
 
 # Modelling {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
