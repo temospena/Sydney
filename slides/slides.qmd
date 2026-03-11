@@ -464,6 +464,29 @@ Otherwise → LTS 4
 
 ---
 
+---
+
+### r5r routing package
+
+`r5r` R package [@pereira2021] for bicycle routing, relies on **LTS of the highways** (and not exactly CI):
+
+```r
+library(r5r)
+trips <- detailed_itineraries(
+    r5r_network = r5_engine,   # city × year street network
+    origins = origins_hex,     # same od pairs used across all years
+    destinations = dests_hex,
+    mode = "BICYCLE",
+    max_lts = lts_level,       # 1, 2, 3, or 4
+    osm_link_ids = TRUE        # match segments with LTS
+)
+```
+
+-   **`max_lts`** limits route choice to low-stress paths.
+-   If no connected low-stress route exists: R5 penalises the segment by setting speed to **walking pace (3.6 km/h)** instead of cycling (12 km/h) → 3× time penalty (cost).
+
+---
+
 ### LTS problem for bicycle routing
 
 But... 
@@ -549,51 +572,50 @@ Despite being the same length, a residential road with or without CI **is treate
 
 ### LTS alternative
 
--   Each year's CI classification is used to **override LTS to 1** on newly classified CI segments (tryed with [LTS = 0](https://github.com/ipeaGIT/r5r/issues/553)...).
-
-::: {style="font-size: 0.75em; color: #555; margin-top:0.5em;"}
-**Note:** Protected CI is drawn as a *separate segment* in OSM; painted lanes are *tags* on the road. Both approaches are modelled correctly here.
-:::
-
----
-
-### r5r routing package
-
-`r5r` R package [@pereira2021] for bicycle routing:
-
-```r
-library(r5r)
+```{.r code-line-numbers="7"}
 trips <- detailed_itineraries(
     r5r_network = r5_engine,   # city × year street network
-    origins = origins_hex,
+    origins = origins_hex,     # same od pairs used across all years
     destinations = dests_hex,
     mode = "BICYCLE",
-    shortest_path = TRUE,
     max_lts = lts_level,       # 1, 2, 3, or 4
+    new_lts = lts1_ci,         # list of CI osm_id with LTS 1
     osm_link_ids = TRUE        # match segments with LTS
 )
 ```
 
--   **`max_lts`** limits route choice to low-stress paths.
--   If no connected low-stress route exists: R5 penalises the segment by setting speed to **walking pace (3.6 km/h)** instead of cycling (12 km/h) → 3× time penalty.
--   **Same 20,000 OD pairs used across all years** → clean panel comparisons.
+-   Each year's CI classification is used to **override LTS to 1** on newly classified CI segments
+<!-- > (I tried also with [LTS = 0](https://github.com/ipeaGIT/r5r/issues/553)...). -->
+
+---
+
+### OSM drawing and tagging
+
+::: {style="font-size: 0.75em; color: #555; margin-top:0.5em;"}
+**Note:** Protected CI is drawn as a *separate segment* in OSM; painted lanes and sharrows are *tags* on the road segment. Both approaches are modelled correctly here.
+:::
+
+::: {layout-ncol="3"}
+![Cycle track - Separated edge](images/osm_deparated.png)
+
+![Bike lane - Tag on the road](images/osm_cycletag.png)
+
+![Sharrows - Tag on the road](images/osm_shared.png)
+
+:::
 
 ## Overline Maps (Used Routes)
 
-stplanr overline
+Using the `stplanr::overline()` we can visualize the segments with high frequency of use by the 20,000 routes.
 
 
-Highlighting the most frequently used network segments for LTS 1 routing.
+![Milan LTS 1](../images/overline_maps/milan_overline_map_lts1.png)
 
-::: {layout-ncol="2"}
-![Sydney LTS 1](../images/overline_maps/sydney_overline_map_lts1.png)
+<!-- ![Paris LTS 1](../images/overline_maps/paris_overline_map_lts1.png)
 
-![Paris LTS 1](../images/overline_maps/paris_overline_map_lts1.png)
+![Brussels LTS 1](../images/overline_maps/brussels_overline_map_lts1.png)
 
-![London LTS 1](../images/overline_maps/london_overline_map_lts1.png)
-
-![Bogotá LTS 1](../images/overline_maps/bogota_overline_map_lts1.png)
-:::
+![Bogotá LTS 1](../images/overline_maps/bogota_overline_map_lts1.png) -->
 
 ## Accessibility – 15-min potential
 

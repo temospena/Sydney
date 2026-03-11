@@ -424,7 +424,7 @@
 <div>
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="2" style="margin-top: 3em; align-items: flex-start;">
+<div class="quarto-layout-panel" style="margin-top: 3em; align-items: flex-start;" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div id="rosa" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><strong>Rosa Félix</strong></p>
@@ -1028,6 +1028,27 @@
 </section>
 <section class="slide level2 center">
 
+</section>
+<section class="slide level2 center">
+
+<h3 id="r5r-routing-package">r5r routing package</h3>
+<p><code>r5r</code> R package <span class="citation" data-cites="pereira2021">(<a href="#/references" role="doc-biblioref" onclick="">Pereira et al. 2021</a>)</span> for bicycle routing, relies on <strong>LTS of the highways</strong> (and not exactly CI):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">library</span>(r5r)</span>
+<span id="cb3-2"><a href=""></a>trips <span class="ot">&lt;-</span> <span class="fu">detailed_itineraries</span>(</span>
+<span id="cb3-3"><a href=""></a>    <span class="at">r5r_network =</span> r5_engine,   <span class="co"># city × year street network</span></span>
+<span id="cb3-4"><a href=""></a>    <span class="at">origins =</span> origins_hex,     <span class="co"># same od pairs used across all years</span></span>
+<span id="cb3-5"><a href=""></a>    <span class="at">destinations =</span> dests_hex,</span>
+<span id="cb3-6"><a href=""></a>    <span class="at">mode =</span> <span class="st">"BICYCLE"</span>,</span>
+<span id="cb3-7"><a href=""></a>    <span class="at">max_lts =</span> lts_level,       <span class="co"># 1, 2, 3, or 4</span></span>
+<span id="cb3-8"><a href=""></a>    <span class="at">osm_link_ids =</span> <span class="cn">TRUE</span>        <span class="co"># match segments with LTS</span></span>
+<span id="cb3-9"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><strong><code>max_lts</code></strong> limits route choice to low-stress paths.</li>
+<li>If no connected low-stress route exists: R5 penalises the segment by setting speed to <strong>walking pace (3.6 km/h)</strong> instead of cycling (12 km/h) → 3× time penalty (cost).</li>
+</ul>
+</section>
+<section class="slide level2 center">
+
 <h3 id="lts-problem-for-bicycle-routing">LTS problem for bicycle routing</h3>
 <p>But…</p>
 <div>
@@ -1124,8 +1145,8 @@
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/network_lts_final_base.png"></p>
-<figcaption>Schematic LTS and CI grid</figcaption>
+<p><img data-src="images/network_lts_final_base_cropped.png"></p>
+<figcaption>A schematic road network LTS and CI grid</figcaption>
 </figure>
 </div>
 </div>
@@ -1158,6 +1179,7 @@
 </div>
 </div>
 </div>
+<p>Even with a CI at Main St, the routing algorithm “preffers” the <strong>lower LTS route</strong>, as long as it is not 3 times longer. <br> In real life this is usually not the cyclist preference (more direct and still safe).</p>
 </section>
 <section class="slide level2 center">
 
@@ -1185,84 +1207,72 @@
 </div>
 </div>
 </div>
-<p>a few notes</p>
+<p>Despite being the same length, a residential road with or without CI <strong>is treated the same</strong> by the routing algorith.</p>
 </section>
 <section class="slide level2 center">
 
 <h3 id="lts-alternative">LTS alternative</h3>
+<div class="sourceCode" id="cb4" data-code-line-numbers="7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a>trips <span class="ot">&lt;-</span> <span class="fu">detailed_itineraries</span>(</span>
+<span id="cb4-2"><a href=""></a>    <span class="at">r5r_network =</span> r5_engine,   <span class="co"># city × year street network</span></span>
+<span id="cb4-3"><a href=""></a>    <span class="at">origins =</span> origins_hex,     <span class="co"># same od pairs used across all years</span></span>
+<span id="cb4-4"><a href=""></a>    <span class="at">destinations =</span> dests_hex,</span>
+<span id="cb4-5"><a href=""></a>    <span class="at">mode =</span> <span class="st">"BICYCLE"</span>,</span>
+<span id="cb4-6"><a href=""></a>    <span class="at">max_lts =</span> lts_level,       <span class="co"># 1, 2, 3, or 4</span></span>
+<span id="cb4-7"><a href=""></a>    <span class="at">new_lts =</span> lts1_ci,         <span class="co"># list of CI osm_id with LTS 1</span></span>
+<span id="cb4-8"><a href=""></a>    <span class="at">osm_link_ids =</span> <span class="cn">TRUE</span>        <span class="co"># match segments with LTS</span></span>
+<span id="cb4-9"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>Each year’s CI classification is used to <strong>override LTS to 1</strong> on newly classified CI segments (tryed with <a href="https://github.com/ipeaGIT/r5r/issues/553">LTS = 0</a>…).</li>
+<li>Each year’s CI classification is used to <strong>override LTS to 1</strong> on newly classified CI segments <!-- > (I tried also with [LTS = 0](https://github.com/ipeaGIT/r5r/issues/553)...). --></li>
 </ul>
-<div style="font-size: 0.75em; color: #555; margin-top:0.5em;">
-<p><strong>Note:</strong> Protected CI is drawn as a <em>separate segment</em> in OSM; painted lanes are <em>tags</em> on the road. Both approaches are modelled correctly here.</p>
-</div>
 </section>
 <section class="slide level2 center">
 
-<h3 id="r5r-routing-package">r5r routing package</h3>
-<p><code>r5r</code> R package <span class="citation" data-cites="pereira2021">(<a href="#/references" role="doc-biblioref" onclick="">Pereira et al. 2021</a>)</span> for bicycle routing:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">library</span>(r5r)</span>
-<span id="cb3-2"><a href=""></a>trips <span class="ot">&lt;-</span> <span class="fu">detailed_itineraries</span>(</span>
-<span id="cb3-3"><a href=""></a>    <span class="at">r5r_network =</span> r5_engine,   <span class="co"># city × year street network</span></span>
-<span id="cb3-4"><a href=""></a>    <span class="at">origins =</span> origins_hex,</span>
-<span id="cb3-5"><a href=""></a>    <span class="at">destinations =</span> dests_hex,</span>
-<span id="cb3-6"><a href=""></a>    <span class="at">mode =</span> <span class="st">"BICYCLE"</span>,</span>
-<span id="cb3-7"><a href=""></a>    <span class="at">shortest_path =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-8"><a href=""></a>    <span class="at">max_lts =</span> lts_level,       <span class="co"># 1, 2, 3, or 4</span></span>
-<span id="cb3-9"><a href=""></a>    <span class="at">osm_link_ids =</span> <span class="cn">TRUE</span>        <span class="co"># match segments with LTS</span></span>
-<span id="cb3-10"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong><code>max_lts</code></strong> limits route choice to low-stress paths.</li>
-<li>If no connected low-stress route exists: R5 penalises the segment by setting speed to <strong>walking pace (3.6 km/h)</strong> instead of cycling (12 km/h) → 3× time penalty.</li>
-<li><strong>Same 20,000 OD pairs used across all years</strong> → clean panel comparisons.</li>
-</ul>
-</section>
-<section id="overline-maps-used-routes" class="slide level2 center">
-<h2>Overline Maps (Used Routes)</h2>
-<p>stplanr overline</p>
-<p>Highlighting the most frequently used network segments for LTS 1 routing.</p>
+<h3 id="osm-drawing-and-tagging">OSM drawing and tagging</h3>
+<div style="font-size: 0.75em; color: #555; margin-top:0.5em;">
+<p><strong>Note:</strong> Protected CI is drawn as a <em>separate segment</em> in OSM; painted lanes and sharrows are <em>tags</em> on the road segment. Both approaches are modelled correctly here.</p>
+</div>
 <div>
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-panel" data-layout-ncol="3">
 <div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../images/overline_maps/sydney_overline_map_lts1.png"></p>
-<figcaption>Sydney LTS 1</figcaption>
+<p><img data-src="images/osm_deparated.png"></p>
+<figcaption>Cycle track - Separated edge</figcaption>
 </figure>
 </div>
 </div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../images/overline_maps/paris_overline_map_lts1.png"></p>
-<figcaption>Paris LTS 1</figcaption>
+<p><img data-src="images/osm_cycletag.png"></p>
+<figcaption>Bike lane - Tag on the road</figcaption>
 </figure>
 </div>
 </div>
-</div>
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../images/overline_maps/london_overline_map_lts1.png"></p>
-<figcaption>London LTS 1</figcaption>
-</figure>
-</div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="../images/overline_maps/bogota_overline_map_lts1.png"></p>
-<figcaption>Bogotá LTS 1</figcaption>
+<p><img data-src="images/osm_shared.png"></p>
+<figcaption>Sharrows - Tag on the road</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
 </section>
+<section id="overline-maps-used-routes" class="slide level2 center">
+<h2>Overline Maps (Used Routes)</h2>
+<p>Using the <code>stplanr::overline()</code> we can visualize the segments with high frequency of use by the 20,000 routes.</p>
+
+<!-- ![Paris LTS 1](../images/overline_maps/paris_overline_map_lts1.png)
+
+![Brussels LTS 1](../images/overline_maps/brussels_overline_map_lts1.png)
+
+![Bogotá LTS 1](../images/overline_maps/bogota_overline_map_lts1.png) -->
+<img data-src="../images/overline_maps/milan_overline_map_lts1.png" class="r-stretch quarto-figure-center"><p class="caption">Milan LTS 1</p></section>
 <section id="accessibility-15-min-potential" class="slide level2 center">
 <h2>Accessibility – 15-min potential</h2>
 <ul>
