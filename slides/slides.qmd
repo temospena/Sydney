@@ -477,6 +477,8 @@ But...
 
 [Source: *Author*]{style="font-size: 0.7em"}
 
+---
+
 ### LTS problem for bicycle routing
 
 Or... 
@@ -490,6 +492,7 @@ Or...
 
 [Source: [A Mensagem](https://amensagem.pt/2025/06/25/estacionamento-lisboa-habitacao-transporte-mobilidade/) / [EMEL](https://www.emel.pt/pt/noticias/rumo-a-uma-lisboa-mais-ciclavel/)]{style="font-size: 0.7em"}
 
+---
 
 ### LTS problem for bicycle routing
 
@@ -509,7 +512,7 @@ Or even...
 ### LTS problem for bicycle routing
 
 ::: {layout-ncol=2}
-![Schematic LTS and CI grid](images/network_lts_final_base.png)
+![A schematic road network LTS and CI grid](images/network_lts_final_base_cropped.png)
 
 
 
@@ -520,22 +523,27 @@ Or even...
 ### LTS problem for bicycle routing
 
 ::: {layout-ncol=2}
-![LTS 1 prefered, despite CI (longer route)](images/ex1a_lts.png)
+![LTS 1 prefered, despite CI (longer route)](images/3A.png)
 
-![CI and shorter route preferred](images/ex1b_ci.png)
+![CI and shorter route preferred](images/3B.png)
 
 :::
+
+Even with a CI at Main St, the routing algorithm "preffers" the **lower LTS route**, as long as it is not 3 times longer. <br>
+In real life this is usually not the cyclist preference (more direct and still safe).
 
 ---
 
 ### LTS problem for bicycle routing
 
 ::: {layout-ncol=2}
-![Shorter despite CI](images/ex2a_lts.png)
+![Shorter despite CI](images/4A.png)
 
-![CI route preferred (same length)](images/ex2b_ci.png)
+![CI route preferred (same length)](images/4B.png)
 
 :::
+
+Despite being the same length, a residential road with or without CI **is treated the same** by the routing algorith.
 
 ---
 
