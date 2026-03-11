@@ -7,12 +7,12 @@ format:
     fontsize: 32px
     slide-number: true
     preview-links: auto
-    css: other_template/styles.css
+    css: styles.css
     center: true
     footer: 'R Félix – TransportLab Seminar 2026'
-    logo: images/unis_merge.png
+    logo: images/combined_logos.png
 title-slide-attributes:
-  data-background-image: other_template/img/gray.png
+  data-background-image: images/gray.png
   data-background-size: cover
 execute:
   echo: false
@@ -116,7 +116,7 @@ Funded by FCT Mobility (Portuguese Science Foundation)
 
 -   Avoiding census or travel survey data → global reproducibility.
 -   Used Global Building Atlas – LoD1 [@zhu2025].
--   Buildings weighted by estimated volume as a proxy for trip attraction.
+-   Buildings weighted by estimated **volume** as a proxy for trip attraction.
 
 ::: {layout-ncol="3"}
 ![Lisbon (mean: 2.94 floors)](../images/Screenshot_20260217_172324.png)
@@ -129,7 +129,7 @@ Funded by FCT Mobility (Portuguese Science Foundation)
 ## Selected Cities
 
 -   **N = 50 cities** with > 1 million residents, balanced across continents.
--   Cities with varying degrees of **infrastructure expansion** (2016–2026).
+-   Cities with **cycling infrastructure expansion** (2016–2026).
 
 ![](../images/city_map_points.png){.nostretch fig-align="center" width="1200" style="margin-top: 0px; margin-left: -75px; max-width: none;"}
 
@@ -187,7 +187,7 @@ Efficient and reproducible pipeline:
 
 ::::::: {layout="[[25,25,25,25]]"}
 
-![](https://www.r-project.org/logo/Rlogo.png){width="150" fig-align="center"}</br> **R** </br> `sf`, `r5r`, `stplanr`, `fixest`, etc.
+![](https://www.r-project.org/logo/Rlogo.png){width="150" fig-align="center"}</br> **R** </br> `sf`, `h3jsr`, `osmactive`, `r5r`, `stplanr`, `fixest`
 
 ![](https://duckdb.org/images/favicon/apple-touch-icon.png){width="150" fig-align="center"}</br> **DuckDB** </br> Global Building Atlas data connection
 
@@ -227,7 +227,7 @@ Without log-normal sampling, trips are too long. With calibration, the distribut
 
 ## CI Classification in 4 types
 
-We re-categorised OSM tags into 4 simplified types to assess infrastructure quality:
+Based in `osmactive`custom classification of CI, we re-categorised OSM tags into 4 simplified types to assess infrastructure quality:
 
 | Type | OSM examples | Symbol |
 |------|------|------|
