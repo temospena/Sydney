@@ -128,11 +128,12 @@ Funded by FCT Mobility (Portuguese Science Foundation)
 :::
 
 ::: {.column style="padding-left: 1em;"}
-**Rosa Félix** 🧑‍🔬
+**Rosa Félix** 
 
--   🎓 Researcher & Invited Assistant Professor
+-   🧑‍🔬 Researcher & Invited Assistant Professor
+-   🎓 Civil Eng., Urban Planning, Transportation
 -   🚴‍♀️ Active mobility, Behaviour change, GIS
--   🏘️🇵🇹 U-Shift Lab, CERIS, Técnico – University of Lisbon
+-   🏛🇵🇹 U-Shift Lab, CERIS, Técnico – University of Lisbon
 -   🌏🇦🇺 4-month visiting researcher at the University of Sydney
 :::
 :::
@@ -159,6 +160,7 @@ Funded by FCT Mobility (Portuguese Science Foundation)
 :::
 
 # Data {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+Open datasets only *(no registerations or API needed)*
 
 ## Historical OpenStreetMap (OSM)
 
@@ -690,22 +692,25 @@ Quantify network fragmentation at the **route level** (physical gaps)
 ![After with new CI](images/accessibility_after.png){.nostretch width="90%"}
 :::
 
-A new CI makes trips *virtually* faster, increasing the **accessibility** of destinations.
+A new CI makes trips *virtually* faster (or possible), increasing the **accessibility** of destinations.
 
 ## Other concepts
 
 **Circuity**
 
+::: {style="font-size: 0.8em;"}
 $$\text{Circuity} = \frac{\text{Route Length}}{\text{Euclidean Distance (O-D)}}$$
-
-A circuity of 1.4 means that the route is 40% linger than the distance *as the crown flies*.
+:::
+A circuity of 1.4 means that the route is 40% longer than the distance *as the crown flies*.
 
 <br>
 
 ::: {.fragment}
-**Route stress score**
+**Stress score (route)**
 
+::: {style="font-size: 0.8em;"}
 $$\text{Route Avg LTS} = \frac{1(\%\text{LTS}_1) + 2(\%\text{LTS}_2) + 3(\%\text{LTS}_3) + 4(\%\text{LTS}_4)}{100}$$
+:::
 
 The stress score is a weighted LTS [1-4] and is higher for higher "use" of higher LTS segments, in that route.
 :::
@@ -713,11 +718,12 @@ The stress score is a weighted LTS [1-4] and is higher for higher "use" of highe
 
 # Modelling {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
 
+What are the systemic and route-level impacts of adding **1 km of cycling infrastructure** on trip performance, safety, and accessibility?
+
+<br>
+
 Fixed Effects Panel Regression across **Macro (city-wide)** and **Micro (route-level)** scales.
 
-## Recall the Question
-
-What are the systemic and route-level impacts of adding **1 km of cycling infrastructure** on trip performance, safety, and accessibility?
 <!-- 
 - **Scope:** 50 global cities × 10 years (2016–2026)
 - **Data:** Historical OSM networks + Global Building Atlas (LoD1)
@@ -790,6 +796,7 @@ modelsummary(
 ::: {.table-note}
 \* p < 0.1, ** p < 0.05, *** p < 0.01.
 SE in parentheses, clustered by city. City + Year FE.  
+Log-Log.
 :::
 :::
 :::
@@ -797,15 +804,14 @@ SE in parentheses, clustered by city. City + Year FE.
 ::: {.column width="42%" style="font-size: 0.8em; margin-left: 2%;"}
 
 - A +10% CI **decreases** 1.45% trip duration, **increases** 3.4% access to opportunities.
-- CI and road network expansion explains ~50% of the **within-city variation** in accessibility over the decade (after controlling for FE).
+<br><br>
 
-::: fragment
 - **Duration effect:** network growth eliminates routing deterrence
 - **Accessibility effect:** CI unlocks destinations previously unreachable within a safe 15-min ride
 
 > Building CI doesn't only make trips faster — it makes them **possible**.
 
-
+::: fragment
 ::: {style="font-size: 0.9em;"}
 ⚠️ **Duration ~ Network Impedance**, not Physical Speed
 Time savings in our models represent the *elimination of network deterrence*, not bikes riding faster.
@@ -813,6 +819,10 @@ Time savings in our models represent the *elimination of network deterrence*, no
 :::
 :::
 ::::
+
+::: {.notes}
+CI and road network expansion explains ~50% of the **within-city variation** in accessibility over the decade (after controlling for FE).
+:::
 ---
 
 ## Micro Model (Route-Level)
@@ -879,7 +889,7 @@ modelsummary(
 ```
 
 ::: {.table-note}
- \* p < 0.1, \*\* p < 0.05, \*\*\* p < 0.01. SE in parentheses, clustered by city. Route + Year FE.
+ \* p < 0.1, \*\* p < 0.05, \*\*\* p < 0.01. SE in parentheses, clustered by city. Route + Year FE. Log-Level.
 :::
 :::
 :::
@@ -949,7 +959,7 @@ modelsummary(
 ```
 
 ::: {.table-note}
- \* p < 0.1, \*\* p < 0.05, \*\*\* p < 0.01. SE in parentheses, clustered by city. Route + Year FE.
+ \* p < 0.1, \*\* p < 0.05, \*\*\* p < 0.01. SE in parentheses, clustered by city. Route + Year FE. Level-Level.
 :::
 :::
 :::
@@ -1016,7 +1026,7 @@ modelsummary(
 ```
 
 ::: {.table-note}
- \* p < 0.1, \*\* p < 0.05, \*\*\* p < 0.01. SE in parentheses, clustered by city. Route + Year FE.
+ \* p < 0.1, \*\* p < 0.05, \*\*\* p < 0.01. SE in parentheses, clustered by city. Route + Year FE. Level-Level.
 :::
 :::
 :::
@@ -1122,11 +1132,11 @@ modelsummary(
     kableExtra::column_spec(c(3, 5), italic = TRUE) |>
     kableExtra::row_spec(0, extra_css = "border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;") |>
     kableExtra::row_spec(4, extra_css = "border-top: 1.5px solid #111 !important;") |>
-    kableExtra::row_spec(4:5, color = "#777777") |>
-    kableExtra::row_spec(5, extra_css = "border-bottom: 2px solid #222 !important;") 
+    kableExtra::row_spec(4:6, color = "#777777") |>
+    kableExtra::row_spec(6, extra_css = "border-bottom: 2px solid #222 !important;") 
 ```
 ::: {.table-note}
-\* p < 0.1, ** p < 0.05, *** p < 0.01. SE in parentheses, clustered by city. Route + Year FE.
+\* p < 0.1, ** p < 0.05, *** p < 0.01. SE in parentheses, clustered by city. Route + Year FE. Level-Level.
 :::
 :::
 
@@ -1135,7 +1145,7 @@ Forcing the routing engine to treat **all CI** (including paint and sharrows on 
 
 Under the alternative, differences between CI types **collapse** — paint and sharrows reduce stress as effectively as protected tracks.
 
-> Cities place *opportunistic paint* on dangerous arterials.  
+> Cities place *opportunistic paint* on busy arterials.  
 > Without **physical protection**, the rider absorbs 100% of that arterial danger.  
 > Physical separation is the only intervention that eliminates the stress penalty.
 
@@ -1210,8 +1220,8 @@ Questions, comments, and suggestions are very welcome! 💬
 **Rosa Félix**
 <br>
 
-[rosamfelix\@tecnico.ulisboa.pt](mailto:rosamfelix@tecnico.ulisboa.pt)<br>
-[github.com/temospena/Sydney](https://github.com/temospena/Sydney)
+[✉️ rosamfelix\@tecnico.ulisboa.pt](mailto:rosamfelix@tecnico.ulisboa.pt)<br>
+[💾 github.com/temospena/Sydney](https://github.com/temospena/Sydney)
 <br><br>
 
 <img src="images/ushift-logo.jpeg" height="45" style="vertical-align:middle; margin-right:20px;"/>
@@ -1222,7 +1232,7 @@ Questions, comments, and suggestions are very welcome! 💬
 
 ::: {.column width="30%"}
 
-![rosafelix.bike](images/qr_rosabike.svg){width="280"}
+![🌐 rosafelix.bike](images/qr_rosabike.svg){width="280"}
 
 <!-- ![Linkedin](images/linkedin_qr.jpeg){width="280"} -->
 :::
@@ -1241,27 +1251,27 @@ Questions, comments, and suggestions are very welcome! 💬
 
 ---
 
-### Global Background Trends (Year Fixed Effects) {visibility="uncounted"}
+## Global Background Trends (Year Fixed Effects) {visibility="uncounted"}
 What happened globally between 2016 and 2026, independent of new infrastructure?
 
 ::: {style="font-size: 0.85em;"}
-**1. The "Global Safety & Data Maturity" Trend**
-*(Driven by 30 km/h city policies and richer OpenStreetMap tagging)*
+**1. The "Global Safety & Data Maturity" Trend** - 
+*Driven by 30 km/h city policies and richer OpenStreetMap tagging*
 
-| Route-Level Metric | 2016 Baseline | 2026 Global Shift |
-|:---|:---:|:---:|
-| **Safe Proportion (% LTS 1)** | 0.00 | **+ 12.5 p.p.** |
-| **Average Stress (LTS 1-4)** | 0.00 | **- 0.32 pts** |
+| Route-Level Metric | 2016 Baseline | 2021 | 2026 Global Shift |
+|:---|:---:|:---:|:---:|
+| **Safe Proportion (% LTS 1)** | 0.00 | + 6.91 p.p. | **+ 12.5 p.p.** |
+| **Average Stress (LTS 1-4)** | 0.00 | - 0.18 pts | **- 0.32 pts** |
 
 <br>
 
-**2. The "Global Sprawl & Friction" Trend**
-*(Driven by outward urban expansion and complexified road networks)*
+**2. The "Global Sprawl & Friction" Trend** - 
+*Driven by outward urban expansion and complexified road networks*
 
-| System Metric | 2016 Baseline | 2026 Global Shift |
-|:---|:---:|:---:|
-| **Macro Accessibility (Bubble)** | 0.00 | **- 10.7 %** |
-| **Micro Interruptions (Count)** | 0.00 | **+ 0.23 stops** |
+| System Metric | 2016 Baseline | 2021 | 2026 Global Shift |
+|:---|:---:|:---:|:---:|
+| **Macro Accessibility (Bubble)** | 0.00 | - 1.78 % | **- 10.7 %** |
+| **Micro Interruptions (Count)** | 0.00 | + 0.14 | **+ 0.23 stops** |
 :::
 
 ::: {.notes}
@@ -1270,7 +1280,7 @@ Speaker Notes: This proves why our models are robust. If we didn't include the Y
 
 ---
 
-#### Micro Level – Stress Scrore by Distance Intervals {.smaller visibility="uncounted"}
+## Micro Level – Stress Scrore by Distance Intervals {.smaller visibility="uncounted"}
 
 ::: {.table-wrapper}
 ```{r}
@@ -1310,7 +1320,7 @@ modelsummary(
 
 ---
 
-### The "Fragmentation Phase" Paradox ⚠️ {visibility="uncounted"}
+## The "Fragmentation Phase" Paradox ⚠️ {visibility="uncounted"}
 
 ::: {style="font-size: 0.8em;"}
 At the **macro level**, total CI positively predicts interruptions (β ≈ +0.656, ***):
