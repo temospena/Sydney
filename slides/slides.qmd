@@ -642,15 +642,26 @@ A new CI makes trips *virtually* faster, increasing the **accessibility** of des
 
 Fixed Effects Panel Regression across **Macro (city-wide)** and **Micro (route-level)** scales.
 
-## Macro Level (City-Wide)
+## Recall the question
+What are the systemic and route-level impacts of adding a 1km of cycling infrastructure on trip performance, safety, and accessibility?
+
+- **The Scale:** 50 global cities over 10 years (2016–2026).
+- **The Data:** Historical OSM networks and Global Building Atlas (LoD1).
+- **The Simulation:** 20,000 OD pairs per city (5 million total), routed using R5 to simulate realistic travel patterns based on Level of Traffic Stress (LTS).
+
+::: {.notes}
+Speaker Notes: Emphasize that this is a longitudinal spatial panel, not a cross-sectional snapshot. We are watching the cities grow.
+:::
+
+## Macro Level (City-Wide systemic impact)
 
 -   How do **massive, city-scale expansions** affect overall averages?
 -   **Two-way Fixed Effects** (city + year), LTS 1 and LTS 2 subsets.
 
-$$\ln(Y_{ct}) = \beta \cdot \ln(\text{Total CI}_{ct}) + \gamma \cdot \ln(\text{Road km}_{ct}) + \alpha_c + \tau_t + \epsilon_{ct}$$
+$$\ln(Y_{ct}) = \beta_1 \cdot \ln(\text{Total CI}_{ct}) + \beta_2 \cdot \ln(\text{Total Road}_{ct}) + \alpha_c + \tau_t + \epsilon_{ct}$$
 
 ::: {style="font-size: 0.75em; color: #555; margin-top: 0.5em;"}
-**Effective sample:** 51 cities × 5 years = **255 observations** per LTS level. Standard errors clustered by city.
+**Effective sample:** 50 cities × 5 years = **250 observations**. SE clustered by city.
 :::
 
 ::: {.callout-note style="font-size: 0.8em;"}

@@ -1,0 +1,502 @@
+---
+date: "March 13, 2026"
+format:
+  revealjs:
+    title-slide: false
+    theme: default
+    fontsize: 32px
+    slide-number: true
+    preview-links: auto
+    css: styles.css
+    center: true
+    footer: 'R Félix – TransportLab Seminar 2026'
+    logo: images/combined_logos.png
+title-slide-attributes:
+  data-background-image: images/gray.png
+  data-background-size: cover
+execute:
+  echo: false
+  warning: false
+  message: false
+bibliography: ../paper/references.bib
+link-citations: true
+editor:
+  render-on-save: true
+---
+
+<style>
+.reveal table {
+  font-size: 0.8em;
+  line-height: 1.5 !important;
+  border-collapse: collapse !important;
+  width: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.reveal table th, .reveal table td {
+  border: none;
+  box-shadow: none !important;
+  text-align: center;
+  padding: 0.2em 0.5em !important;
+}
+.reveal table thead {
+  border-bottom: 2px solid #333 !important;
+}
+/* Table container to keep notes aligned with table width but allow float */
+.table-wrapper {
+  margin: auto;
+  width: fit-content;
+  max-width: 100%;
+}
+.table-note {
+  font-size: 0.5em !important;
+  color: #666 !important;
+  text-align: right;
+  margin-top: 0.2em;
+  line-height: 1.2;
+}
+</style>
+
+```{r}
+#| label: setup
+#| include: false
+library(modelsummary)
+library(fixest)
+
+# Load lean models exported from models_final.r
+m <- readRDS("../data/models/models_final_exported.rds")
+
+# Shared coefficient rename map
+coef_macro <- c(
+    "log_total_ci_km"   = "Total City CI (log km)",
+    "log_total_road_km" = "Total Road Network (log km)"
+)
+
+coef_micro <- c(
+    "ci_strong_km" = "Protected CI (km added)",
+    "ci_medium_km" = "Painted lane (km added)",
+    "ci_weak_km"   = "Sharrows (km added)",
+    "ci_foot_km"   = "Shared w/ pedestrians (km added)"
+)
+
+coef_micro_nosafe <- c(
+    "ci_strong_km" = "Protected CI (km added)",
+    "ci_medium_km" = "Painted lane (km added)",
+    "ci_weak_km"   = "Sharrows (km added)"
+)
+
+# Helper to combine R2 and Adj R2 into one row
+get_gof_row <- function(models, type = "r2") {
+    # Ensure nested lists (like split models) are flattened one level 
+    # so we can iterate over individual fixest objects
+    if (!inherits(models[[1]], "fixest")) {
+        models <- unlist(models, recursive = FALSE)
+    }
+    
+    vals <- sapply(models, function(m) {
+        if (type == "r2") {
+            # Standard R2 and Adjusted R2
+            r  <- fixest::r2(m, type = "r2")
+            ar <- fixest::r2(m, type = "ar2")
+            sprintf("%.3f / %.3f", r, ar)
+        } else {
+            # Within R2 and Adjusted Within R2
+            wr  <- fixest::r2(m, type = "wr2")
+            war <- fixest::r2(m, type = "war2")
+            # If within R2 is NULL/absent (e.g. no FE), return empty
+            if (is.null(wr) || is.na(wr) || length(wr) == 0) return("")
+            sprintf("%.3f / %.3f", wr, war)
+        }
+    })
+    as.data.frame(t(c(ifelse(type == "r2", "R2 / Adj R2", "R2 Within / Adj R2 Within"), vals)))
+}
+```
+
+# Modelling {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+
+Fixed Effects Panel Regression across **Macro (city-wide)** and **Micro (route-level)** scales.
+
+## Recall the Question
+
+What are the systemic and route-level impacts of adding **1 km of cycling infrastructure** on trip performance, safety, and accessibility?
+
+- **Scope:** 50 global cities × 10 years (2016–2026)
+- **Data:** Historical OSM networks + Global Building Atlas (LoD1)
+- **Simulation:** 20,000 OD pairs per city (~5M routes total), routed by R5 using Level of Traffic Stress (LTS)
+
+::: {.notes}
+This is a longitudinal spatial panel, not a cross-sectional snapshot. We are watching cities grow over a decade.
+:::
+
+# Methodology {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+
+Two-Scale Fixed Effects
+
+## Macro Model (City-Wide)
+
+Systemic impact of network expansion on city averages.
+
+$$\ln(Y_{ct}) = \beta_1 \cdot \ln(\text{Total CI}_{ct}) + \beta_2 \cdot \ln(\text{Total Road}_{ct}) + \alpha_c + \tau_t + \varepsilon_{ct}$$
+
+::: {style="font-size: 0.75em; color: #555; margin-top: 0.5em;"}
+- $Y_{ct}$: city-wide average outcome (duration, accessibility) in city $c$, year $t$
+- $\alpha_c$: **city fixed effects** — absorbs unobserved time-invariant city traits (geography, sprawl)
+- $\tau_t$: **year fixed effects** — absorbs global shocks (COVID infrastructure boom, OSM tagging growth)
+- SE clustered by city; **N = 250 obs** (50 cities × 5 years)
+:::
+
+::: {.notes}
+The log-log specification gives us elasticities directly: a 1% increase in X → β% change in Y. The FE approach means we are not comparing Amsterdam to São Paulo; we watch each city change relative to itself.
+:::
+
+## Micro Model (Route-Level)
+
+Impact of infrastructure on individual route characteristics.
+
+$$Y_{irt} = \beta_1 \text{Prot}_{rt} + \beta_2 \text{Paint}_{rt} + \beta_3 \text{Sharrow}_{rt} + \beta_4 \text{Foot}_{rt} + \gamma_{ir} + \tau_t + \varepsilon_{irt}$$
+
+::: {style="font-size: 0.75em; color: #555; margin-top: 0.5em;"}
+- $Y_{irt}$: transformation depends on the outcome:
+  - **log** for duration & circuity → semi-elasticity
+  - **level** for % LTS1, avg. stress score, interruptions → marginal effect
+- $\text{Prot}_{rt}$, etc.: **km of CI type** along route $r$ in year $t$ (always in levels)
+- $\gamma_{ir}$: **route fixed effect** — compares the same OD pairs routes accross the years
+- $\tau_t$: year FE — absorbs global OSM tagging trends
+- SE clustered by city; **N ≈ 9.9M route-year observations**
+:::
+
+::: {.notes}
+The route fixed effect is the key advantage. We are not comparing a flat downtown trip to a hilly suburb. We are watching the exact same OD pair change as the city builds infrastructure. This controls for all time-invariant route geometry.
+:::
+
+---
+
+### Before we proceed...
+
+::: {style="font-size: 0.85em;"}
+**1. Duration = Network Impedance, not Physical Speed**  
+Time savings in our models represent the *elimination of network deterrence*, not bikes riding faster.
+
+**2. OSM Tagging ≈ Physical Reality**  
+In OSM, painted lanes are *tags* on existing arterial road segments, while protected paths are *separate geometries*. This mirrors reality:
+
+- **Paint** → rider shares the arterial's space → inherits its danger
+- **Protection** → spatially separate → implies a road diet or space-reallocation (lanes, parking, etc.)
+:::
+
+
+# Macro Results {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+
+The Systemic Return on Investment
+
+---
+
+### Macro Results – Regression Table
+
+::: {.table-wrapper}
+```{r}
+#| label: macro-results-tab
+macro_list <- list(
+    "Duration (Log)"      = m$macro_duration,
+    "Accessibility (Log)" = m$macro_access
+)
+
+modelsummary(
+    macro_list,
+    coef_map = coef_macro,
+    estimate = "{estimate}{stars} ({std.error})",
+    statistic = NULL,
+    fmt = fmt_decimal(digits = 3, big.mark = ","),
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "IC|Log.Lik|RMSE|Std|Pseudo|vcov|FE|R2|Adj|Within",
+    title = "Macro-level Impact of Network Expansion (City-Wide), LTS 1",
+    align = "lcc",
+    add_rows = rbind(
+        get_gof_row(macro_list, "r2"),
+        get_gof_row(macro_list, "within")
+    ),
+    escape = FALSE,
+    output = "kableExtra"
+) |>
+    kableExtra::kable_classic(full_width = FALSE, html_font = "inherit") |>
+    kableExtra::kable_styling(font_size = 20) |>
+    kableExtra::row_spec(0, extra_css = "border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;") |>
+    kableExtra::row_spec(3, extra_css = "border-top: 1.5px solid #111 !important;") |>
+    kableExtra::row_spec(3:5, color = "#777777") |>
+    kableExtra::row_spec(5, extra_css = "border-bottom: 2px solid #222 !important;")
+```
+
+::: {.table-note}
+\* p < 0.1, ** p < 0.05, *** p < 0.01. SE in parentheses, clustered by city. City + Year FE.  
+:::
+:::
+
+[A 10% CI decreases 1.45% trip duration, increases 3.4% access to opportunities]{style="font-size: 0.85em;"}
+
+---
+
+### Macro Results – Interpretation
+
+::: {.callout-tip style="font-size: 0.85em;"}
+**Elasticity interpretation (log-log):**  
+A **10% expansion** of the city's CI network…
+
+- reduces average LTS 1 trip **duration** by ≈ **1.38%** $(-0.145 \times \ln(1.10))$
+- increases **15-min accessibility** by ≈ **3.28%** $(+0.344 \times \ln(1.10))$
+
+A **50% expansion** → accessibility jumps by ≈ **14%** — thousands of new safe destinations.
+:::
+
+> *"Building bike lanes doesn't only make trips faster — it makes them **possible** and **safe**."*
+
+- **Duration effect:** real — network growth eliminates routing deterrence
+- **Accessibility effect:** large — CI bridges arterials and rivers, unlocking destinations previously unreachable within a safe 15-min ride
+
+# Micro Results {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+
+Route-Level Behavioural Impacts
+
+---
+
+### Micro Results – Table (Duration, Circuity, Safety) {.smaller}
+
+::: {.table-wrapper}
+```{r}
+#| label: micro-results-1-tab
+micro_list_1 <- list(
+    "Duration (Log)" = m$micro_duration,
+    "Circuity (Log)" = m$micro_circuity,
+    "% LTS1 Safe (p.p.)" = m$micro_safety,
+    "Stress Score (1-4)" = m$micro_stress,
+    "Interruptions (nr.)" = m$micro_interrupts
+)
+
+modelsummary(
+    micro_list_1,
+    coef_map = coef_micro,
+    estimate = "{estimate}{stars} ({std.error})",
+    statistic = NULL,
+    fmt = fmt_decimal(digits = 3, big.mark = ","),
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "IC|Log.Lik|RMSE|Std|Adj|Pseudo|vcov|FE|R2",
+    title = "Micro-Level: Impact of 1 km Infrastructure on Routes (LTS 1)",
+    align = "lccccc",
+    add_rows = rbind(
+        get_gof_row(micro_list_1, "r2"),
+        get_gof_row(micro_list_1, "within")
+    ),
+    escape = FALSE,
+    output = "kableExtra"
+) |>
+    kableExtra::kable_classic(full_width = FALSE, html_font = "inherit") |>
+    kableExtra::kable_styling(font_size = 18) |>
+    kableExtra::row_spec(0, extra_css = "border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;") |>
+    kableExtra::row_spec(5, extra_css = "border-top: 1.5px solid #111 !important;") |>
+    kableExtra::row_spec(5:7, color = "#777777") |>
+    kableExtra::row_spec(7, extra_css = "border-bottom: 2px solid #222 !important;")
+```
+
+::: {.table-note}
+ \* p < 0.1, \*\* p < 0.05, \*\*\* p < 0.01. SE in parentheses, clustered by city. Route + Year FE.
+:::
+:::
+
+---
+
+### Micro Results – Finding 1: The Commuter Trade-Off 🔄
+
+::: {layout-ncol="2"}
+![](../images/commuter_tradeoff.png)
+
+::: {style="font-size: 0.9em; padding-top: 1em;"}
+**Per 1 km of protected CI built:**
+
+- Physical circuity **+~6%**  
+  *(rider detours to use the safe path)*
+
+- Effective trip duration **−~1.3%**  
+  *(safer route avoids slow mixed-traffic friction)*
+
+> **Cyclists willingly accept a longer detour for a faster, safer trip.**
+
+Strong behavioural signal: *perceived safety* over raw distance.
+:::
+:::
+
+---
+
+### Micro Results – Finding 2: The Network Glue 🔗
+
+::: {layout-ncol="2"}
+![](../images/network_glue_gaps.png)
+
+::: {style="font-size: 0.9em; padding-top: 1em;"}
+**Impact on route interruptions (gaps > 100m without CI):**
+
+- Protected CI: **−0.084** per km *(significant)* ✅  
+  → Closes real gaps in the network
+- Painted lanes: **−0.055** per km *(border signif.)* ⚠️
+- Sharrows: **+0.055** per km *(not significant)*
+
+> **Protected CI is the ONLY type that significantly reduces network fragmentation.**
+:::
+:::
+
+---
+
+### Micro Results – Finding 3: The Arterial Lure 🛣️
+
+Stress penalty (Avg. LTS increase) by **trip distance** and infrastructure type:
+
+![](../images/arterial_lure_distancebins.png){fig-align="center" width="900"}
+
+::: {style="font-size: 0.8em; color: #555;"}
+**Key insight:** Paint and sharrows on arterials spike stress penalties, especially for short trips.  
+Protected infrastructure neutralises arterial stress at **all** trip lengths.
+:::
+
+---
+
+### Micro Results – Stress Scrore by Distance Intervals {.smaller}
+
+::: {.table-wrapper}
+```{r}
+#| label: micro-results-dist-tab
+micro_list_dist <- m$micro_stress_dist
+# Clean up headers: extract the descriptive part and prepend "Stress Score: "
+names(micro_list_dist) <- paste0(sub(".*_", "", names(micro_list_dist))) # "Stress Score: ", 
+
+modelsummary(
+    micro_list_dist,
+    coef_map = coef_micro_nosafe,
+    estimate = "{estimate}{stars} ({std.error})",
+    statistic = NULL,
+    fmt = fmt_decimal(digits = 3, big.mark = ","),
+    title = "Micro-Level: Impact of 1 km Infrastructure on Stress Score by Distance (LTS 1)",
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "IC|Log.Lik|RMSE|Std|Adj|Pseudo|vcov|FE|R2|Within",
+    align = "lcccc",
+    add_rows = rbind(
+        get_gof_row(micro_list_dist, "r2"),
+        get_gof_row(micro_list_dist, "within")
+    ),
+    escape = FALSE,
+    output = "kableExtra"
+) |>
+    kableExtra::kable_classic(full_width = FALSE, html_font = "inherit") |>
+    kableExtra::kable_styling(font_size = 20) |>
+    kableExtra::row_spec(0, extra_css = "border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;") |>
+    kableExtra::row_spec(4, extra_css = "border-top: 1.5px solid #111 !important;") |>
+    kableExtra::row_spec(3:6, color = "#777777") |>
+    kableExtra::row_spec(6, extra_css = "border-bottom: 2px solid #222 !important;")
+```
+::: {.table-note}
+\* p < 0.1, ** p < 0.05, *** p < 0.01. SE in parentheses, clustered by city. Route + Year FE.
+:::
+:::
+
+# Robustness Check {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+
+Placement vs. Protection
+
+---
+
+### Robustness – Alternative LTS Table {.smaller}
+
+::: {.table-wrapper}
+```{r}
+#| label: robust-results-tab
+robust_list <- list(
+    "% LTS1 (original)" = m$micro_safety,
+    "% LTS1 (CI = LTS1)" = m$micro_safety_alt,
+    "Stress (original)" = m$micro_stress,
+    "Stress (CI = LTS1)" = m$micro_stress_alt
+)
+modelsummary(
+    robust_list,
+    coef_map = coef_micro_nosafe,
+    estimate = "{estimate}{stars} ({std.error})",
+    statistic = NULL,
+    fmt = fmt_decimal(digits = 3, big.mark = ","),
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "IC|Log.Lik|RMSE|Std|Adj|Pseudo|vcov|FE|R2|Within",
+    align = "lcccc",
+    add_rows = rbind(
+        get_gof_row(robust_list, "r2"),
+        get_gof_row(robust_list, "within")
+    ),
+    escape = FALSE,
+    output = "kableExtra"
+) |>
+    kableExtra::kable_classic(full_width = FALSE, html_font = "inherit") |>
+    kableExtra::kable_styling(font_size = 20) |>
+    kableExtra::column_spec(c(3, 5), italic = TRUE) |>
+    kableExtra::row_spec(0, extra_css = "border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;") |>
+    kableExtra::row_spec(4, extra_css = "border-top: 1.5px solid #111 !important;") |>
+    kableExtra::row_spec(4:6, color = "#777777") |>
+    kableExtra::row_spec(6, extra_css = "border-bottom: 2px solid #222 !important;") 
+```
+::: {.table-note}
+\* p < 0.1, ** p < 0.05, *** p < 0.01. SE in parentheses, clustered by city. Route + Year FE.
+:::
+:::
+
+---
+
+### Robustness – Interpretation
+
+::: {style="font-size: 0.85em;"}
+**Setup:** We forced the routing engine to treat **all CI** (including paint and sharrows on busy arterials) as fully safe (**LTS = 1**).
+
+**Result:** Under the alternative, differences between CI types **collapse** — paint and sharrows reduce stress as effectively as protected tracks.
+
+**Conclusion:**
+
+> Our primary findings are **not a routing algorithm artefact.**  
+> Cities inherently place *opportunistic paint* on dangerous arterials.  
+> Without **physical protection**, the rider absorbs 100% of that arterial danger.  
+> Physical separation is the only intervention that eliminates the stress penalty.
+:::
+
+::: {.callout-note style="font-size: 0.8em; margin-top: 0.5em;"}
+This answers the toughest critique: the "Arterial Lure" is driven by real-world infrastructure placement, not a modelling error.
+:::
+
+---
+
+### The "Fragmentation Phase" Paradox ⚠️
+
+::: {style="font-size: 0.9em;"}
+At the **macro level**, total CI positively predicts interruptions (β ≈ +0.26, ***):
+
+> *Each 10% expansion of total CI increases average interruptions per route by ~2.6%*
+
+**Why?** Cities in 2016–2026 were in the **"Fragmented Network Phase"**:
+
+1. **No CI (Stage 1):** Rider uses mixed traffic → 0 interruptions
+2. **Fragmented CI (Stage 2):** Isolated islands; each new segment creates **2 new gap edges**
+3. **Mature network (Stage 3):** Connected corridors → interruptions drop
+
+**Policy implication:** Shift success metrics from **"km built"** → **"gaps closed"**
+:::
+
+# Summary {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+
+---
+
+## Key Takeaways
+
+| Finding | Metric | Effect |
+|:---|---|---|
+| Network growth eliminates impedance | Avg. duration (macro) | −1.38% per 10% CI growth |
+| Network unlocks destinations | 15-min accessibility | +3.28% per 10% CI growth |
+| Detour as trade-off for safety | Circuity (micro) | +6% per 1km protected CI |
+| Trip is (*virtually?*) shorter | Duration (micro) | −1.3% per 1km protected CI |
+| Only protected CI closes gaps | Interruptions | −0.084 per km (signif.) |
+| More CI → more gaps (fragmented era) | Interruptions (macro) | +2.6% per 10% CI ⚠️ |
+
+::: {style="margin-top: 0.5em; font-size: 0.85em; color: #554;"}
+**The central policy message:**  
+Infrastructure works. But **isolated corridors without gap-closing** create a fragmented, stressful network.  
+The win lies in **continuity and protection**, not just quantity.
+:::
