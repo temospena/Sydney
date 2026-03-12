@@ -426,7 +426,7 @@
 <div>
 
 </div>
-<div class="quarto-layout-panel" style="margin-top: 3em; align-items: flex-start;" data-layout-ncol="2">
+<div class="quarto-layout-panel" data-layout-ncol="2" style="margin-top: 3em; align-items: flex-start;">
 <div class="quarto-layout-row">
 <div id="rosa" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><strong>Rosa Félix</strong></p>
@@ -1158,7 +1158,7 @@
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/3A.png"></p>
+<p><img data-src="images/3A.png" style="width:85.0%"></p>
 <figcaption>LTS 1 prefered, despite CI (longer route)</figcaption>
 </figure>
 </div>
@@ -1166,14 +1166,16 @@
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/3B.png"></p>
+<p><img data-src="images/3B.png" style="width:85.0%"></p>
 <figcaption>CI and shorter route preferred</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
+<div style="font-size: 0.9em;">
 <p>Even with a CI at Main St, the routing algorithm “preffers” the <strong>lower LTS route</strong>, as long as it is not 3x longer. <br> In real life this is usually not the cyclist preference (more direct and still safe).</p>
+</div>
 </section>
 <section class="slide level2 center">
 
@@ -1186,7 +1188,7 @@
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/4A.png"></p>
+<p><img data-src="images/4A.png" style="width:85.0%"></p>
 <figcaption>Shorter despite CI</figcaption>
 </figure>
 </div>
@@ -1194,14 +1196,16 @@
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/4B.png"></p>
+<p><img data-src="images/4B.png" style="width:85.0%"></p>
 <figcaption>CI route preferred (same length)</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
+<div style="font-size: 0.9em;">
 <p>Despite being the same length, a residential road with or without CI <strong>is treated the same</strong> by the routing algorith.</p>
+</div>
 </section>
 <section class="slide level2 center">
 
@@ -1309,6 +1313,7 @@
 <p><strong>Circuity</strong></p>
 <p><span class="math display">\[\text{Circuity} = \frac{\text{Route Length}}{\text{Euclidean Distance (O-D)}}\]</span></p>
 <p>A circuity of 1.4 means that the route is 40% linger than the distance <em>as the crown flies</em>.</p>
+<p><br></p>
 <div class="fragment">
 <p><strong>Route stress score</strong></p>
 <p><span class="math display">\[\text{Route Avg LTS} = \frac{1(\%\text{LTS}_1) + 2(\%\text{LTS}_2) + 3(\%\text{LTS}_3) + 4(\%\text{LTS}_4)}{100}\]</span></p>
@@ -1322,12 +1327,10 @@
 </section>
 <section id="recall-the-question" class="slide level2 center">
 <h2>Recall the Question</h2>
-<p>What are the systemic and route-level impacts of adding <strong>1 km of cycling infrastructure</strong> on trip performance, safety, and accessibility?</p>
-<ul>
-<li><strong>Scope:</strong> 50 global cities × 10 years (2016–2026)</li>
-<li><strong>Data:</strong> Historical OSM networks + Global Building Atlas (LoD1)</li>
-<li><strong>Simulation:</strong> 20,000 OD pairs per city (~5M routes total), routed by R5 using Level of Traffic Stress (LTS)</li>
-</ul>
+<p>What are the systemic and route-level impacts of adding <strong>1 km of cycling infrastructure</strong> on trip performance, safety, and accessibility? <!-- 
+- **Scope:** 50 global cities × 10 years (2016–2026)
+- **Data:** Historical OSM networks + Global Building Atlas (LoD1)
+- **Simulation:** 20,000 OD pairs per city (~5M routes total), routed by R5 using Level of Traffic Stress (LTS) --></p>
 <aside class="notes">
 <p>This is a longitudinal spatial panel, not a cross-sectional snapshot. We are watching cities grow over a decade.</p>
 <style type="text/css">
@@ -1907,7 +1910,7 @@ Physical separation is the only intervention that eliminates the stress penalty.
 <tr class="even">
 <td style="text-align: left;">Trip is (<em>virtually?</em>) shorter</td>
 <td>Duration (micro)</td>
-<td>−1.3% per 1km protected CI</td>
+<td>−1.3% per 1km prot. CI</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Only protected CI closes gaps</td>
@@ -1917,7 +1920,7 @@ Physical separation is the only intervention that eliminates the stress penalty.
 </tbody>
 </table>
 <!-- | More CI → more gaps (fragmented era) | Interruptions (macro) | +0.6 per 10% CI ⚠️ | -->
-<div style="margin-top: 0.5em; font-size: 0.85em; color: #554;">
+<div class="fragment" style="margin-top: 0.5em; font-size: 0.85em; color: #554;">
 <p>Infrastructure works. But <strong>isolated corridors without gap-closing</strong> create a fragmented, stressful network.<br>
 The win lies in <strong>continuity and protection</strong>, not just quantity.</p>
 </div>
@@ -2074,21 +2077,6 @@ Zhu, Xiao Xiang, Sining Chen, Fahong Zhang, Yilei Shi, and Yuanyuan Wang. 2025. 
 </section>
 <section class="slide level2 center">
 
-<h3 data-visibility="uncounted" id="the-fragmentation-phase-paradox">The “Fragmentation Phase” Paradox ⚠️</h3>
-<div style="font-size: 0.8em;">
-<p>At the <strong>macro level</strong>, total CI positively predicts interruptions (β ≈ +0.656, ***):</p>
-<p>Expanding the total network by 1% adds a statistically significant, but practically small, 0.006 interruptions to the average commute. While small per trip, the positive direction confirms that cities historically expand via disconnected, opportunistic segments.</p>
-<p><strong>Why?</strong> Cities in 2016–2026 were in the <strong>“Fragmented Network Phase”</strong>:</p>
-<ol type="1">
-<li><strong>No CI (Stage 1):</strong> Rider uses mixed traffic → 0 interruptions</li>
-<li><strong>Fragmented CI (Stage 2):</strong> Isolated islands; each new segment creates <strong>2 new gap edges</strong></li>
-<li><strong>Mature network (Stage 3):</strong> Connected corridors → interruptions drop</li>
-</ol>
-<p><strong>Policy implication:</strong> Shift success metrics from <strong>“km built”</strong> → <strong>“gaps closed”</strong></p>
-</div>
-</section>
-<section class="slide level2 center">
-
 <h4 class="smaller" data-visibility="uncounted" id="micro-level-stress-scrore-by-distance-intervals">Micro Level – Stress Scrore by Distance Intervals</h4>
 <div class="table-wrapper">
 <div class="cell">
@@ -2156,6 +2144,21 @@ Zhu, Xiao Xiang, Sining Chen, Fahong Zhang, Yilei Shi, and Yuanyuan Wang. 2025. 
 <div class="table-note">
 <p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
 </div>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 data-visibility="uncounted" id="the-fragmentation-phase-paradox">The “Fragmentation Phase” Paradox ⚠️</h3>
+<div style="font-size: 0.8em;">
+<p>At the <strong>macro level</strong>, total CI positively predicts interruptions (β ≈ +0.656, ***):</p>
+<p>Expanding the total network by 1% adds a statistically significant, but practically small, 0.006 interruptions to the average commute. While small per trip, the positive direction confirms that cities historically expand via disconnected, opportunistic segments.</p>
+<p><strong>Why?</strong> Cities in 2016–2026 were in the <strong>“Fragmented Network Phase”</strong>:</p>
+<ol type="1">
+<li><strong>No CI (Stage 1):</strong> Rider uses mixed traffic → 0 interruptions</li>
+<li><strong>Fragmented CI (Stage 2):</strong> Isolated islands; each new segment creates <strong>2 new gap edges</strong></li>
+<li><strong>Mature network (Stage 3):</strong> Connected corridors → interruptions drop</li>
+</ol>
+<p><strong>Policy implication:</strong> Shift success metrics from <strong>“km built”</strong> → <strong>“gaps closed”</strong></p>
 </div>
 <div class="quarto-auto-generated-content">
 <p><img src="images/combined_logos.png" class="slide-logo"></p>

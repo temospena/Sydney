@@ -591,8 +591,6 @@ Or even...
 ::: {layout-ncol=2}
 ![A schematic road network LTS and CI grid](images/network_lts_final_base_cropped.png)
 
-
-
 :::
 
 ---
@@ -600,27 +598,29 @@ Or even...
 ### LTS problem for bicycle routing
 
 ::: {layout-ncol=2}
-![LTS 1 prefered, despite CI (longer route)](images/3A.png)
+![LTS 1 prefered, despite CI (longer route)](images/3A.png){width="85%"}
 
-![CI and shorter route preferred](images/3B.png)
+![CI and shorter route preferred](images/3B.png){width="85%"}
 
 :::
 
+::: {style="font-size: 0.9em;"}
 Even with a CI at Main St, the routing algorithm "preffers" the **lower LTS route**, as long as it is not 3x longer. <br>
 In real life this is usually not the cyclist preference (more direct and still safe).
-
+:::
 ---
 
 ### LTS problem for bicycle routing
 
 ::: {layout-ncol=2}
-![Shorter despite CI](images/4A.png)
+![Shorter despite CI](images/4A.png){width="85%"}
 
-![CI route preferred (same length)](images/4B.png)
+![CI route preferred (same length)](images/4B.png){width="85%"}
 
 :::
-
+::: {style="font-size: 0.9em;"}
 Despite being the same length, a residential road with or without CI **is treated the same** by the routing algorith.
+:::
 
 ---
 
