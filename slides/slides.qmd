@@ -625,14 +625,18 @@ Quantify network fragmentation at the **route level** (physical gaps)
 
 ## Accessibility – 15-min potential
 
-
+::: {style="font-size: 0.75em;"}
 -   For each origin (H3 hex), we compute the **sum of building volumes** reachable within a 15-minute cycling trip.
--   Increases when more destinations become reachable, or existing destinations become fast enough to reach with low stress.
-
-Image with cuttof 15min accessibility - if faster  more accesibility
-
-::: {layout-ncol="2"}
+-   Increases when **more destinations** become reachable, or existing destinations become **fast enough** to reach with low stress.
 :::
+::: {layout-ncol=2}
+![Before](images/accessibility_before.png){.nostretch width="90%"}
+
+![After with new CI](images/accessibility_after.png){.nostretch width="90%"}
+:::
+
+A new CI makes trips *virtually* faster, increasing the **accessibility** of destinations.
+
 
 # Modelling {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
 
