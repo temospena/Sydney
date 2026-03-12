@@ -424,7 +424,7 @@
 <div>
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="2" style="margin-top: 3em; align-items: flex-start;">
+<div class="quarto-layout-panel" style="margin-top: 3em; align-items: flex-start;" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div id="rosa" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><strong>Rosa Félix</strong></p>
@@ -674,7 +674,7 @@
 <div class="columns">
 <div class="column" style="width:60%;">
 <ul>
-<li><p><strong>10km</strong> buffer from city center coordinates</p></li>
+<li><p><strong>10km</strong> buffer from city center coordinates (20km diameter)</p></li>
 <li><p><strong>20,000 OD pairs</strong> generated per city</p></li>
 <li><p>Destinations randomly sampled, weighted by <strong>building volume</strong> (proxy for trip attraction)</p></li>
 <li><p>Distance follows a <strong>log-normal function</strong> calibrated for cycling trips <span class="citation" data-cites="kou2019">(<a href="#/references" role="doc-biblioref" onclick="">Kou and Cai 2019</a>)</span></p></li>
@@ -1028,9 +1028,6 @@
 </section>
 <section class="slide level2 center">
 
-</section>
-<section class="slide level2 center">
-
 <h3 id="r5r-routing-package">r5r routing package</h3>
 <p><code>r5r</code> R package <span class="citation" data-cites="pereira2021">(<a href="#/references" role="doc-biblioref" onclick="">Pereira et al. 2021</a>)</span> for bicycle routing, relies on <strong>LTS of the highways</strong> (and not exactly CI):</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">library</span>(r5r)</span>
@@ -1225,47 +1222,11 @@
 <li>Each year’s CI classification is used to <strong>override LTS to 1</strong> on newly classified CI segments <!-- > (I tried also with [LTS = 0](https://github.com/ipeaGIT/r5r/issues/553)...). --></li>
 </ul>
 </section>
-<section class="slide level2 center">
-
-<h3 id="osm-drawing-and-tagging">OSM drawing and tagging</h3>
-<div style="font-size: 0.75em; color: #555; margin-top:0.5em;">
-<p><strong>Note:</strong> Protected CI is drawn as a <em>separate segment</em> in OSM; painted lanes and sharrows are <em>tags</em> on the road segment. Both approaches are modelled correctly here.</p>
-</div>
-<div>
-
-</div>
-<div class="quarto-layout-panel" data-layout-ncol="3">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/osm_deparated.png"></p>
-<figcaption>Cycle track - Separated edge</figcaption>
-</figure>
-</div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/osm_cycletag.png"></p>
-<figcaption>Bike lane - Tag on the road</figcaption>
-</figure>
-</div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/osm_shared.png"></p>
-<figcaption>Sharrows - Tag on the road</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="overline-maps-used-routes" class="slide level2 center">
-<h2>Overline Maps (Used Routes)</h2>
+<section id="overline-maps-routed-trips" class="slide level2 center">
+<h2>Overline Maps (Routed trips)</h2>
+<div style="font-size: 0.75em;">
 <p>Using the <code>stplanr::overline()</code> we can visualize the segments with high frequency of use by the 20,000 routes.</p>
+</div>
 <div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
 <figure>
 <p><img data-src="../images/overline_maps/sydney_overline_map_lts1_x3.png" class="" width="1250"></p>
@@ -1273,8 +1234,8 @@
 </figure>
 </div>
 </section>
-<section id="overline-maps-used-routes-1" class="slide level2 center">
-<h2>Overline Maps (Used Routes)</h2>
+<section id="overline-maps-routed-trips-1" class="slide level2 center">
+<h2>Overline Maps (Routed trips)</h2>
 <div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
 <figure>
 <p><img data-src="../images/overline_maps/mexico_overline_map_lts1_x3.png" class="" width="1250"></p>
@@ -1282,8 +1243,8 @@
 </figure>
 </div>
 </section>
-<section id="overline-maps-used-routes-2" class="slide level2 center">
-<h2>Overline Maps (Used Routes)</h2>
+<section id="overline-maps-routed-trips-2" class="slide level2 center">
+<h2>Overline Maps (Routed trips)</h2>
 <div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
 <figure>
 <p><img data-src="../images/overline_maps/brussels_overline_map_lts1_x3.png" class="" width="1250"></p>
@@ -1291,14 +1252,27 @@
 </figure>
 </div>
 </section>
-<section id="overline-maps-used-routes-3" class="slide level2 center">
-<h2>Overline Maps (Used Routes)</h2>
+<section id="overline-maps-routed-trips-3" class="slide level2 center">
+<h2>Overline Maps (Routed trips)</h2>
 <div class="quarto-figure quarto-figure-center" style="max-width: none; margin-left: -100px;">
 <figure>
 <p><img data-src="../images/overline_maps/milan_overline_map_lts1_x3.png" class="" width="1250"></p>
 <figcaption>Milan, max LTS 1</figcaption>
 </figure>
 </div>
+</section>
+<section id="ci-interruptions" class="slide level2 center">
+<h2>CI Interruptions</h2>
+<p>Quantify network fragmentation at the <strong>route level</strong> (physical gaps)</p>
+<ul>
+<li>For each route, identify transitions from CI <span class="math inline">\(\rightarrow\)</span> non-CI <span class="math inline">\(\rightarrow\)</span> CI.</li>
+<li>When consecutive <strong>non-CI edges</strong> are <strong>&gt; 100m</strong>, that counts as <strong>1 interruption</strong>.</li>
+</ul>
+<div style="text-align: center;">
+<p><img data-src="images/ci_interruption_scheme.png" class="" width="700"></p>
+</div>
+<!-- ![](images/ci_interruption_scheme_multiple.png){.nostretch fig-align="center" width="700"} -->
+<p><span style="font-size: 0.7em; color: #555;">Gaps &lt; 100m are considered negligible transitions (e.g.&nbsp;crossing a safe junction).</span></p>
 </section>
 <section id="accessibility-15-min-potential" class="slide level2 center">
 <h2>Accessibility – 15-min potential</h2>
@@ -1588,6 +1562,44 @@
 </section>
 <section class="slide level2 center">
 
+<h3 id="osm-drawing-and-tagging">OSM drawing and tagging</h3>
+<div style="font-size: 0.75em; color: #555; margin-top:0.5em;">
+<p><strong>Note:</strong> Protected CI is drawn as a <em>separate segment</em> in OSM; painted lanes and sharrows are <em>tags</em> on the road segment. Both approaches are modelled correctly here.</p>
+</div>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/osm_deparated.png"></p>
+<figcaption>Cycle track - Separated edge</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/osm_cycletag.png"></p>
+<figcaption>Bike lane - Tag on the road</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/osm_shared.png"></p>
+<figcaption>Sharrows - Tag on the road</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2 center">
+
 <h3 id="the-fragmentation-phase-paradox">The “Fragmentation Phase” Paradox ⚠️</h3>
 <div style="font-size: 0.9em;">
 <p>At the macro level, <strong>total CI positively predicts interruptions</strong> (β ≈ +0.26, ***):</p>
@@ -1741,9 +1753,15 @@ Infrastructure works. But <strong>isolated corridors without gap-closing</strong
 <p><a href="mailto:rosamfelix@tecnico.ulisboa.pt">rosamfelix@tecnico.ulisboa.pt</a><br> <a href="https://github.com/temospena/Sydney">github.com/temospena/Sydney</a> <br><br></p>
 <p><img src="images/ushift-logo.jpeg" height="45" style="vertical-align:middle; margin-right:20px;"> <img src="https://ceris.pt/wp-content/uploads/2025/11/Ceris-logo-color-horizontal.svg" height="25" style="vertical-align:middle;"> <img src="images/Tecnico_ID_Principal_RBG-COR.png" height="45" style="vertical-align:middle; margin-right:20px;"></p>
 </div><div class="column" style="width:30%;">
-<p><br><br> <img data-src="images/linkedin_qr.jpeg" width="280" alt="Linkedin"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/qr_rosabike.svg" width="280"></p>
+<figcaption>rosafelix.bike</figcaption>
+</figure>
+</div>
+<!-- ![Linkedin](images/linkedin_qr.jpeg){width="280"} -->
 </div></div>
-<p><span style="font-size: 0.8em">Funded by FCT - Fundação para a Ciência e Tecnologia under the <strong>FCT-Mobility</strong> program</span> <br> <span style="font-size: 0.6em; color: #666;">(FCT/Mobility/1302410540/2024-25)</span></p>
+<p><span style="font-size: 0.75em">Funded by FCT - Fundação para a Ciência e Tecnologia under the <strong>FCT-Mobility</strong> program</span> <br><span style="font-size: 0.6em; color: #666;">(FCT/Mobility/1302410540/2024-25)</span></p>
 <p><img src="images/logo_fct_black.svg" height="40" style="margin-right:15px; padding:5px;"> <img src="images/prr.svg" height="40" style="margin-right:15px; padding:5px;"> <img src="images/RepublicaPortuguesa.svg" height="40" style="margin-right:15px; padding:5px;"> <img src="images/eu_NextGeneration.svg" height="40" style="margin-right:15px; padding:5px;"></p>
 </div>
 </section>

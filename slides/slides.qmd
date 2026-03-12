@@ -205,7 +205,7 @@ Efficient and reproducible pipeline:
 ::::: {.columns}
 ::: {.column width="60%"}
 
--   **10km** buffer from city center coordinates
+-   **10km** buffer from city center coordinates (20km diameter)
 -   **20,000 OD pairs** generated per city
 
 -   Destinations randomly sampled, weighted by **building volume** (proxy for trip attraction)
@@ -464,8 +464,6 @@ Otherwise → LTS 4
 
 ---
 
----
-
 ### r5r routing package
 
 `r5r` R package [@pereira2021] for bicycle routing, relies on **LTS of the highways** (and not exactly CI):
@@ -589,42 +587,44 @@ trips <- detailed_itineraries(
 
 ---
 
-### OSM drawing and tagging
-
-::: {style="font-size: 0.75em; color: #555; margin-top:0.5em;"}
-**Note:** Protected CI is drawn as a *separate segment* in OSM; painted lanes and sharrows are *tags* on the road segment. Both approaches are modelled correctly here.
-:::
-
-::: {layout-ncol="3"}
-![Cycle track - Separated edge](images/osm_deparated.png)
-
-![Bike lane - Tag on the road](images/osm_cycletag.png)
-
-![Sharrows - Tag on the road](images/osm_shared.png)
-
-:::
-
-## Overline Maps (Used Routes)
-
+## Overline Maps (Routed trips)
+::: {style="font-size: 0.75em;"}
 Using the `stplanr::overline()` we can visualize the segments with high frequency of use by the 20,000 routes.
-
+:::
 
 ![Sydney, max LTS 1](../images/overline_maps/sydney_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
-
-## Overline Maps (Used Routes)
+## Overline Maps (Routed trips)
 
 ![Mexico City, max LTS 1](../images/overline_maps/mexico_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
-## Overline Maps (Used Routes)
+## Overline Maps (Routed trips)
 
 ![Brussels, max LTS 1](../images/overline_maps/brussels_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
-## Overline Maps (Used Routes)
+## Overline Maps (Routed trips)
 
 ![Milan, max LTS 1](../images/overline_maps/milan_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
+## CI Interruptions
+
+Quantify network fragmentation at the **route level** (physical gaps)
+
+-   For each route, identify transitions from CI $\rightarrow$ non-CI $\rightarrow$ CI.
+-   When consecutive **non-CI edges** are **> 100m**, that counts as **1 interruption**.
+
+::: {style="text-align: center;"}
+![](images/ci_interruption_scheme.png){.nostretch width="700"}
+:::
+
+<!-- ![](images/ci_interruption_scheme_multiple.png){.nostretch fig-align="center" width="700"} -->
+
+[Gaps < 100m are considered negligible transitions (e.g. crossing a safe junction).]{style="font-size: 0.7em; color: #555;"}
+
+---
+
 ## Accessibility – 15-min potential
+
 
 -   For each origin (H3 hex), we compute the **sum of building volumes** reachable within a 15-minute cycling trip.
 -   Increases when more destinations become reachable, or existing destinations become fast enough to reach with low stress.
@@ -788,6 +788,22 @@ The alternative LTS shows that, when CI is credited more generously, a higher pr
 
 ---
 
+### OSM drawing and tagging
+
+::: {style="font-size: 0.75em; color: #555; margin-top:0.5em;"}
+**Note:** Protected CI is drawn as a *separate segment* in OSM; painted lanes and sharrows are *tags* on the road segment. Both approaches are modelled correctly here.
+:::
+
+::: {layout-ncol="3"}
+![Cycle track - Separated edge](images/osm_deparated.png)
+
+![Bike lane - Tag on the road](images/osm_cycletag.png)
+
+![Sharrows - Tag on the road](images/osm_shared.png)
+:::
+
+---
+
 ### The "Fragmentation Phase" Paradox ⚠️
 
 ::: {style="font-size: 0.9em;"}
@@ -891,12 +907,14 @@ Questions, comments, and suggestions are very welcome! 💬
 :::
 
 ::: {.column width="30%"}
-<br><br>
-![Linkedin](images/linkedin_qr.jpeg){width="280"}
+
+![rosafelix.bike](images/qr_rosabike.svg){width="280"}
+
+<!-- ![Linkedin](images/linkedin_qr.jpeg){width="280"} -->
 :::
 ::::
 
-[Funded by FCT - Fundação para a Ciência e Tecnologia under the **FCT-Mobility** program]{style="font-size: 0.8em"} <br> [(FCT/Mobility/1302410540/2024-25)]{style="font-size: 0.6em; color: #666;"}
+[Funded by FCT - Fundação para a Ciência e Tecnologia under the **FCT-Mobility** program]{style="font-size: 0.75em"} <br>[(FCT/Mobility/1302410540/2024-25)]{style="font-size: 0.6em; color: #666;"}
 
 <img src="images/logo_fct_black.svg" height="40" style="margin-right:15px; padding:5px;"/> <img src="images/prr.svg" height="40" style="margin-right:15px; padding:5px;"/> <img src="images/RepublicaPortuguesa.svg" height="40" style="margin-right:15px; padding:5px;"/> <img src="images/eu_NextGeneration.svg" height="40" style="margin-right:15px; padding:5px;"/> 
 
