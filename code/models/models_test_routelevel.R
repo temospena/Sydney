@@ -219,6 +219,17 @@ macro_access <- feols(
   cluster = ~city
 )
 
+# Does building total city infrastructure lower the AVERAGE interruptions?
+macro_interrruptions <- feols(
+  avg_ci_interruptions ~ log_total_ci_km + log_total_road_km
+  | city + year,
+  # | city,
+  data = city_lts1,
+  # data = city_lts2,
+  cluster = ~city
+)
+etable(macro_interrruptions)
+
 # ==========================================
 # STEP 3: THE MICRO STORY (ROUTE LEVEL)
 # Does 1km of new infrastructure change the specific trip?
