@@ -196,6 +196,15 @@ macro_access <- feols(
     cluster = ~city
 )
 
+# 5. Average Interruptions (Level-Log)
+# Does building total city infrastructure lower the AVERAGE interruptions?
+macro_interrruptions <- feols(
+  avg_ci_interruptions ~ log_total_ci_km + log_total_road_km
+  | city + year,
+  data = city_lts1,
+  cluster = ~city
+)
+
 # ==========================================
 # STEP 3: THE MICRO STORY (ROUTE LEVEL)
 # Does 1km of new infrastructure change the specific trip?
@@ -298,6 +307,7 @@ exported_models <- list(
     # Macro Models
     macro_duration = summary(macro_duration, lean = TRUE),
     macro_access = summary(macro_access, lean = TRUE),
+    macro_interruptions = summary(macro_interrruptions, lean = TRUE),
 
     # Micro Models
     micro_duration = summary(micro_duration, lean = TRUE),
@@ -328,7 +338,8 @@ modelsummary(
         "Avg Duration (Log)" = macro_duration,
         # "Avg Circuity (Log)" = macro_circuity,
         # "% Safe Route" = macro_safety,
-        "Accessibility (Log)" = macro_access
+        "Accessibility (Log)" = macro_access,
+        "Avg Interruptions (Level)" = macro_interruptions
     ),
     coef_rename = c(
         "log_total_ci_km" = "Total City CI (Log)",
