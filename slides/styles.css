@@ -92,3 +92,40 @@ div[id="refs"] .csl-entry {
     margin-top: 0px !important;
     text-align: center !important;
 }
+
+/* Model Tables Styling */
+.reveal table {
+  font-size: 0.8em;
+  line-height: 1.5 !important;
+  border-collapse: collapse !important;
+  width: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.reveal table th, 
+.reveal table td {
+  border: none;
+  box-shadow: none !important;
+  text-align: center;
+  padding: 0.2em 0.5em !important;
+}
+
+.reveal table thead {
+  border-bottom: 2px solid #333 !important;
+}
+
+/* Table container to keep notes aligned with table width but allow float */
+.table-wrapper {
+  margin: auto;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.table-note {
+  font-size: 0.5em !important;
+  color: #666 !important;
+  text-align: right;
+  margin-top: 0.2em;
+  line-height: 1.2;
+}

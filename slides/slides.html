@@ -406,6 +406,8 @@
       margin-right: 0; 
     }
   </style>
+  <script src="slides_files/libs/kePrint-0.0.1/kePrint.js"></script>
+  <link href="slides_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -424,7 +426,7 @@
 <div>
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="2" style="margin-top: 3em; align-items: flex-start;">
+<div class="quarto-layout-panel" style="margin-top: 3em; align-items: flex-start;" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div id="rosa" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><strong>Rosa Félix</strong></p>
@@ -445,12 +447,7 @@
 </div>
 </div>
 </div>
-<div class="quarto-auto-generated-content">
-<p><img src="images/combined_logos.png" class="slide-logo"></p>
-<div class="footer footer-default">
-<p>R Félix – TransportLab Seminar 2026</p>
-</div>
-</div></section>
+</section>
 
 <section id="about" class="title-slide slide level1 unlisted center">
 <h1>A bit about me</h1>
@@ -1306,284 +1303,421 @@
 </div>
 </div>
 <p>A new CI makes trips <em>virtually</em> faster, increasing the <strong>accessibility</strong> of destinations.</p>
+</section>
+<section id="other-concepts" class="slide level2 center">
+<h2>Other concepts</h2>
+<p><strong>Circuity</strong></p>
+<p><span class="math display">\[\text{Circuity} = \frac{\text{Route Length}}{\text{Euclidean Distance (O-D)}}\]</span></p>
+<p>A circuity of 1.4 means that the route is 40% linger than the distance <em>as the crown flies</em>.</p>
+<div class="fragment">
+<p><strong>Route stress score</strong></p>
+<p><span class="math display">\[\text{Route Avg LTS} = \frac{1(\%\text{LTS}_1) + 2(\%\text{LTS}_2) + 3(\%\text{LTS}_3) + 4(\%\text{LTS}_4)}{100}\]</span></p>
+<p>The stress score is a weighted LTS [1-4] and is higher for higher “use” of higher LTS segments, in that route.</p>
+</div>
 </section></section>
 <section>
 <section id="modelling" class="title-slide slide level1 center" data-transition="fade-in slide-out" data-background-image="other_template/img/gray.png">
 <h1>Modelling</h1>
 <p>Fixed Effects Panel Regression across <strong>Macro (city-wide)</strong> and <strong>Micro (route-level)</strong> scales.</p>
 </section>
-<section id="macro-level-city-wide" class="slide level2 center">
-<h2>Macro Level (City-Wide)</h2>
+<section id="recall-the-question" class="slide level2 center">
+<h2>Recall the Question</h2>
+<p>What are the systemic and route-level impacts of adding <strong>1 km of cycling infrastructure</strong> on trip performance, safety, and accessibility?</p>
 <ul>
-<li>How do <strong>massive, city-scale expansions</strong> affect overall averages?</li>
-<li><strong>Two-way Fixed Effects</strong> (city + year), LTS 1 and LTS 2 subsets.</li>
+<li><strong>Scope:</strong> 50 global cities × 10 years (2016–2026)</li>
+<li><strong>Data:</strong> Historical OSM networks + Global Building Atlas (LoD1)</li>
+<li><strong>Simulation:</strong> 20,000 OD pairs per city (~5M routes total), routed by R5 using Level of Traffic Stress (LTS)</li>
 </ul>
-<p><span class="math display">\[\ln(Y_{ct}) = \beta \cdot \ln(\text{Total CI}_{ct}) + \gamma \cdot \ln(\text{Road km}_{ct}) + \alpha_c + \tau_t + \epsilon_{ct}\]</span></p>
+<aside class="notes">
+<p>This is a longitudinal spatial panel, not a cross-sectional snapshot. We are watching cities grow over a decade.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="macro-model-city-wide" class="slide level2 center">
+<h2>Macro Model (City-Wide)</h2>
+<p>Systemic impact of network expansion on city averages.</p>
+<p><span class="math display">\[\log(Y_{ct}) = \beta_1 \cdot \log(\text{Total CI}_{ct}) + \beta_2 \cdot \log(\text{Total Road}_{ct}) + \alpha_c + \tau_t + \varepsilon_{ct}\]</span></p>
+<p><br></p>
 <div style="font-size: 0.75em; color: #555; margin-top: 0.5em;">
-<p><strong>Effective sample:</strong> 51 cities × 5 years = <strong>255 observations</strong> per LTS level. Standard errors clustered by city.</p>
+<ul>
+<li><span class="math inline">\(Y_{ct}\)</span>: city-wide average outcome (<strong>avg trip duration</strong>, <strong>avg accessibility</strong>) in city <span class="math inline">\(c\)</span>, year <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(\alpha_c\)</span>: <strong>city fixed effects</strong> — absorbs unobserved time-invariant city traits (geography, road grid, morphology)</li>
+<li><span class="math inline">\(\tau_t\)</span>: <strong>year fixed effects</strong> — absorbs global shocks (COVID infrastructure boom, OSM tagging growth)</li>
+<li>Standard Errors clustered by city; <strong>N = 250 obs</strong> (50 cities × 5 years)</li>
+</ul>
 </div>
-<div style="font-size: 0.8em;">
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Note</strong></p>
-</div>
-<div class="callout-content">
-<p><strong>Key statistical note:</strong> The main independent variable (km of CI) varies only at the city-year level, even though routing outcomes are averaged over 20,000 routes. The effective degrees of freedom are lower than the observation count suggests.</p>
-</div>
-</div>
-</div>
-</div>
+<aside class="notes">
+<p>The log-log specification gives us elasticities directly: a 1% increase in X → β% change in Y. The FE approach means we are not comparing Amsterdam to São Paulo; we watch each city change relative to itself.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section class="slide level2 center">
 
-<h3 id="macro-results-duration-accessibility">Macro Results – Duration &amp; Accessibility</h3>
-<table class="caption-top">
+<h3 id="macro-level---results">Macro Level - Results</h3>
+<div class="columns">
+<div class="column" style="width:48%;;">
+<div class="table-wrapper">
+<div class="cell">
+<div class="cell-output-display">
+<table class="table lightable-classic caption-top" data-quarto-postprocess="true" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: inherit; margin-left: auto; margin-right: auto; font-size: 20px; margin-left: auto; margin-right: auto;">
+<caption>Macro-level Impact of Network Expansion (City-Wide), LTS 1</caption>
 <thead>
 <tr class="header">
-<th>Model</th>
-<th>Dep. variable</th>
-<th>Coef. Total CI</th>
-<th>Signif.</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">Duration (Log)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">Accessibility (Log)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>LTS 1</td>
-<td>log(avg_duration)</td>
-<td><strong>−0.066</strong></td>
-<td>***</td>
+<td style="text-align: left;">Total Cycling Infrastructure (log km)</td>
+<td style="text-align: center;">−0.145*** (0.014)</td>
+<td style="text-align: center;">0.344*** (0.029)</td>
 </tr>
 <tr class="even">
-<td>LTS 2</td>
-<td>log(avg_duration)</td>
-<td><strong>−0.089</strong></td>
-<td>***</td>
+<td style="text-align: left; box-shadow: 0px 1.5px;">Total Road Network (log km)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">−0.468*** (0.133)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.837*** (0.272)</td>
 </tr>
 <tr class="odd">
-<td>LTS 1</td>
-<td>log(access_15min)</td>
-<td><strong>+0.175</strong></td>
-<td>*</td>
+<td style="text-align: left; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">Num.Obs.</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">250</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">250</td>
 </tr>
 <tr class="even">
-<td>LTS 2</td>
-<td>log(access_15min)</td>
-<td><strong>+0.197</strong></td>
-<td>**</td>
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important;">R2 / Adj R2</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important;">0.968 / 0.959</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important;">0.988 / 0.985</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">R2 Within / Adj R2 Within</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.524 / 0.519</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.487 / 0.481</td>
 </tr>
 </tbody>
 </table>
-<p>Within R² ≈ 0.10–0.24 (two-way FE absorb most city/year variation)</p>
-<div style="font-size: 0.8em;">
-<div class="callout callout-tip callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Tip</strong></p>
-</div>
-<div class="callout-content">
-<p><strong>Interpretation (log-log):</strong> A <strong>10% expansion</strong> of total CI reduces average LTS 1 trip duration by <strong>0.66%</strong>, and increases 15-min accessible destinations by <strong>1.75%</strong>.</p>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="slide level2 center">
 
-<h3 id="the-accessibility-story">The Accessibility Story</h3>
+
+</div>
+</div>
+<div class="table-note">
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. City + Year FE.</p>
+</div>
+</div>
+</div><div class="column" style="font-size: 0.8em; margin-left: 2%;">
+<ul>
+<li>A +10% CI <strong>decreases</strong> 1.45% trip duration, <strong>increases</strong> 3.4% access to opportunities.</li>
+<li>CI and road network expansion explains ~50% of the <strong>within-city variation</strong> in accessibility over the decade (after controlling for FE).</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><strong>Duration effect:</strong> network growth eliminates routing deterrence</li>
+<li><strong>Accessibility effect:</strong> CI unlocks destinations previously unreachable within a safe 15-min ride</li>
+</ul>
 <blockquote>
-<p><em>“Building bike lanes doesn’t necessarily make trips faster; it makes them <strong>possible</strong>, and it makes them <strong>safe</strong>.”</em></p>
+<p>Building CI doesn’t only make trips faster — it makes them <strong>possible</strong>.</p>
 </blockquote>
-<ul>
-<li><strong>Duration effect:</strong> small but real – network growth saves time</li>
-<li><strong>Accessibility effect:</strong> larger – new CI bridges previously uncrossable barriers (arterials, rivers, highways), unlocking thousands of new destinations within a safe 15-min ride</li>
-</ul>
-<div style="font-size: 0.8em; color: #446;">
-<p>If a city expands its network by <strong>50%</strong>, accessibility for cautious riders jumps by ~<strong>9%</strong> — thousands of new jobs and services within a safe 15-minute ride.</p>
+<div style="font-size: 0.9em;">
+<p>⚠️ <strong>Duration ~ Network Impedance</strong>, not Physical Speed Time savings in our models represent the <em>elimination of network deterrence</em>, not bikes riding faster.</p>
 </div>
+</div>
+</div></div>
 </section>
-<section id="micro-level-route" class="slide level2 center">
-<h2>Micro Level (Route)</h2>
+<section id="micro-model-route-level" class="slide level2 center">
+<h2>Micro Model (Route-Level)</h2>
+<p>Impacts of infrastructure on individual route characteristics.</p>
+<p><span class="math display">\[Y_{rt} = \beta_1 \text{Protected}_{rt} + \beta_2 \text{Paint}_{rt} + \beta_3 \text{Sharrow}_{rt} + \beta_4 \text{Foot}_{rt} + \gamma_{r} + \tau_t + \varepsilon_{rt}\]</span></p>
+<div style="font-size: 0.75em; color: #555; margin-top: 0.5em;">
 <ul>
-<li>~<strong>9.9 million</strong> LTS 1 route observations (50 cities × 5 years × 20k ODs).</li>
-<li>Fixed effects at <strong>route × year</strong> level — each OD pair controls for itself.</li>
-</ul>
-<p><span class="math display">\[ \ln(Y_{irt}) = \beta_1 \text{Protected}_{rt} + \beta_2 \text{Painted}_{rt} + \beta_3 \text{Sharrows}_{rt} + \beta_4 \text{Foot}_{rt} + \alpha_{ir} + \tau_t + \epsilon_{irt} \]</span></p>
-<p>Where <span class="math inline">\(\text{Protected}_{rt}\)</span> = km of protected CI along route <span class="math inline">\(r\)</span> in year <span class="math inline">\(t\)</span>.</p>
-<p><strong>Outcomes modelled:</strong></p>
+<li><span class="math inline">\(Y_{rt}\)</span>: transformation depends on the outcome:
 <ul>
-<li>Log duration, log circuity</li>
-<li>% of route at LTS 1 (safety)</li>
-<li>Weighted average LTS score</li>
-<li>Number of CI interruptions (gaps &gt; 100m)</li>
+<li><strong>log</strong> for duration &amp; circuity → semi-elasticity</li>
+<li><strong>level</strong> for % LTS1, avg. stress score, interruptions → marginal effect</li>
+</ul></li>
+<li><span class="math inline">\(\text{Prot}_{rt}\)</span>, etc.: <strong>km of CI type</strong> along route <span class="math inline">\(r\)</span> in year <span class="math inline">\(t\)</span> (always in levels)</li>
+<li><span class="math inline">\(\gamma_{r}\)</span>: <strong>route fixed effect</strong> — compares <strong>the same</strong> OD pairs’ routes accross the years</li>
+<li><span class="math inline">\(\tau_t\)</span>: <strong>time fixed effect</strong> — absorbs global OSM tagging trends</li>
+<li>SE clustered by city; <strong>N ≈ 4.95M route-year observations</strong></li>
 </ul>
+</div>
+<aside class="notes">
+<p>The route fixed effect is the key advantage. We are not comparing a flat downtown trip to a hilly suburb. We are watching the exact same OD pair change as the city builds infrastructure. This controls for all time-invariant route geometry.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section class="slide level2 center">
 
-<h3 id="micro-results-model-summary">Micro Results – Model Summary</h3>
-<table class="caption-top">
+<h3 id="micro-level-duration-circuity">Micro Level – Duration, Circuity</h3>
+<div class="columns">
+<div class="column" style="width:45%;">
+<div class="table-wrapper">
+<div class="cell">
+<div class="cell-output-display">
+<table class="table lightable-classic caption-top" data-quarto-postprocess="true" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: inherit; margin-left: auto; margin-right: auto; font-size: 18px; margin-left: auto; margin-right: auto;">
+<caption>Micro-Level: Impact of 1 km Infrastructure on Routes</caption>
 <thead>
 <tr class="header">
-<th>Outcome</th>
-<th>Protected (β)</th>
-<th>Painted (β)</th>
-<th>Sharrows (β)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">Duration (Log)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">Circuity (Log)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Log duration</td>
-<td>−0.013 **</td>
-<td>−0.003</td>
-<td>+0.002</td>
+<td style="text-align: left;">Protected CI (km added)</td>
+<td style="text-align: center;">−0.013** (0.005)</td>
+<td style="text-align: center;">0.060*** (0.003)</td>
 </tr>
 <tr class="even">
-<td>Log circuity</td>
-<td>+0.013 **</td>
-<td>+0.003</td>
-<td>+0.002</td>
+<td style="text-align: left;">Painted lane (km added)</td>
+<td style="text-align: center;">−0.023** (0.009)</td>
+<td style="text-align: center;">0.052*** (0.006)</td>
 </tr>
 <tr class="odd">
-<td>% LTS 1 safe</td>
-<td>+0.17 ***</td>
-<td>+0.77 ***</td>
-<td>+0.77 ***</td>
+<td style="text-align: left;">Sharrows (km added)</td>
+<td style="text-align: center;">−0.048*** (0.012)</td>
+<td style="text-align: center;">0.029*** (0.005)</td>
 </tr>
 <tr class="even">
-<td>Avg. LTS score</td>
-<td>−0.084 **</td>
-<td>−0.055 *</td>
-<td>+0.055</td>
+<td style="text-align: left; box-shadow: 0px 1.5px;">Shared w/ pedestrians (km added)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">−0.002 (0.007)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.063*** (0.004)</td>
 </tr>
 <tr class="odd">
-<td>Interruptions</td>
-<td>−0.084 **</td>
-<td>−0.055</td>
-<td>+0.055</td>
+<td style="text-align: left; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">Num.Obs.</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948776</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948320</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important;">R2 / Adj R2</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important;">0.960 / 0.949</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important;">0.841 / 0.802</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">R2 Within / Adj R2 Within</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.014 / 0.014</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.089 / 0.089</td>
 </tr>
 </tbody>
 </table>
-<div style="font-size: 0.65em; color: #555; margin-top: 0.5em;">
-<p>Route + year fixed effects; standard errors clustered by city. Significance: * p&lt;0.1, ** p&lt;0.05, *** p&lt;0.01</p>
-</div>
-</section>
-<section class="slide level2 center">
 
-<h3 id="the-commuter-trade-off">The Commuter Trade-off 🔄</h3>
-<div>
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="2">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img data-src="../images/commuter_tradeoff.png"></p>
 </div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="table-note">
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
+</div>
+</div>
+</div><div class="column" style="margin-left: 3%; margin-top: 1em;">
+<p>The cyclist trade-off 🔄</p>
+<!-- ![](../images/commuter_tradeoff.png) -->
+<div style="font-size: 0.8em; ">
 <p><strong>Per 1 km of protected CI built:</strong></p>
 <ul>
-<li><p>Physical circuity <strong>increases by ~6%</strong><br>
+<li><p>Circuity <strong>+~6%</strong><br>
 <em>(rider detours to use the safe path)</em></p></li>
-<li><p>Effective trip duration <strong>decreases by ~1.3%</strong><br>
+<li><p>Effective trip duration <strong>−~1.3%</strong><br>
 <em>(safer route avoids slow mixed-traffic friction)</em></p></li>
 </ul>
 <blockquote>
-<p><strong>Cyclists willingly accept a longer detour to achieve a faster, safer trip.</strong></p>
+<p><strong>Cyclists willingly accept a longer detour for a “faster”, safer trip.</strong></p>
 </blockquote>
-<p>This is a strong behavioural signal: cyclists value <em>perceived safety</em> over raw distance.</p>
+<!-- Strong behavioural signal: *perceived safety* over raw distance. -->
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section class="slide level2 center">
 
-<h3 id="the-network-glue">The Network Glue 🔗</h3>
-<div>
+<h3 id="micro-level-interruptions">Micro Level – Interruptions</h3>
+<div class="columns">
+<div class="column" style="width:45%;">
+<div class="table-wrapper">
+<div class="cell">
+<div class="cell-output-display">
+<table class="table lightable-classic caption-top" data-quarto-postprocess="true" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: inherit; margin-left: auto; margin-right: auto; font-size: 18px; margin-left: auto; margin-right: auto;">
+<caption>Micro-Level: Impact of 1 km Infrastructure on Routes (LTS 1)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">&nbsp;Interruptions (nr.)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Protected CI (km added)</td>
+<td style="text-align: center;">−0.084*** (0.030)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Painted lane (km added)</td>
+<td style="text-align: center;">−0.055* (0.032)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; box-shadow: 0px 1.5px;">Sharrows (km added)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.055 (0.060)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">Num.Obs.</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948776</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important;">R2 / Adj R2</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important;">0.741 / 0.676</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">R2 Within / Adj R2 Within</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.005 / 0.005</td>
+</tr>
+</tbody>
+</table>
+
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="2">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img data-src="../images/network_glue_gaps.png"></p>
 </div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="table-note">
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
+</div>
+</div>
+</div><div class="column" style="margin-left: 3%;">
+<p>The network continuity 🔗</p>
+<!-- ![](../images/network_glue_gaps.png) -->
+<div style="font-size: 0.8em; ">
 <p><strong>Impact on route interruptions (gaps &gt; 100m without CI):</strong></p>
 <ul>
 <li>Protected CI: <strong>−0.084</strong> per km <em>(significant)</em> ✅<br>
 → Closes real gaps in the network</li>
-<li>Painted lanes: <strong>−0.055</strong> per km <em>(border signif.)</em> ⚠️</li>
-<li>Sharrows: <strong>+0.055</strong> per km <em>(not signific., may increase gaps)</em></li>
+<li>Painted lanes: <strong>−0.055</strong> per km <em>(border signif.)</em></li>
 </ul>
 <blockquote>
-<p><strong>Protected infrastructure is the ONLY type that significantly reduces network fragmentation.</strong></p>
+<p><strong>Protected CI significantly reduces network fragmentation.</strong></p>
 </blockquote>
-<p>Paint and sharrows do not provide the connectivity “glue” needed to stitch together a continuous, low-stress network.</p>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section class="slide level2 center">
 
-<h3 id="the-arterial-lure">The Arterial Lure 🛣️</h3>
-<p>Stress penalty (Avg. LTS increase) by <strong>trip distance</strong> and infrastructure type:</p>
-<div>
+<h3 id="micro-level-safety">Micro Level – Safety</h3>
+<div class="columns">
+<div class="column" style="width:45%;">
+<div class="table-wrapper">
+<div class="cell">
+<div class="cell-output-display">
+<table class="table lightable-classic caption-top" data-quarto-postprocess="true" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: inherit; margin-left: auto; margin-right: auto; font-size: 18px; margin-left: auto; margin-right: auto;">
+<caption>Micro-Level: Impact of 1 km Infrastructure on Routes (LTS 1)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">% LTS1 Safe (p.p.)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">&nbsp;Stress Score (1-4)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Protected CI (km added)</td>
+<td style="text-align: center;">−2.059*** (0.675)</td>
+<td style="text-align: center;">0.052*** (0.018)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Painted lane (km added)</td>
+<td style="text-align: center;">−14.087*** (0.785)</td>
+<td style="text-align: center;">0.282*** (0.023)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; box-shadow: 0px 1.5px;">Sharrows (km added)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">−11.386*** (0.906)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.305*** (0.025)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">Num.Obs.</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948776</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948776</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important;">R2 / Adj R2</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important;">0.810 / 0.762</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important;">0.782 / 0.728</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">R2 Within / Adj R2 Within</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.183 / 0.183</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.131 / 0.131</td>
+</tr>
+</tbody>
+</table>
+
 
 </div>
-<div class="quarto-layout-panel" data-layout-ncol="1">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="../images/arterial_lure_distancebins.png" class="quarto-figure quarto-figure-center" width="900"></p>
-</figure>
+</div>
+<div class="table-note">
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
 </div>
 </div>
+</div><div class="column" style="margin-left: 3%; margin-top: 1em;">
+<p>The Arterial Lure 🛣️</p>
+<!-- ![](../images/arterial_lure_distancebins.png){fig-align="center" width="900"} -->
+<div style="font-size: 0.8em;">
+<p><strong>Stress penalty (Avg. LTS increase) by weaker infrastructure type</strong></p>
+<ul>
+<li>Per 1km Protected, the % of route using safe streets (LTS1) drops 2pp*</li>
+<li>But for 1km Painted lane, it is 7x worse!</li>
+<li>Paint attracts to higher stress streets</li>
+<li>Sharrows are usually placed in (already) quiet streets</li>
+<li><ul>
+<li><em>the cyclist still has to use other segments to access the protected CI</em></li>
+</ul></li>
+</ul>
+<blockquote>
+<p>Separation is real. Protected CI are less stressfull than non-protected</p>
+</blockquote>
+<aside class="notes">
+<p>Before the painted lane existed, the routing engine avoided that arterial road entirely. It kept the rider on quiet backstreets (LTS 1). Once the cycleway=lane tag is added, the engine says, “Oh, this is ‘safe’ enough to use now, let’s take the shortcut!” It lures the route onto the arterial.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<!-- **Key insight:** Paint and sharrows on arterials spike stress penalties, especially for short trips.  
+Protected infrastructure neutralises arterial stress at **all** trip lengths. -->
 </div>
-</div>
-<div style="font-size: 0.8em; color: #555;">
-<p><strong>Key insight:</strong> Paint and sharrows on arterial roads dramatically increase stress penalties for short/medium trips. Protected infrastructure neutralises the stress from arterial crossings across all trip lengths.</p>
-</div>
-</section>
-<section id="the-alternative-lts" class="slide level2 center">
-<h2>The Alternative LTS</h2>
-<p>Comparing the <strong>baseline</strong> LTS routing versus an <strong>alternative LTS</strong> assignment that more aggressively recognises CI:</p>
-<div>
-
-</div>
-<div class="quarto-layout-panel" data-layout-ncol="2">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="../images/route_lts_pct/sydney_plot_route_lts_usage_lts1.png"></p>
-<figcaption>Sydney LTS 1 – Original assignment</figcaption>
-</figure>
-</div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="../images/route_lts_pct/sydney_plot_route_lts_usage_alternative_lts1.png"></p>
-<figcaption>Sydney LTS 1 – Alternative assignment</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div style="font-size: 0.8em; color: #555; margin-top: 0.5em;">
-<p>The alternative LTS shows that, when CI is credited more generously, a higher proportion of trips spend time on LTS 1 segments — validating the robustness of the methodology.</p>
-</div>
+</div></div>
 </section>
 <section class="slide level2 center">
 
 <h3 id="osm-drawing-and-tagging">OSM drawing and tagging</h3>
-<div style="font-size: 0.75em; color: #555; margin-top:0.5em;">
-<p><strong>Note:</strong> Protected CI is drawn as a <em>separate segment</em> in OSM; painted lanes and sharrows are <em>tags</em> on the road segment. Both approaches are modelled correctly here.</p>
+<div style="font-size: 0.9em;">
+<p>Protected CI is drawn as a <strong>separate segment</strong> in OSM. Painted lanes and sharrows are <strong>tags</strong> on the road segment. (<em>Both approaches are modelled correctly.</em>)</p>
 </div>
 <div>
 
@@ -1616,25 +1750,121 @@
 </div>
 </div>
 </div>
+<div style="font-size: 0.8em;">
+<ul>
+<li><strong>Paint</strong> → rider shares the arterial’s space → inherits its danger</li>
+<li><strong>Protection</strong> → spatially separate → implies a road diet or space-reallocation (lanes, parking, etc.)</li>
+</ul>
+</div>
 </section>
 <section class="slide level2 center">
 
-<h3 id="the-fragmentation-phase-paradox">The “Fragmentation Phase” Paradox ⚠️</h3>
-<div style="font-size: 0.9em;">
-<p>At the macro level, <strong>total CI positively predicts interruptions</strong> (β ≈ +0.26, ***):</p>
+<h3 id="the-alternative-lts">The Alternative LTS</h3>
+<p>Comparing the <strong>original</strong> LTS routing versus an <strong>alternative LTS</strong> assignment that more aggressively recognises CI:</p>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../images/route_lts_pct/sydney_plot_route_lts_usage_lts1.png"></p>
+<figcaption>Sydney LTS 1 – Original assignment</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../images/route_lts_pct/sydney_plot_route_lts_usage_alternative_lts1.png"></p>
+<figcaption>Sydney LTS 1 – Alternative assignment</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div style="font-size: 0.8em; color: #555; margin-top: 0.5em;">
+<p>The alternative LTS shows that, when CI is credited more generously, a higher proportion of trips spend time on LTS 1 segments.</p>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h3 class="smaller" id="micro-level-alternative-lts">Micro Level – Alternative LTS</h3>
+<!-- Placement vs. Protection -->
+<div class="table-wrapper">
+<div class="cell">
+<div class="cell-output-display">
+<table class="table lightable-classic caption-top" data-quarto-postprocess="true" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: inherit; width: auto !important; margin-left: auto; margin-right: auto; font-size: 20px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">% LTS1 (original)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">&nbsp;% LTS1 (CI = LTS1)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">Stress (original)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">&nbsp;Stress (CI = LTS1)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Protected CI (km added)</td>
+<td style="text-align: center;">−2.059*** (0.675)</td>
+<td style="text-align: center; font-style: italic;">4.223*** (0.380)</td>
+<td style="text-align: center;">0.052*** (0.018)</td>
+<td style="text-align: center; font-style: italic;">−0.105*** (0.010)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Painted lane (km added)</td>
+<td style="text-align: center;">−14.087*** (0.785)</td>
+<td style="text-align: center; font-style: italic;">5.021*** (0.563)</td>
+<td style="text-align: center;">0.282*** (0.023)</td>
+<td style="text-align: center; font-style: italic;">−0.125*** (0.015)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; box-shadow: 0px 1.5px;">Sharrows (km added)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">−11.386*** (0.906)</td>
+<td style="text-align: center; box-shadow: 0px 1.5pxfont-style;">4.590*** (1.195)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.305*** (0.025)</td>
+<td style="text-align: center; box-shadow: 0px 1.5pxfont-style;">−0.107*** (0.029)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">Num.Obs.</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948776</td>
+<td style="text-align: center; font-style: italic; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948776</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948776</td>
+<td style="text-align: center; font-style: italic; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">4948776</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">R2 / Adj R2</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.810 / 0.762</td>
+<td style="text-align: center; font-style: italic; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.800 / 0.749</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.782 / 0.728</td>
+<td style="text-align: center; font-style: italic; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.786 / 0.732</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R2 Within / Adj R2 Within</td>
+<td style="text-align: center;">0.183 / 0.183</td>
+<td style="text-align: center; font-style: italic;">0.081 / 0.081</td>
+<td style="text-align: center;">0.131 / 0.131</td>
+<td style="text-align: center; font-style: italic;">0.075 / 0.075</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<div class="table-note">
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
+</div>
+</div>
+<div style="font-size: 0.8em;">
+<p>Forcing the routing engine to treat <strong>all CI</strong> (including paint and sharrows on busy roads) as fully safe (<strong>LTS = 1</strong>).</p>
+<p>Under the alternative, differences between CI types <strong>collapse</strong> — paint and sharrows reduce stress as effectively as protected tracks.</p>
 <blockquote>
-<p><em>Each 10% expansion of total CI increases average interruptions per route by ~2.6%</em></p>
-</blockquote>
-<p><strong>Why?</strong> Cities in 2016–2026 were in the <strong>“Fragmented Network Phase”</strong>:</p>
-<ol type="1">
-<li><strong>No CI (Stage 1):</strong> Rider goes fully in mixed traffic → 0 interruptions.</li>
-<li><strong>Fragmented CI (Stage 2):</strong> Isolated “islands” of safe lanes; each new isolated segment creates <strong>2 new gap edges</strong> where the cyclist must enter/exit mixed traffic.</li>
-<li><strong>Mature network (Stage 3):</strong> Connected corridors → interruptions drop.</li>
-</ol>
-<p>This is a <strong>data-confirmed policy finding</strong> — not a modelling flaw:</p>
-<blockquote>
-<p><em>“Just building raw kilometres doesn’t create a cohesive network. It creates a fragmented, stressful riding experience.”</em><br>
-The policy recommendation: shift success metrics from <strong>“km built”</strong> → <strong>“gaps closed”</strong>.</p>
+<p>Cities place <em>opportunistic paint</em> on dangerous arterials.<br>
+Without <strong>physical protection</strong>, the rider absorbs 100% of that arterial danger.<br>
+Physical separation is the only intervention that eliminates the stress penalty.</p>
 </blockquote>
 </div>
 </section></section>
@@ -1645,92 +1875,69 @@ The policy recommendation: shift success metrics from <strong>“km built”</st
 </section>
 <section id="key-takeaways" class="slide level2 center">
 <h2>Key Takeaways</h2>
-<div>
-
-</div>
-<div class="quarto-layout-panel" data-layout-ncol="1">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <table class="caption-top">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 40%">
+<col style="width: 30%">
+<col style="width: 30%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Finding</th>
-<th style="text-align: left;">Metric</th>
-<th style="text-align: left;">Effect</th>
+<th>Metric</th>
+<th>Effect</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Network growth saves time</td>
-<td style="text-align: left;">Avg. duration (macro)</td>
-<td style="text-align: left;">−0.66% per 10% CI growth</td>
+<td style="text-align: left;">Network growth eliminates impedance</td>
+<td>Avg. duration (macro)</td>
+<td>−1.45% per 10% CI growth</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Network unlocks destinations</td>
-<td style="text-align: left;">15-min accessibility</td>
-<td style="text-align: left;">+1.75–1.97% per 10% CI</td>
+<td>15-min accessibility</td>
+<td>+3.4% per 10% CI growth</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Detour accepted for safety</td>
-<td style="text-align: left;">Circuity (micro)</td>
-<td style="text-align: left;">+6% per 1km protected CI</td>
+<td style="text-align: left;">Detour as trade-off for safety</td>
+<td>Circuity (micro)</td>
+<td>+6% per 1km protected CI</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">But trip is effectively shorter</td>
-<td style="text-align: left;">Duration (micro)</td>
-<td style="text-align: left;">−1.3% per 1km protected CI</td>
+<td style="text-align: left;">Trip is (<em>virtually?</em>) shorter</td>
+<td>Duration (micro)</td>
+<td>−1.3% per 1km protected CI</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Only protected CI closes gaps</td>
-<td style="text-align: left;">Interruptions</td>
-<td style="text-align: left;">−0.084 per km (signif.)</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">More CI → more gaps (fragmented era)</td>
-<td style="text-align: left;">Interruptions (macro)</td>
-<td style="text-align: left;">+2.6% per 10% CI ⚠️</td>
+<td>Interruptions</td>
+<td>−0.084 per km (signif.)</td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
+<!-- | More CI → more gaps (fragmented era) | Interruptions (macro) | +0.6 per 10% CI ⚠️ | -->
 <div style="margin-top: 0.5em; font-size: 0.85em; color: #554;">
-<p><strong>The central policy message:</strong><br>
-Infrastructure works. But <strong>isolated corridors without gap-closing</strong> create a fragmented, stressful network. The win lies in <strong>continuity</strong>, not just quantity.</p>
+<p>Infrastructure works. But <strong>isolated corridors without gap-closing</strong> create a fragmented, stressful network.<br>
+The win lies in <strong>continuity and protection</strong>, not just quantity.</p>
 </div>
-</section></section>
-<section>
-<section id="limitations" class="title-slide slide level1 center" data-transition="fade-in slide-out" data-background-image="other_template/img/gray.png">
-<h1>Limitations</h1>
-
 </section>
-<section id="routing-engine" class="slide level2 center">
-<h2>Routing Engine</h2>
+<section id="limitations" class="slide level2 center">
+<h2>Limitations</h2>
+<h3 id="routing-engine">Routing Engine</h3>
 <ul>
-<li>Calm residential roads (LTS 1 by default) are treated the same as dedicated CI → engine may route through dense neighbourhoods rather than lanes.</li>
-<li>Custom cost schemes in R5 are subjective; standard LTS was used to maintain reproducibility and comparability.</li>
+<li>Calm residential roads (LTS 1 by default) are <strong>treated the same</strong> as dedicated CI → engine may route through dense neighbourhoods rather than CI.</li>
+<li>Custom cost schemes in R5 are simple and objective; standard LTS was used to maintain reproducibility and comparability.</li>
 </ul>
 </section>
-<section id="osm-data-quality" class="slide level2 center">
-<h2>OSM Data Quality</h2>
+<section class="slide level2 center">
+
+<h3 id="osm-data-quality">OSM Data Quality</h3>
 <ul>
 <li><strong>Tagging evolution:</strong> OSM segments are tagged differently across years — our algorithm captures some of this, but tagging changes ≠ physical infrastructure changes (e.g., Munich 2021→2026).</li>
-<li><strong>Contributions growth:</strong> OSM data density in all cities increased 2016→2026 — some “new CI” may just be newly mapped old CI.</li>
+<li><strong>Contributions growth:</strong> OSM data density in all cities increased 2016→2026</li>
+<li><strong>Delays in OSM</strong>: some “new CI” may just be newly mapped old CI.</li>
 <li><strong>Segment fragmentation:</strong> Protected CI drawn as separate segments is realistic, but increases with tagging evolution.</li>
-</ul>
-</section>
-<section id="endogeneity" class="slide level2 center">
-<h2>Endogeneity ⚠️</h2>
-<ul>
-<li>Cities don’t build bike lanes randomly — they build where <strong>demand is highest or space is cheapest</strong>.</li>
-<li>This biases elasticity estimates upward unless Instrumental Variables (IV) are applied (e.g., historical railway lines, planned-but-unfunded corridors).</li>
-<li>Current results should be interpreted as <strong>associations</strong>, not causal effects.</li>
 </ul>
 <div style="font-size: 0.8em; color: #655; margin-top: 0.5em;">
 <p>These routing-engine and OSM limitations would affect any study using these data sources — they are inherent to using open, longitudinal data globally.</p>
@@ -1741,18 +1948,14 @@ Infrastructure works. But <strong>isolated corridors without gap-closing</strong
 <h1>Further Research</h1>
 
 </section>
-<section id="further-research-1" class="slide level2 center">
-<h2>Further Research</h2>
+<section id="next-steps" class="slide level2 incremental center">
+<h2>Next steps</h2>
 <ul>
 <li><strong>Scale up:</strong> Pre-process ~200 cities 🌍</li>
-<li><strong>More time points:</strong> Add 2018, 2019, 2024 to smooth OSM tagging fluctuations and better capture the COVID-19 infrastructure boom</li>
-</ul>
-</section>
-<section id="further-research-cont." class="slide level2 center">
-<h2>Further Research (cont.)</h2>
-<ul>
-<li><strong>Validate OSM tags:</strong> Random sampling to quantify tagging inconsistencies per city</li>
-<li><strong>Gap-closing metric:</strong> Develop a specific “network continuity” score and model its elasticities</li>
+<li><strong>More time points:</strong> Add all the 10 years ⏳</li>
+<li><strong>Validate OSM tags:</strong> Random sampling to quantify tagging inconsistencies per city 🔎🗺️</li>
+<li><strong>Gap-closing metric:</strong> Develop a specific “network continuity” score ⛓️‍💥</li>
+<li><strong>Submit a paper</strong> 📝</li>
 </ul>
 </section></section>
 <section id="questions" class="title-slide slide level1 center" data-background-image="other_template/img/gray.png">
@@ -1804,7 +2007,163 @@ Zhu, Xiao Xiang, Sining Chen, Fahong Zhang, Yilei Shi, and Yuanyuan Wang. 2025. 
 </div>
 </div>
 </section>
+<section class="slide level2 center">
+
+<h3 data-visibility="uncounted" id="global-background-trends-year-fixed-effects">Global Background Trends (Year Fixed Effects)</h3>
+<p>What happened globally between 2016 and 2026, independent of new infrastructure?</p>
+<div style="font-size: 0.85em;">
+<p><strong>1. The “Global Safety &amp; Data Maturity” Trend</strong> <em>(Driven by 30 km/h city policies and richer OpenStreetMap tagging)</em></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Route-Level Metric</th>
+<th style="text-align: center;">2016 Baseline</th>
+<th style="text-align: center;">2026 Global Shift</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Safe Proportion (% LTS 1)</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;"><strong>+ 12.5 p.p.</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Average Stress (LTS 1-4)</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;"><strong>- 0.32 pts</strong></td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p><strong>2. The “Global Sprawl &amp; Friction” Trend</strong> <em>(Driven by outward urban expansion and complexified road networks)</em></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">System Metric</th>
+<th style="text-align: center;">2016 Baseline</th>
+<th style="text-align: center;">2026 Global Shift</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Macro Accessibility (Bubble)</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;"><strong>- 10.7 %</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Micro Interruptions (Count)</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;"><strong>+ 0.23 stops</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<aside class="notes">
+<p>Speaker Notes: This proves why our models are robust. If we didn’t include the Year FE, our model would have falsely credited our specific bike lanes for that massive 12.5% global jump in safety. By filtering out these background trends, our coefficients strictly measure the marginal impact of the newly poured asphalt.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
+<section class="slide level2 center">
+
+<h3 data-visibility="uncounted" id="the-fragmentation-phase-paradox">The “Fragmentation Phase” Paradox ⚠️</h3>
+<div style="font-size: 0.8em;">
+<p>At the <strong>macro level</strong>, total CI positively predicts interruptions (β ≈ +0.656, ***):</p>
+<p>Expanding the total network by 1% adds a statistically significant, but practically small, 0.006 interruptions to the average commute. While small per trip, the positive direction confirms that cities historically expand via disconnected, opportunistic segments.</p>
+<p><strong>Why?</strong> Cities in 2016–2026 were in the <strong>“Fragmented Network Phase”</strong>:</p>
+<ol type="1">
+<li><strong>No CI (Stage 1):</strong> Rider uses mixed traffic → 0 interruptions</li>
+<li><strong>Fragmented CI (Stage 2):</strong> Isolated islands; each new segment creates <strong>2 new gap edges</strong></li>
+<li><strong>Mature network (Stage 3):</strong> Connected corridors → interruptions drop</li>
+</ol>
+<p><strong>Policy implication:</strong> Shift success metrics from <strong>“km built”</strong> → <strong>“gaps closed”</strong></p>
+</div>
+</section>
+<section class="slide level2 center">
+
+<h4 class="smaller" data-visibility="uncounted" id="micro-level-stress-scrore-by-distance-intervals">Micro Level – Stress Scrore by Distance Intervals</h4>
+<div class="table-wrapper">
+<div class="cell">
+<div class="cell-output-display">
+<table class="table lightable-classic caption-top" data-quarto-postprocess="true" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: inherit; width: auto !important; margin-left: auto; margin-right: auto; font-size: 20px; margin-left: auto; margin-right: auto;">
+<caption>Micro-Level: Impact of 1 km Infrastructure on Stress Score by Distance (LTS 1)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">&nbsp;Short (&lt;2km)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">&nbsp;Medium (2-5km)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">&nbsp;Long (5-8km)</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; border-top: 2px solid #222 !important; border-bottom: 1.5px solid #222 !important;">&nbsp;VeryLong (&gt;8km)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Protected CI (km added)</td>
+<td style="text-align: center;">0.170** (0.068)</td>
+<td style="text-align: center;">0.082*** (0.026)</td>
+<td style="text-align: center;">0.049*** (0.015)</td>
+<td style="text-align: center;">0.033*** (0.011)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Painted lane (km added)</td>
+<td style="text-align: center;">0.770*** (0.065)</td>
+<td style="text-align: center;">0.395*** (0.028)</td>
+<td style="text-align: center;">0.229*** (0.018)</td>
+<td style="text-align: center;">0.146*** (0.011)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; box-shadow: 0px 1.5px;">Sharrows (km added)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.772*** (0.088)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.402*** (0.035)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.234*** (0.020)</td>
+<td style="text-align: center; box-shadow: 0px 1.5px;">0.162*** (0.014)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">Num.Obs.</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">1211352</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">2737710</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">666247</td>
+<td style="text-align: center; border-top: 1.5px solid #111 !important; color: rgba(119, 119, 119, 255) !important;">221525</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">R2 / Adj R2</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.804 / 0.747</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.807 / 0.753</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.831 / 0.778</td>
+<td style="text-align: center; color: rgba(119, 119, 119, 255) !important; border-bottom: 2px solid #222 !important;">0.834 / 0.783</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R2 Within / Adj R2 Within</td>
+<td style="text-align: center;">0.106 / 0.106</td>
+<td style="text-align: center;">0.176 / 0.176</td>
+<td style="text-align: center;">0.228 / 0.228</td>
+<td style="text-align: center;">0.268 / 0.268</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<div class="table-note">
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
+</div>
+</div>
+<div class="quarto-auto-generated-content">
+<p><img src="images/combined_logos.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>R Félix – TransportLab Seminar 2026</p>
+</div>
+</div>
+</section></section>
     </div>
   </div>
 
@@ -2015,6 +2374,44 @@ Zhu, Xiao Xiang, Sining Chen, Fahong Zhang, Yilei Shi, and Yuanyuan Wang. 2025. 
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
       const toggleBodyColorMode = (bsSheetEl) => {
