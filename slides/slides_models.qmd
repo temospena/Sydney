@@ -139,7 +139,7 @@ Systemic impact of network expansion on city averages.
 $$\ln(Y_{ct}) = \beta_1 \cdot \ln(\text{Total CI}_{ct}) + \beta_2 \cdot \ln(\text{Total Road}_{ct}) + \alpha_c + \tau_t + \varepsilon_{ct}$$
 
 ::: {style="font-size: 0.75em; color: #555; margin-top: 0.5em;"}
-- $Y_{ct}$: city-wide average outcome (duration, accessibility) in city $c$, year $t$
+- $Y_{ct}$: city-wide average outcome (duration, accessibility, interruptions) in city $c$, year $t$
 - $\alpha_c$: **city fixed effects** — absorbs unobserved time-invariant city traits (geography, sprawl)
 - $\tau_t$: **year fixed effects** — absorbs global shocks (COVID infrastructure boom, OSM tagging growth)
 - SE clustered by city; **N = 250 obs** (50 cities × 5 years)
@@ -199,6 +199,7 @@ The Systemic Return on Investment
 macro_list <- list(
     "Duration (Log)"      = m$macro_duration,
     "Accessibility (Log)" = m$macro_access
+    #"Interruptions (Level)" = m$macro_interrruptions
 )
 
 modelsummary(
@@ -464,22 +465,6 @@ This answers the toughest critique: the "Arterial Lure" is driven by real-world 
 
 ---
 
-### The "Fragmentation Phase" Paradox ⚠️
-
-::: {style="font-size: 0.9em;"}
-At the **macro level**, total CI positively predicts interruptions (β ≈ +0.26, ***):
-
-> *Each 10% expansion of total CI increases average interruptions per route by ~2.6%*
-
-**Why?** Cities in 2016–2026 were in the **"Fragmented Network Phase"**:
-
-1. **No CI (Stage 1):** Rider uses mixed traffic → 0 interruptions
-2. **Fragmented CI (Stage 2):** Isolated islands; each new segment creates **2 new gap edges**
-3. **Mature network (Stage 3):** Connected corridors → interruptions drop
-
-**Policy implication:** Shift success metrics from **"km built"** → **"gaps closed"**
-:::
-
 # Summary {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
 
 ---
@@ -493,10 +478,29 @@ At the **macro level**, total CI positively predicts interruptions (β ≈ +0.26
 | Detour as trade-off for safety | Circuity (micro) | +6% per 1km protected CI |
 | Trip is (*virtually?*) shorter | Duration (micro) | −1.3% per 1km protected CI |
 | Only protected CI closes gaps | Interruptions | −0.084 per km (signif.) |
-| More CI → more gaps (fragmented era) | Interruptions (macro) | +2.6% per 10% CI ⚠️ |
+<!-- | More CI → more gaps (fragmented era) | Interruptions (macro) | +0.6 per 10% CI ⚠️ | -->
 
 ::: {style="margin-top: 0.5em; font-size: 0.85em; color: #554;"}
 **The central policy message:**  
 Infrastructure works. But **isolated corridors without gap-closing** create a fragmented, stressful network.  
 The win lies in **continuity and protection**, not just quantity.
+:::
+
+---
+
+### The "Fragmentation Phase" Paradox ⚠️ {visibility="uncounted"}
+
+::: {style="font-size: 0.8em;"}
+At the **macro level**, total CI positively predicts interruptions (β ≈ +0.656, ***):
+
+Expanding the total network by 1% adds a statistically significant, but practically small, 0.006 interruptions to the average commute. 
+While small per trip, the positive direction confirms that cities historically expand via disconnected, opportunistic segments.
+
+**Why?** Cities in 2016–2026 were in the **"Fragmented Network Phase"**:
+
+1. **No CI (Stage 1):** Rider uses mixed traffic → 0 interruptions
+2. **Fragmented CI (Stage 2):** Isolated islands; each new segment creates **2 new gap edges**
+3. **Mature network (Stage 3):** Connected corridors → interruptions drop
+
+**Policy implication:** Shift success metrics from **"km built"** → **"gaps closed"**
 :::
