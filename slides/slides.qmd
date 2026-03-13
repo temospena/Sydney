@@ -180,11 +180,11 @@ Open datasets only *(no registerations or API needed)*
 -   Buildings weighted by estimated **volume** as a proxy for trip attraction.
 
 ::: {layout-ncol="3"}
-![Lisbon (mean: 2.94 floors)](../images/Screenshot_20260217_172324.png)
+![Lisbon (mean: 2.94 floors)](images/Screenshot_20260217_172324.png)
 
-![Paris (mean: 3.92 floors)](../images/Screenshot_20260217_172645.png)
+![Paris (mean: 3.92 floors)](images/Screenshot_20260217_172645.png)
 
-![Sydney (mean: 3.21 floors)](../images/Screenshot_20260217_173136.png)
+![Sydney (mean: 3.21 floors)](images/Screenshot_20260217_173136.png)
 :::
 
 ## Selected Cities
@@ -192,7 +192,7 @@ Open datasets only *(no registerations or API needed)*
 -   **N = 50 cities** with > 1 million residents, balanced across continents.
 -   Cities with **cycling infrastructure expansion** (2016–2026).
 
-![](../images/city_map_points.png){.nostretch fig-align="center" width="1200" style="margin-top: 0px; margin-left: -75px; max-width: none;"}
+![](images/city_map_points.png){.nostretch fig-align="center" width="1200" style="margin-top: 0px; margin-left: -75px; max-width: none;"}
 
 ::: {.absolute top="550" left="20" style="background-color: rgba(255, 255, 255, 0.9); padding: 12px; border-radius: 8px; width: 150px; font-size: 14px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); text-align: left; z-index: 100;"}
 **Coords sources:** National Geospatial Intelligence Agency, USGS, US Census, NASA ([simplemaps.com/data/world-cities](https://simplemaps.com/data/world-cities)).
@@ -310,7 +310,7 @@ Efficient and reproducible pipeline:
 -   Log-normal calibration ensures routes resemble **realistic urban cycling** trips.
 
 ::: {layout-ncol="2"}
-![Random OD](../images/Lisbon_traveldistance_lts2.png){width="700" fig-align="center"}
+![Random OD](images/Lisbon_traveldistance_lts2.png){width="700" fig-align="center"}
 
 ![Calibrated random OD](../images/cumulative_distance/sao paulo_cumulative_distance_lts1.png){width="700" fig-align="center"}
 :::
@@ -408,7 +408,7 @@ END AS ci_type
 
 ### CI evolution – Santiago
 
-![](../data/pipeline/santiago/results/ci_evolution_facet_map.png)
+![](images/santiago_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
 ![](../images/ci_evolution/santiago_plot_ci_types_absolute.png)
@@ -418,7 +418,7 @@ END AS ci_type
 
 ### CI evolution – London
 
-![](../data/pipeline/london/results/ci_evolution_facet_map.png)
+![](images/london_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
 ![](../images/ci_evolution/london_plot_ci_types_absolute.png)
@@ -428,7 +428,7 @@ END AS ci_type
 
 ### CI evolution – Brussels
 
-![](../data/pipeline/brussels/results/ci_evolution_facet_map.png)
+![](images/brussels_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
 ![](../images/ci_evolution/brussels_plot_ci_types_absolute.png)
@@ -438,7 +438,7 @@ END AS ci_type
 
 ### CI evolution – Christchurch
 
-![](../data/pipeline/christchurch/results/ci_evolution_facet_map.png)
+![](images/christchurch_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
 ![](../images/ci_evolution/christchurch_plot_ci_types_absolute.png)
@@ -448,7 +448,7 @@ END AS ci_type
 
 ### CI evolution – Montréal
 
-![](../data/pipeline/montréal/results/ci_evolution_facet_map.png)
+![](images/montréal_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
 ![](../images/ci_evolution/montréal_plot_ci_types_absolute.png)
@@ -458,7 +458,7 @@ END AS ci_type
 
 ### CI evolution – São Paulo
 
-![](../data/pipeline/sao%20paulo/results/ci_evolution_facet_map.png)
+![](images/sao_paulo_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
 ![](../images/ci_evolution/sao%20paulo_plot_ci_types_absolute.png)
@@ -489,37 +489,37 @@ Otherwise → LTS 4
 
 ### LTS classification - examples
 
-![](../data/pipeline/sydney/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![](images/sydney_lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
 ### LTS classification - examples
 
-![](../data/pipeline/melbourne/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![](images/melbourne_lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
 ### LTS classification - examples
 
-![](../data/pipeline/paris/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![](images/paris_lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
 ### LTS classification - examples
 
-![](../data/pipeline/kyoto/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![](images/kyoto_lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
 ### LTS classification - examples
 
-![](../data/pipeline/san%20francisco/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![](images/san_francisco_lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
 ### LTS classification - examples
 
-![](../data/pipeline/london/results/lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![](images/london_lts_evolution_facet_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
@@ -898,7 +898,7 @@ modelsummary(
 ::: {.column style="width: 52%; margin-left: 3%; margin-top: 1em;"}
 The cyclist trade-off 🔄
 
-<!-- ![](../images/commuter_tradeoff.png) -->
+<!-- ![](images/commuter_tradeoff.png) -->
 
 ::: {style="font-size: 0.8em; "}
 **Per 1 km of protected CI built:**
@@ -969,7 +969,7 @@ modelsummary(
 The network continuity 🔗
 
 
-<!-- ![](../images/network_glue_gaps.png) -->
+<!-- ![](images/network_glue_gaps.png) -->
 
 ::: {style="font-size: 0.8em; "}
 **Impact on route interruptions (gaps > 100m without CI):**
@@ -1036,7 +1036,7 @@ modelsummary(
 
 The Arterial Lure 🛣️
 
-<!-- ![](../images/arterial_lure_distancebins.png){fig-align="center" width="900"} -->
+<!-- ![](images/arterial_lure_distancebins.png){fig-align="center" width="900"} -->
 
 ::: {style="font-size: 0.8em;"}
 **Stress penalty (Avg. LTS increase) by weaker infrastructure type**
