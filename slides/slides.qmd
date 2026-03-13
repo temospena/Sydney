@@ -274,7 +274,7 @@ Efficient and reproducible pipeline:
 
 ::: {.column width="40%"}
 
-![H3 res9 in Sydney](/images/sydney_hex9.png){fig-align="center"}
+![H3 res9 in Sydney](images/sydney_hex9.png){fig-align="center"}
 
 :::
 :::::
