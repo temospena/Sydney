@@ -209,14 +209,14 @@ Open datasets only *(no registerations or API needed)*
 -   **Quality**: OSM tagging variability
 <br><br>
 
-![Munich, Lisbon, Ljubljana](../images/ci_evolution/munich_plot_ci_types_absolute.png){width="1000"}
+![Munich, Lisbon, Ljubljana](images/munich_plot_ci_types_absolute.png){width="1000"}
 :::
 
 ::: {.column width="45%"}
 ::: {layout-nrow="2"}
-![Cairo, Cape Town, Hong Kong (no data)](../images/ci_evolution/cairo_plot_ci_types_absolute.png){width="1000"}
+![Cairo, Cape Town, Hong Kong (no data)](images/cairo_plot_ci_types_absolute.png){width="1000"}
 
-![Amsterdam, Stockholm](../images/ci_evolution/amsterdam_plot_ci_types_absolute.png){width="1000"}
+![Amsterdam, Stockholm](images/amsterdam_plot_ci_types_absolute.png){width="1000"}
 :::
 :::
 :::::
@@ -281,27 +281,27 @@ Efficient and reproducible pipeline:
 
 ---
 
-![Sydney OD hex map](../images/od_hex_map/sydney_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![Sydney OD hex map](images/sydney_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
-![London OD hex map](../images/od_hex_map/london_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![London OD hex map](images/london_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
-![Santiago OD hex map](../images/od_hex_map/santiago_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![Santiago OD hex map](images/santiago_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
-![Tokyo OD hex map](../images/od_hex_map/tokyo_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![Tokyo OD hex map](images/tokyo_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
-![São Paulo OD hex map](../images/od_hex_map/sao-paulo_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![São Paulo OD hex map](images/sao-paulo_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
-![Shanghai OD hex map](../images/od_hex_map/shanghai_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![Shanghai OD hex map](images/shanghai_od_hex_map.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ---
 
@@ -312,7 +312,7 @@ Efficient and reproducible pipeline:
 ::: {layout-ncol="2"}
 ![Random OD](images/Lisbon_traveldistance_lts2.png){width="700" fig-align="center"}
 
-![Calibrated random OD](../images/cumulative_distance/sao paulo_cumulative_distance_lts1.png){width="700" fig-align="center"}
+![Calibrated random OD](images/sao-paulo_cumulative_distance_lts1.png){width="700" fig-align="center"}
 :::
 
 <!-- Arrow overlay -->
@@ -395,13 +395,13 @@ END AS ci_type
 ### CI evolution by type
 
 ::: {layout-ncol="2"}
-![Paris – strong growth in painted & protected](../images/ci_evolution/paris_plot_ci_types_absolute.png)
+![Paris – strong growth in painted & protected CI](images/paris_plot_ci_types_absolute.png)
 
-![Sydney – growing mixed CI after 2019](../images/ci_evolution/sydney_plot_ci_types_absolute.png)
+![Sydney – growing mixed CI after 2019](images/sydney_plot_ci_types_absolute.png)
 
-![Bogotá – mostly protected CI](../images/ci_evolution/bogota_plot_ci_types_absolute.png)
+![Bogotá – mostly protected CI](images/bogota_plot_ci_types_absolute.png)
 
-![Tokyo – mostly sharrows / mixed](../images/ci_evolution/tokyo_plot_ci_types_absolute.png)
+![Tokyo – mostly sharrows / mixed](images/tokyo_plot_ci_types_absolute.png)
 :::
 
 ---
@@ -411,7 +411,7 @@ END AS ci_type
 ![](images/santiago_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
-![](../images/ci_evolution/santiago_plot_ci_types_absolute.png)
+![](images/santiago_plot_ci_types_absolute.png)
 :::
 
 ---
@@ -421,7 +421,7 @@ END AS ci_type
 ![](images/london_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
-![](../images/ci_evolution/london_plot_ci_types_absolute.png)
+![](images/london_plot_ci_types_absolute.png)
 :::
 
 ---
@@ -431,7 +431,7 @@ END AS ci_type
 ![](images/brussels_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
-![](../images/ci_evolution/brussels_plot_ci_types_absolute.png)
+![](images/brussels_plot_ci_types_absolute.png)
 :::
 
 ---
@@ -441,7 +441,7 @@ END AS ci_type
 ![](images/christchurch_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
-![](../images/ci_evolution/christchurch_plot_ci_types_absolute.png)
+![](images/christchurch_plot_ci_types_absolute.png)
 :::
 
 ---
@@ -451,17 +451,17 @@ END AS ci_type
 ![](images/montréal_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
-![](../images/ci_evolution/montréal_plot_ci_types_absolute.png)
+![](images/montréal_plot_ci_types_absolute.png)
 :::
 
 ---
 
 ### CI evolution – São Paulo
 
-![](images/sao_paulo_ci_evolution_facet_map.png)
+![](images/sao-paulo_ci_evolution_facet_map.png)
 
 ::: {.absolute bottom="-25%" right="0%" style="width: 500px;"}
-![](../images/ci_evolution/sao%20paulo_plot_ci_types_absolute.png)
+![](images/sao-paulo_plot_ci_types_absolute.png)
 :::
 
 
@@ -651,19 +651,19 @@ trips <- detailed_itineraries(
 Using the `stplanr::overline()` we can visualize the segments with high frequency of use by the 20,000 routes.
 :::
 
-![Sydney, max LTS 1](../images/overline_maps/sydney_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![Sydney, max LTS 1](images/sydney_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ## Overline Maps (Routed trips)
 
-![Mexico City, max LTS 1](../images/overline_maps/mexico_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![Mexico City, max LTS 1](images/mexico_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ## Overline Maps (Routed trips)
 
-![Brussels, max LTS 1](../images/overline_maps/brussels_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![Brussels, max LTS 1](images/brussels_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ## Overline Maps (Routed trips)
 
-![Milan, max LTS 1](../images/overline_maps/milan_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
+![Milan, max LTS 1](images/milan_overline_map_lts1_x3.png){.nostretch fig-align="center" width="1250" style="max-width: none; margin-left: -100px;"}
 
 ## CI Interruptions
 
@@ -1088,9 +1088,9 @@ Painted lanes and sharrows are **tags** on the road segment. (*Both approaches a
 Comparing the **original** LTS routing versus an **alternative LTS** assignment that more aggressively recognises CI:
 
 ::: {layout-ncol="2"}
-![Sydney LTS 1 – Original assignment](../images/route_lts_pct/sydney_plot_route_lts_usage_lts1.png)
+![Sydney LTS 1 – Original assignment](images/sydney_plot_route_lts_usage_lts1.png)
 
-![Sydney LTS 1 – Alternative assignment](../images/route_lts_pct/sydney_plot_route_lts_usage_alternative_lts1.png)
+![Sydney LTS 1 – Alternative assignment](images/sydney_plot_route_lts_usage_alternative_lts1.png)
 :::
 
 ::: {style="font-size: 0.8em; color: #555; margin-top: 0.5em;"}
