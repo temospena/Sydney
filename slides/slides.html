@@ -225,7 +225,7 @@
 <h2 class="subtitle" style="margin-top: 0;">
 <p>A 50-city panel data analysis using open data</p>
 </h2>
-<div class="quarto-layout-panel" style="margin-top: 3em; align-items: flex-start;" data-layout-ncol="2">
+<div class="quarto-layout-panel" data-layout-ncol="2" style="margin-top: 3em; align-items: flex-start;">
 <div class="quarto-layout-row">
 <div id="rosa" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><strong>Rosa Félix</strong></p>
@@ -1140,7 +1140,7 @@
 
 <h3 id="macro-level---results">Macro Level - Results</h3>
 <div class="columns">
-<div class="column" style="width:48%;;">
+<div class="column" style="width:48%;">
 <div class="table-wrapper">
 <div class="cell">
 <div class="cell-output-display">
@@ -1184,10 +1184,11 @@
 </div>
 </div>
 <div class="table-note">
-<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. City + Year FE.</p>
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. City + Year FE.<br>
+Log-Log.</p>
 </div>
 </div>
-</div><div class="column" style="font-size: 0.8em; margin-left: 2%;">
+</div><div class="column" style="width: 42%; font-size: 0.8em; margin-left: 2%;">
 <ul>
 <li><p>A +10% CI <strong>decreases</strong> 1.45% trip duration, <strong>increases</strong> 3.4% access to opportunities. <br><br></p></li>
 <li><p><strong>Duration effect:</strong> network growth eliminates routing deterrence</p></li>
@@ -1305,10 +1306,10 @@
 </div>
 </div>
 <div class="table-note">
-<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE. Log-Level.</p>
 </div>
 </div>
-</div><div class="column" style="margin-left: 3%; margin-top: 1em;">
+</div><div class="column" style="width: 52%; margin-left: 3%; margin-top: 1em;">
 <p>The cyclist trade-off 🔄</p>
 <!-- ![](../images/commuter_tradeoff.png) -->
 <div style="font-size: 0.8em; ">
@@ -1372,10 +1373,10 @@
 </div>
 </div>
 <div class="table-note">
-<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE. Level-Level.</p>
 </div>
 </div>
-</div><div class="column" style="margin-left: 3%;">
+</div><div class="column" style="width: 52%; margin-left: 3%;">
 <p>The network continuity 🔗</p>
 <!-- ![](../images/network_glue_gaps.png) -->
 <div style="font-size: 0.8em; ">
@@ -1444,10 +1445,10 @@
 </div>
 </div>
 <div class="table-note">
-<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE. Level-Level.</p>
 </div>
 </div>
-</div><div class="column" style="margin-left: 3%; margin-top: 1em;">
+</div><div class="column" style="width: 52%; margin-left: 3%; margin-top: 1em;">
 <p>The Arterial Lure 🛣️</p>
 <!-- ![](../images/arterial_lure_distancebins.png){fig-align="center" width="900"} -->
 <div style="font-size: 0.8em;">
@@ -1548,13 +1549,16 @@ Protected infrastructure neutralises arterial stress at **all** trip lengths. --
 </div>
 </div>
 <div style="font-size: 0.8em; color: #555; margin-top: 0.5em;">
-<p>The alternative LTS shows that, when CI is credited more generously, a higher proportion of trips spend time on LTS 1 segments.</p>
+<p>The alternative LTS shows that, when CI is credited more generously, a higher proportion of trips ride along on LTS 1 segments. (The routes are the same!).</p>
 </div>
 </section>
 <section class="slide level2 center">
 
 <h3 class="smaller" id="micro-level-alternative-lts">Micro Level – Alternative LTS</h3>
 <!-- Placement vs. Protection -->
+<div style="font-size: 0.8em;">
+<p>Forcing the routing engine to treat <strong>all CI</strong> (including paint and sharrows on busy roads) as fully safe (<strong>LTS = 1</strong>).</p>
+</div>
 <div class="table-wrapper">
 <div class="cell">
 <div class="cell-output-display">
@@ -1616,14 +1620,13 @@ Protected infrastructure neutralises arterial stress at **all** trip lengths. --
 </div>
 </div>
 <div class="table-note">
-<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE.</p>
+<p>* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE. Level-Level.</p>
 </div>
 </div>
 <div style="font-size: 0.8em;">
-<p>Forcing the routing engine to treat <strong>all CI</strong> (including paint and sharrows on busy roads) as fully safe (<strong>LTS = 1</strong>).</p>
 <p>Under the alternative, differences between CI types <strong>collapse</strong> — paint and sharrows reduce stress as effectively as protected tracks.</p>
 <blockquote>
-<p>Cities place <em>opportunistic paint</em> on dangerous arterials.<br>
+<p>Cities place <em>opportunistic paint</em> on busy arterials.<br>
 Without <strong>physical protection</strong>, the rider absorbs 100% of that arterial danger.<br>
 Physical separation is the only intervention that eliminates the stress penalty.</p>
 </blockquote>
@@ -1666,7 +1669,7 @@ Physical separation is the only intervention that eliminates the stress penalty.
 <td>+6% per 1km protected CI</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Trip is (<em>virtually?</em>) shorter</td>
+<td style="text-align: left;">Trip is (<em>virtually?</em>) faster</td>
 <td>Duration (micro)</td>
 <td>−1.3% per 1km prot. CI</td>
 </tr>
@@ -1679,8 +1682,10 @@ Physical separation is the only intervention that eliminates the stress penalty.
 </table>
 <!-- | More CI → more gaps (fragmented era) | Interruptions (macro) | +0.6 per 10% CI ⚠️ | -->
 <div class="fragment" style="margin-top: 0.5em; font-size: 0.85em; color: #554;">
+<blockquote>
 <p>Infrastructure works. But <strong>isolated corridors without gap-closing</strong> create a fragmented, stressful network.<br>
 The win lies in <strong>continuity and protection</strong>, not just quantity.</p>
+</blockquote>
 </div>
 </section>
 <section id="limitations" class="slide level2 center">

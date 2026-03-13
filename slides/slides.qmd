@@ -758,7 +758,7 @@ The log-log specification gives us elasticities directly: a 1% increase in X →
 ### Macro Level - Results
 :::: {.columns}
 
-::: {.column width="48%;"}
+::: {.column width="48%"}
 ::: {.table-wrapper}
 ```{r}
 #| label: macro-results-tab
@@ -801,7 +801,7 @@ Log-Log.
 :::
 :::
 
-::: {.column width="42%" style="font-size: 0.8em; margin-left: 2%;"}
+::: {.column style="width: 42%; font-size: 0.8em; margin-left: 2%;"}
 
 - A +10% CI **decreases** 1.45% trip duration, **increases** 3.4% access to opportunities.
 <br><br>
@@ -894,7 +894,7 @@ modelsummary(
 :::
 :::
 
-::: {.column width="52%" style="margin-left: 3%; margin-top: 1em;"}
+::: {.column style="width: 52%; margin-left: 3%; margin-top: 1em;"}
 The cyclist trade-off 🔄
 
 <!-- ![](../images/commuter_tradeoff.png) -->
@@ -964,7 +964,7 @@ modelsummary(
 :::
 :::
 
-::: {.column width="52%" style="margin-left: 3%;"}
+::: {.column style="width: 52%; margin-left: 3%;"}
 The network continuity 🔗
 
 
@@ -1031,7 +1031,7 @@ modelsummary(
 :::
 :::
 
-::: {.column width="52%" style="margin-left: 3%; margin-top: 1em;"}
+::: {.column style="width: 52%; margin-left: 3%; margin-top: 1em;"}
 
 The Arterial Lure 🛣️
 
@@ -1093,7 +1093,7 @@ Comparing the **original** LTS routing versus an **alternative LTS** assignment 
 :::
 
 ::: {style="font-size: 0.8em; color: #555; margin-top: 0.5em;"}
-The alternative LTS shows that, when CI is credited more generously, a higher proportion of trips spend time on LTS 1 segments.
+The alternative LTS shows that, when CI is credited more generously, a higher proportion of trips ride along on LTS 1 segments. (The routes are the same!).
 :::
 
 ---
@@ -1101,6 +1101,9 @@ The alternative LTS shows that, when CI is credited more generously, a higher pr
 ### Micro Level – Alternative LTS {.smaller}
 
 <!-- Placement vs. Protection -->
+::: {style="font-size: 0.8em;"}
+Forcing the routing engine to treat **all CI** (including paint and sharrows on busy roads) as fully safe (**LTS = 1**).
+:::
 
 ::: {.table-wrapper}
 ```{r}
@@ -1141,8 +1144,6 @@ modelsummary(
 :::
 
 ::: {style="font-size: 0.8em;"}
-Forcing the routing engine to treat **all CI** (including paint and sharrows on busy roads) as fully safe (**LTS = 1**).
-
 Under the alternative, differences between CI types **collapse** — paint and sharrows reduce stress as effectively as protected tracks.
 
 > Cities place *opportunistic paint* on busy arterials.  
@@ -1162,14 +1163,14 @@ Under the alternative, differences between CI types **collapse** — paint and s
 | Network growth eliminates impedance | Avg. duration (macro) | −1.45% per 10% CI growth |
 | Network unlocks destinations | 15-min accessibility | +3.4% per 10% CI growth |
 | Detour as trade-off for safety | Circuity (micro) | +6% per 1km protected CI |
-| Trip is (*virtually?*) shorter | Duration (micro) | −1.3% per 1km prot. CI |
+| Trip is (*virtually?*) faster | Duration (micro) | −1.3% per 1km prot. CI |
 | Only protected CI closes gaps | Interruptions | −0.084 per km (signif.) |
 <!-- | More CI → more gaps (fragmented era) | Interruptions (macro) | +0.6 per 10% CI ⚠️ | -->
 
 
 ::: {.fragment style="margin-top: 0.5em; font-size: 0.85em; color: #554;"}
-Infrastructure works. But **isolated corridors without gap-closing** create a fragmented, stressful network.  
-The win lies in **continuity and protection**, not just quantity.
+> Infrastructure works. But **isolated corridors without gap-closing** create a fragmented, stressful network.  
+> The win lies in **continuity and protection**, not just quantity.
 :::
 
 
