@@ -225,7 +225,7 @@
 <h2 class="subtitle" style="margin-top: 0;">
 <p>A 50-city panel data analysis using open data</p>
 </h2>
-<div class="quarto-layout-panel" data-layout-ncol="2" style="margin-top: 3em; align-items: flex-start;">
+<div class="quarto-layout-panel" style="margin-top: 3em; align-items: flex-start;" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div id="rosa" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><strong>Rosa Félix</strong></p>
@@ -468,7 +468,7 @@
 </div><div class="column" style="width:40%;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../images/sydney_hex9.png"></p>
+<p><img data-src="images/sydney_hex9.png"></p>
 <figcaption>H3 res9 in Sydney</figcaption>
 </figure>
 </div>
@@ -2249,7 +2249,7 @@ Zhu, Xiao Xiang, Sining Chen, Fahong Zhang, Yilei Shi, and Yuanyuan Wang. 2025. 
         }
           var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
           var mailtoRegex = new RegExp(/^mailto:/);
-            var filterRegex = new RegExp('/' + window.location.host + '/');
+            var filterRegex = new RegExp("https:\/\/temospena\.github\.io\/Sydney\/");
           var isInternal = (href) => {
               return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
           }
