@@ -79,7 +79,7 @@ get_gof_row <- function(models, type = "r2") {
 ```
 
 
-#  {.unlisted background-image="other_template/img/gray.png"}
+#  {.unlisted background-image="images/gray.png"}
 
 ::::::: {style="text-align: center; margin-top: 1em;"}
 <h1 class="title" style="margin-bottom: 0.2em;">
@@ -139,7 +139,7 @@ Funded by FCT Mobility (Portuguese Science Foundation)
 :::
 :::
 
-# Objectives {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+# Objectives {transition="fade-in slide-out" background-image="images/gray.png"}
 
 ---
 
@@ -160,7 +160,7 @@ Funded by FCT Mobility (Portuguese Science Foundation)
 -   Distinguish effects by infrastructure **type** (protected, painted, sharrows, shared foot)
 :::
 
-# Data {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+# Data {transition="fade-in slide-out" background-image="images/gray.png"}
 Open datasets only *(no registerations or API needed)*
 
 ## Historical OpenStreetMap (OSM)
@@ -231,7 +231,7 @@ Evolution of absolute cycling infrastructure across the **50 cities** (2016–20
 <!-- Each point = one city × one year. Line = continental average. Strong growth especially in Europe and Americas. -->
 :::
 
-# Data Processing {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+# Data Processing {transition="fade-in slide-out" background-image="images/gray.png"}
 
 ## Methods Overview 
 
@@ -717,7 +717,7 @@ The stress score is a weighted LTS [1-4] and is higher for higher "use" of highe
 :::
 
 
-# Modelling {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+# Modelling {transition="fade-in slide-out" background-image="images/gray.png"}
 
 What are the systemic and route-level impacts of adding **1 km of cycling infrastructure** on trip performance, safety, and accessibility?
 
@@ -1153,7 +1153,7 @@ Under the alternative, differences between CI types **collapse** — paint and s
 
 :::
 
-# Findings {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+# Findings {transition="fade-in slide-out" background-image="images/gray.png"}
 
 ---
 
@@ -1186,7 +1186,7 @@ Under the alternative, differences between CI types **collapse** — paint and s
 
 ### OSM Data Quality
 
--   **Tagging evolution:** OSM segments are tagged differently across years — our algorithm captures some of this, but tagging changes ≠ physical infrastructure changes (e.g., Munich 2021→2026).
+-   **Tagging evolution:** OSM segments are tagged differently across years — our algorithm captures some of this, but tagging changes ≠ physical infrastructure changes (e.g., Munich 2021→2026). Also, [cycling tags change](https://wiki.openstreetmap.org/wiki/Proposal:Deprecate_cycleway%3Dopposite_family).
 -   **Contributions growth:** OSM data density in all cities increased 2016→2026
 -   **Delays in OSM**: some "new CI" may just be newly mapped old CI.
 -   **Segment fragmentation:** Protected CI drawn as separate segments is realistic, but increases with tagging evolution.
@@ -1196,7 +1196,7 @@ These routing-engine and OSM limitations would affect any study using these data
 :::
 
 
-# Further Research {transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+# Further Research {transition="fade-in slide-out" background-image="images/gray.png"}
 
 ## Next steps{.incremental}
 
@@ -1206,14 +1206,14 @@ These routing-engine and OSM limitations would affect any study using these data
 -   **Gap-closing metric:** Develop a specific "network continuity" score ⛓️‍💥
 -   **Submit a paper** 📝
 
-# Questions? {background-image="other_template/img/gray.png"}
+# Questions? {background-image="images/gray.png"}
 
 ::: {style="text-align: center; margin-top: 1em;"}
 Questions, comments, and suggestions are very welcome! 💬
 
 :::
 
-# Thank You {.center .unlisted transition="fade-in slide-out" background-image="other_template/img/gray.png"}
+# Thank You {.center .unlisted transition="fade-in slide-out" background-image="images/gray.png"}
 
 ::: {align="center"}
 :::: {.columns}
