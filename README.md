@@ -9,7 +9,7 @@ This repository contains an automated, scalable pipeline designed to analyze the
 - [**documents/**](documents/): Technical documentation, including all the AI prompts used to scale up the pipeline, pipeline flowcharts (`.drawio`) and project development plans.
 - [**images/**](images/): High-level visualizations, research snapshots, and consolidated plots for all studied cities.
 - [**paper/**](paper/): Manuscript and research note source files (`.qmd`, `.bib`).
-- [**slides/**](slides/): Presentation slides (`.qmd`, `.html`).
+- [**slides/**](slides/): Presentation slides (`.qmd`, `.html`): [TransportLab (Mar2026)](https://temospena.github.io/Sydney/slides/)
 
 ## Key Features
 
