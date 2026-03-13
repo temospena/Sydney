@@ -1,0 +1,22 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "slides/slides.qmd"
+
+website:
+  title: "Sydney Project"
+  sidebar: false
+  navbar: false
+
+# Still good to have these just in case
+exclude:
+  - "paper/**"
+  - "documents/**"
+  - "README.md"
+  - "LICENSE"
+  - "data/**"
+  - "networks/**"
+  - "code/**"
+  - "backup_schemes/**"
+  - "**/.*"
