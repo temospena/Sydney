@@ -143,7 +143,7 @@ Funded by FCT Mobility (Portuguese Science Foundation)
 
 ---
 
-## How does cycling network expansion impact…
+## How does cycling network expansion impacts…
 
 -   **Trip efficiency**: duration, distance, circuity ⏱️
 -   **Safety**: Level of Traffic Stress exposure 🛡️
@@ -1045,7 +1045,7 @@ The Arterial Lure 🛣️
 - But for 1km Painted lane, it is 7x worse!
 - Paint attracts to higher stress streets
 - Sharrows are usually placed in (already) quiet streets
-- * *the cyclist still has to use other segments to access the protected CI*
+- \* *the cyclist still has to use other segments to access the protected CI*
 
 > Separation is real. Protected CI are less stressfull than non-protected
 
