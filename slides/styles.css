@@ -1,0 +1,131 @@
+.reveal p {
+    color: #424141;
+    font-size: 0.9em;
+    /* Adjusted for better readability */
+}
+
+.reveal a {
+    color: #009fe3;
+}
+
+.reveal table td {
+    color: #424141;
+    /* Or #666666 for lighter gray */
+}
+
+/* Bullet point list text color */
+.reveal ul,
+.reveal ol,
+.reveal li {
+    color: #666666;
+    /* Or your preferred gray */
+    font-size: 0.95em;
+    /* Adjusted for better readability */
+}
+
+/* Second-level bullets (nested lists) */
+.reveal ul ul,
+.reveal ol ol {
+    font-size: 0.85em;
+    /* or even 0.8em, depending on preference */
+    color: #666666;
+}
+
+.reveal h1 {
+    font-size: 3.4em;
+}
+
+.reveal h2 {
+    font-size: 1.6em;
+}
+
+.reveal h3 {
+    font-size: 1.3em;
+}
+
+.reveal h4 {
+    font-size: 1.1em;
+}
+
+
+.title {
+    font-size: 70px !important;
+    line-height: 1.2em !important;
+}
+
+.subtitle {
+    font-size: 40px !important;
+    color: #666666 !important;
+    margin-top: 20px !important;
+}
+
+/* Or a more general rule */
+div[id="refs"] {
+    font-size: 0.8em;
+}
+
+div[id="refs"] .csl-entry {
+    margin-bottom: 1em !important;
+}
+
+.v-center-container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+}
+
+.h-center-text {
+    text-align: center !important;
+}
+
+.h-center-text ul {
+    display: inline-block !important;
+    text-align: left !important;
+}
+
+.reveal figcaption,
+.reveal .caption {
+    font-size: 0.5em !important;
+    color: #888888 !important;
+    margin-top: 0px !important;
+    text-align: center !important;
+}
+
+/* Model Tables Styling */
+.reveal table {
+  font-size: 0.8em;
+  line-height: 1.5 !important;
+  border-collapse: collapse !important;
+  width: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.reveal table th, 
+.reveal table td {
+  border: none;
+  box-shadow: none !important;
+  text-align: center;
+  padding: 0.2em 0.5em !important;
+}
+
+.reveal table thead {
+  border-bottom: 2px solid #333 !important;
+}
+
+/* Table container to keep notes aligned with table width but allow float */
+.table-wrapper {
+  margin: auto;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.table-note {
+  font-size: 0.5em !important;
+  color: #666 !important;
+  text-align: right;
+  margin-top: 0.2em;
+  line-height: 1.2;
+}

@@ -1,0 +1,191 @@
+[
+  {
+    "objectID": "slides/index.html#how-does-cycling-network-expansion-impacts",
+    "href": "slides/index.html#how-does-cycling-network-expansion-impacts",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "How does cycling network expansion impacts…",
+    "text": "How does cycling network expansion impacts…\n\nTrip efficiency: duration, distance, circuity ⏱️\nSafety: Level of Traffic Stress exposure 🛡️\nAccessibility: 15-min potential to reach opportunities 🏫\nContinuity: number of interruptions when using CI 🛑\n\n\nGoals:\n\nAnalyze 10 years of evolution (2016–2026) across 50 cities\nEstimate model elasticities of infrastructure improvements\nDistinguish effects by infrastructure type (protected, painted, sharrows, shared foot)"
+  },
+  {
+    "objectID": "slides/index.html#historical-openstreetmap-osm",
+    "href": "slides/index.html#historical-openstreetmap-osm",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Historical OpenStreetMap (OSM)",
+    "text": "Historical OpenStreetMap (OSM)\n\nSource: Geofabrik 🗺️\n\nFull road network for routing\nCycling infrastructure classification"
+  },
+  {
+    "objectID": "slides/index.html#buildings-as-originsdestinations",
+    "href": "slides/index.html#buildings-as-originsdestinations",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Buildings as origins/destinations",
+    "text": "Buildings as origins/destinations\n\nAvoiding census or travel survey data → global reproducibility.\nUsed Global Building Atlas – LoD1 (Zhu et al. 2025).\nBuildings weighted by estimated volume as a proxy for trip attraction.\n\n\n\n\n\n\n\nLisbon (mean: 2.94 floors)\n\n\n\n\n\n\n\nParis (mean: 3.92 floors)\n\n\n\n\n\n\n\nSydney (mean: 3.21 floors)"
+  },
+  {
+    "objectID": "slides/index.html#selected-cities",
+    "href": "slides/index.html#selected-cities",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Selected Cities",
+    "text": "Selected Cities\n\nN = 50 cities with &gt; 1 million residents, balanced across continents.\nCities with cycling infrastructure expansion (2016–2026).\n\n\n\n\n\n\n\nCoords sources: National Geospatial Intelligence Agency, USGS, US Census, NASA (simplemaps.com/data/world-cities)."
+  },
+  {
+    "objectID": "slides/index.html#excluded-cities",
+    "href": "slides/index.html#excluded-cities",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Excluded Cities",
+    "text": "Excluded Cities\n\n\n8 cities excluded due to:\n\nScale: &lt; 100 km of CI by 2026\nGrowth: &lt; 10% CI expansion in 2016–2026\nQuality: OSM tagging variability \n\n\n\n\nMunich, Lisbon, Ljubljana\n\n\n\n\n\n\n\n\n\nCairo, Cape Town, Hong Kong (no data)\n\n\n\n\n\n\n\n\n\nAmsterdam, Stockholm"
+  },
+  {
+    "objectID": "slides/index.html#cycling-infrastructure-evolution",
+    "href": "slides/index.html#cycling-infrastructure-evolution",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Cycling Infrastructure Evolution",
+    "text": "Cycling Infrastructure Evolution\nEvolution of absolute cycling infrastructure across the 50 cities (2016–2026)"
+  },
+  {
+    "objectID": "slides/index.html#methods-overview",
+    "href": "slides/index.html#methods-overview",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Methods Overview",
+    "text": "Methods Overview\n\n\n\n\n\n\n\n\nEfficient and reproducible pipeline:\n\nEach city takes ~20 minutes to run the full pipeline\nGenerates ~3 GB of data per city"
+  },
+  {
+    "objectID": "slides/index.html#tools",
+    "href": "slides/index.html#tools",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Tools",
+    "text": "Tools\n\n\n\n R  sf, h3jsr, osmactive, r5r, stplanr, fixest\n\n\n DuckDB  Global Building Atlas data connection\n\n\n Java / R5 Conveyal routing engine\n\n\nGemini 3.1 Pro Scaling R scripts into an efficient 50-city pipeline"
+  },
+  {
+    "objectID": "slides/index.html#od-pairs-sampling",
+    "href": "slides/index.html#od-pairs-sampling",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "OD Pairs Sampling",
+    "text": "OD Pairs Sampling\n\n\n\n10km buffer from city center coordinates (20km diameter)\n20,000 OD pairs generated per city\nDestinations randomly sampled, weighted by building volume (proxy for trip attraction)\nDistance follows a log-normal function calibrated for cycling trips (Kou and Cai 2019)\nOrigin hexagons (with buildings) sampled using H3 resolution 9 (~200m edge length, ~400m “diameter”, ~0.105 km²)\n\n\n\n\n\nH3 res9 in Sydney"
+  },
+  {
+    "objectID": "slides/index.html#ci-classification-in-4-types",
+    "href": "slides/index.html#ci-classification-in-4-types",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "CI Classification in 4 types",
+    "text": "CI Classification in 4 types\nWith osmactive custom classification of CI, we classified OSM segments into 4 simplified types to assess infrastructure quality, based on OSM tags:\n\n\n\n\n\n\n\n\nType\nOSM examples\n\n\n\n\nProtected (separated)\nhighway:cycleway → separated tracks\n\n\nPainted (medium)\ncycleway:lane → bike lanes on road\n\n\nSharrows (weak/mixed)\ncycleway:shared_lane → advisory\n\n\nFoot (shared w/pedestrian)\nhighway:pedestrian & bicycle:yes → shared paths\n\n\n\n\n\n-- Conceptual query (based on osmactive logic)\nCASE WHEN highway = 'cycleway' OR cycleway IN ('track', 'opposite_track') THEN 'Protected'\n     WHEN cycleway IN ('lane', 'opposite_lane') THEN 'Painted'\n     WHEN cycleway IN ('share_busway', 'shared_lane') OR bicycle_road = 'yes' THEN 'Sharrows'\n     WHEN highway IN ('path', 'footway', 'pedestrian') AND bicycle IN ('yes', 'designated')\n          THEN 'Foot'\nEND AS ci_type"
+  },
+  {
+    "objectID": "slides/index.html#level-of-traffic-stress-lts",
+    "href": "slides/index.html#level-of-traffic-stress-lts",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Level of Traffic Stress (LTS)",
+    "text": "Level of Traffic Stress (LTS)\n\nClassification from Mineta Transport Institute (2012)\n\n\nLTS - Alta Planning\n\nAdapted by Conveyal (Conway 2015) to applied to every OSM edge as:\n\nIf way does not allow cars → LTS 1\nIf highway:residential / living_street → LTS 1\nIf maxspeed &lt; 40 km/h AND lanes &lt; 4 → LTS 2\nIf highway:tertiary/unclassified + cycleway tag → LTS 2\nIf cycleway tag on busier road → LTS 3\nOtherwise → LTS 4"
+  },
+  {
+    "objectID": "slides/index.html#overline-maps-routed-trips",
+    "href": "slides/index.html#overline-maps-routed-trips",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Overline Maps (Routed trips)",
+    "text": "Overline Maps (Routed trips)\n\nUsing the stplanr::overline() we can visualize the segments with high frequency of use by the 20,000 routes.\n\n\n\n\nSydney, max LTS 1"
+  },
+  {
+    "objectID": "slides/index.html#overline-maps-routed-trips-1",
+    "href": "slides/index.html#overline-maps-routed-trips-1",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Overline Maps (Routed trips)",
+    "text": "Overline Maps (Routed trips)\n\n\n\nMexico City, max LTS 1"
+  },
+  {
+    "objectID": "slides/index.html#overline-maps-routed-trips-2",
+    "href": "slides/index.html#overline-maps-routed-trips-2",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Overline Maps (Routed trips)",
+    "text": "Overline Maps (Routed trips)\n\n\n\nBrussels, max LTS 1"
+  },
+  {
+    "objectID": "slides/index.html#overline-maps-routed-trips-3",
+    "href": "slides/index.html#overline-maps-routed-trips-3",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Overline Maps (Routed trips)",
+    "text": "Overline Maps (Routed trips)\n\n\n\nMilan, max LTS 1"
+  },
+  {
+    "objectID": "slides/index.html#ci-interruptions",
+    "href": "slides/index.html#ci-interruptions",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "CI Interruptions",
+    "text": "CI Interruptions\nQuantify network fragmentation at the route level (physical gaps)\n\nFor each route, identify transitions from CI \\(\\rightarrow\\) non-CI \\(\\rightarrow\\) CI.\nWhen consecutive non-CI edges are &gt; 100m, that counts as 1 interruption.\n\n\n\n\n\nGaps &lt; 100m are considered negligible transitions (e.g. crossing a safe junction)."
+  },
+  {
+    "objectID": "slides/index.html#accessibility-15-min-potential",
+    "href": "slides/index.html#accessibility-15-min-potential",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Accessibility – 15-min potential",
+    "text": "Accessibility – 15-min potential\n\n\nFor each origin (H3 hex), we compute the sum of building volumes reachable within a 15-minute cycling trip.\nIncreases when more destinations become reachable, or existing destinations become fast enough to reach with low stress.\n\n\n\n\n\n\n\n\nBefore\n\n\n\n\n\n\n\nAfter with new CI\n\n\n\n\n\nA new CI makes trips virtually faster (or possible), increasing the accessibility of destinations."
+  },
+  {
+    "objectID": "slides/index.html#other-concepts",
+    "href": "slides/index.html#other-concepts",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Other concepts",
+    "text": "Other concepts\nCircuity\n\n\\[\\text{Circuity} = \\frac{\\text{Route Length}}{\\text{Euclidean Distance (O-D)}}\\]\n\nA circuity of 1.4 means that the route is 40% longer than the distance as the crown flies.\n\n\nStress score (route)\n\n\\[\\text{Route Avg LTS} = \\frac{1(\\%\\text{LTS}_1) + 2(\\%\\text{LTS}_2) + 3(\\%\\text{LTS}_3) + 4(\\%\\text{LTS}_4)}{100}\\]\n\nThe stress score is a weighted LTS [1-4] and is higher for higher “use” of higher LTS segments, in that route."
+  },
+  {
+    "objectID": "slides/index.html#macro-model-city-wide",
+    "href": "slides/index.html#macro-model-city-wide",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Macro Model (City-Wide)",
+    "text": "Macro Model (City-Wide)\nSystemic impact of network expansion on city averages.\n\\[\\log(Y_{ct}) = \\beta_1 \\cdot \\log(\\text{Total CI}_{ct}) + \\beta_2 \\cdot \\log(\\text{Total Road}_{ct}) + \\alpha_c + \\tau_t + \\varepsilon_{ct}\\]\n\n\n\n\\(Y_{ct}\\): city-wide average outcome (avg trip duration, avg accessibility) in city \\(c\\), year \\(t\\)\n\\(\\alpha_c\\): city fixed effects — absorbs unobserved time-invariant city traits (geography, road grid, morphology)\n\\(\\tau_t\\): year fixed effects — absorbs global shocks (COVID infrastructure boom, OSM tagging growth)\nStandard Errors clustered by city; N = 250 obs (50 cities × 5 years)\n\n\n\nThe log-log specification gives us elasticities directly: a 1% increase in X → β% change in Y. The FE approach means we are not comparing Amsterdam to São Paulo; we watch each city change relative to itself."
+  },
+  {
+    "objectID": "slides/index.html#micro-model-route-level",
+    "href": "slides/index.html#micro-model-route-level",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Micro Model (Route-Level)",
+    "text": "Micro Model (Route-Level)\nImpacts of infrastructure on individual route characteristics.\n\\[Y_{rt} = \\beta_1 \\text{Protected}_{rt} + \\beta_2 \\text{Paint}_{rt} + \\beta_3 \\text{Sharrow}_{rt} + \\beta_4 \\text{Foot}_{rt} + \\gamma_{r} + \\tau_t + \\varepsilon_{rt}\\]\n\n\n\\(Y_{rt}\\): transformation depends on the outcome:\n\nlog for duration & circuity → semi-elasticity\nlevel for % LTS1, avg. stress score, interruptions → marginal effect\n\n\\(\\text{Prot}_{rt}\\), etc.: km of CI type along route \\(r\\) in year \\(t\\) (always in levels)\n\\(\\gamma_{r}\\): route fixed effect — compares the same OD pairs’ routes accross the years\n\\(\\tau_t\\): time fixed effect — absorbs global OSM tagging trends\nSE clustered by city; N ≈ 4.95M route-year observations\n\n\n\nThe route fixed effect is the key advantage. We are not comparing a flat downtown trip to a hilly suburb. We are watching the exact same OD pair change as the city builds infrastructure. This controls for all time-invariant route geometry."
+  },
+  {
+    "objectID": "slides/index.html#key-takeaways",
+    "href": "slides/index.html#key-takeaways",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Key Takeaways",
+    "text": "Key Takeaways\n\n\n\n\n\n\n\n\nFinding\nMetric\nEffect\n\n\n\n\nNetwork growth eliminates impedance\nAvg. duration (macro)\n−1.45% per 10% CI growth\n\n\nNetwork unlocks destinations\n15-min accessibility\n+3.4% per 10% CI growth\n\n\nDetour as trade-off for safety\nCircuity (micro)\n+6% per 1km protected CI\n\n\nTrip is (virtually?) faster\nDuration (micro)\n−1.3% per 1km prot. CI\n\n\nOnly protected CI closes gaps\nInterruptions\n−0.084 per km (signif.)\n\n\n\n\n\n\nInfrastructure works. But isolated corridors without gap-closing create a fragmented, stressful network.\nThe win lies in continuity and protection, not just quantity."
+  },
+  {
+    "objectID": "slides/index.html#limitations",
+    "href": "slides/index.html#limitations",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Limitations",
+    "text": "Limitations\nRouting Engine\n\nCalm residential roads (LTS 1 by default) are treated the same as dedicated CI → engine may route through dense neighbourhoods rather than CI.\nCustom cost schemes in R5 are simple and objective; standard LTS was used to maintain reproducibility and comparability."
+  },
+  {
+    "objectID": "slides/index.html#next-steps",
+    "href": "slides/index.html#next-steps",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Next steps",
+    "text": "Next steps\n\nScale up: Pre-process ~200 cities 🌍\nMore time points: Add all the 10 years ⏳\nValidate OSM tags: Random sampling to quantify tagging inconsistencies per city 🔎🗺️\nGap-closing metric: Develop a specific “network continuity” score ⛓️‍💥\nSubmit a paper 📝"
+  },
+  {
+    "objectID": "slides/index.html#references",
+    "href": "slides/index.html#references",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "References",
+    "text": "References\n\n\nConway, Mathew. 2015. “Better Measures of Bike Accessibility.” https://medium.com/conveyal-blog/better-measures-of-bike-accessibility-d875ae5ed831.\n\n\nKou, Zhaoyu, and Hua Cai. 2019. “Understanding Bike Sharing Travel Patterns: An Analysis of Trip Data from Eight Cities.” Physica A: Statistical Mechanics and Its Applications 515 (February): 785–97. https://doi.org/10.1016/j.physa.2018.09.123.\n\n\nPereira, Rafael H. M., Marcus Saraiva, Daniel Herszenhut, Carlos Kaue Vieira Braga, and Matthew Wigginton Conway. 2021. “R5r: Rapid Realistic Routing on Multimodal Transport Networks with R5 in R.” Findings, March, 21262. https://doi.org/10.32866/001c.21262.\n\n\nUnited Nations Economic Commission for Europe, UNECE -. 2026. “Definitions for Infrastructure for Cycling.” United Nations. https://unece.org/transport/publications/definitions-cycling-infrastructure.\n\n\nZhu, Xiao Xiang, Sining Chen, Fahong Zhang, Yilei Shi, and Yuanyuan Wang. 2025. “GlobalBuildingAtlas: An Open Global and Complete Dataset of Building Polygons, Heights and LoD1 3D Models.” Earth System Science Data 17 (12): 6647–68. https://doi.org/10.5194/essd-17-6647-2025."
+  },
+  {
+    "objectID": "slides/index.html#global-background-trends-year-fixed-effects",
+    "href": "slides/index.html#global-background-trends-year-fixed-effects",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Global Background Trends (Year Fixed Effects)",
+    "text": "Global Background Trends (Year Fixed Effects)\nWhat happened globally between 2016 and 2026, independent of new infrastructure?\n\n1. The “Global Safety & Data Maturity” Trend - Driven by 30 km/h city policies and richer OpenStreetMap tagging\n\n\n\nRoute-Level Metric\n2016 Baseline\n2021\n2026 Global Shift\n\n\n\n\nSafe Proportion (% LTS 1)\n0.00\n+ 6.91 p.p.\n+ 12.5 p.p.\n\n\nAverage Stress (LTS 1-4)\n0.00\n- 0.18 pts\n- 0.32 pts\n\n\n\n\n2. The “Global Sprawl & Friction” Trend - Driven by outward urban expansion and complexified road networks\n\n\n\nSystem Metric\n2016 Baseline\n2021\n2026 Global Shift\n\n\n\n\nMacro Accessibility (Bubble)\n0.00\n- 1.78 %\n- 10.7 %\n\n\nMicro Interruptions (Count)\n0.00\n+ 0.14\n+ 0.23 stops\n\n\n\n\n\nSpeaker Notes: This proves why our models are robust. If we didn’t include the Year FE, our model would have falsely credited our specific bike lanes for that massive 12.5% global jump in safety. By filtering out these background trends, our coefficients strictly measure the marginal impact of the newly poured asphalt."
+  },
+  {
+    "objectID": "slides/index.html#micro-level-stress-scrore-by-distance-intervals",
+    "href": "slides/index.html#micro-level-stress-scrore-by-distance-intervals",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "Micro Level – Stress Scrore by Distance Intervals",
+    "text": "Micro Level – Stress Scrore by Distance Intervals\n\n\n\n\nMicro-Level: Impact of 1 km Infrastructure on Stress Score by Distance (LTS 1)\n\n\n\n Short (&lt;2km)\n Medium (2-5km)\n Long (5-8km)\n VeryLong (&gt;8km)\n\n\n\n\nProtected CI (km added)\n0.170** (0.068)\n0.082*** (0.026)\n0.049*** (0.015)\n0.033*** (0.011)\n\n\nPainted lane (km added)\n0.770*** (0.065)\n0.395*** (0.028)\n0.229*** (0.018)\n0.146*** (0.011)\n\n\nSharrows (km added)\n0.772*** (0.088)\n0.402*** (0.035)\n0.234*** (0.020)\n0.162*** (0.014)\n\n\nNum.Obs.\n1211352\n2737710\n666247\n221525\n\n\nR2 / Adj R2\n0.804 / 0.747\n0.807 / 0.753\n0.831 / 0.778\n0.834 / 0.783\n\n\nR2 Within / Adj R2 Within\n0.106 / 0.106\n0.176 / 0.176\n0.228 / 0.228\n0.268 / 0.268\n\n\n\n\n\n\n* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01. SE in parentheses, clustered by city. Route + Year FE."
+  },
+  {
+    "objectID": "slides/index.html#the-fragmentation-phase-paradox",
+    "href": "slides/index.html#the-fragmentation-phase-paradox",
+    "title": "\nQuantifying the evolution of cycling network performance\n",
+    "section": "The “Fragmentation Phase” Paradox ⚠️",
+    "text": "The “Fragmentation Phase” Paradox ⚠️\n\nAt the macro level, total CI positively predicts interruptions (β ≈ +0.656, ***):\nExpanding the total network by 1% adds a statistically significant, but practically small, 0.006 interruptions to the average commute. While small per trip, the positive direction confirms that cities historically expand via disconnected, opportunistic segments.\nWhy? Cities in 2016–2026 were in the “Fragmented Network Phase”:\n\nNo CI (Stage 1): Rider uses mixed traffic → 0 interruptions\nFragmented CI (Stage 2): Isolated islands; each new segment creates 2 new gap edges\nMature network (Stage 3): Connected corridors → interruptions drop\n\nPolicy implication: Shift success metrics from “km built” → “gaps closed”"
+  }
+]
