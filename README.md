@@ -6,7 +6,7 @@ This repository contains an automated, scalable pipeline designed to analyze the
 
 - [**code/pipeline/**](code/pipeline/): Core R scripts for data extraction, historical routing (`r5r`), accessibility analysis, and visualization.
 - [**data/pipeline/**](data/pipeline/): Processed spatial datasets, city-specific results, and the master aggregated metrics table.
-- [**docs/**](docs/): Technical documentation, including all the AI prompts used to scale up the pipeline, pipeline flowcharts (`.drawio`) and project development plans.
+- [**documents/**](documents/): Technical documentation, including all the AI prompts used to scale up the pipeline, pipeline flowcharts (`.drawio`) and project development plans.
 - [**images/**](images/): High-level visualizations, research snapshots, and consolidated plots for all studied cities.
 - [**paper/**](paper/): Manuscript and research note source files (`.qmd`, `.bib`).
 - [**slides/**](slides/): Presentation slides (`.qmd`, `.html`).
