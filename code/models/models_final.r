@@ -205,6 +205,38 @@ macro_interrruptions <- feols(
   cluster = ~city
 )
 
+
+### Macro leverl by type CI ###########################################################
+
+# 1. Average Duration (Log-Log)
+macro_duration_type <- feols(
+  log(avg_duration_min) ~ log_ci_strong_km + log_ci_medium_km + log_ci_weak_km + log_ci_foot_km + log_total_road_km |
+    city + year,
+  data = city_lts1,
+  cluster = ~city # Cluster standard errors by city
+)
+
+# 4. Total Accessibility (Log-Log)
+# Does building total city infrastructure lower the AVERAGE city trip duration?
+macro_access_type <- feols(
+  log_access ~ log_ci_strong_km + log_ci_medium_km + log_ci_weak_km + log_ci_foot_km + log_total_road_km |
+    city + year,
+  data = city_lts1,
+  cluster = ~city
+)
+
+# 5. Average Interruptions (Level-Log)
+# Does building total city infrastructure lower the AVERAGE interruptions?
+macro_interrruptions_type <- feols(
+  avg_ci_interruptions ~ log_ci_strong_km + log_ci_medium_km + log_ci_weak_km + log_ci_foot_km + log_total_road_km
+  | city + year,
+  data = city_lts1,
+  cluster = ~city
+)
+
+etable(macro_duration_type, macro_access_type, macro_interrruptions_type)
+
+
 # ==========================================
 # STEP 3: THE MICRO STORY (ROUTE LEVEL)
 # Does 1km of new infrastructure change the specific trip?
@@ -308,7 +340,11 @@ exported_models <- list(
     macro_duration = summary(macro_duration, lean = TRUE),
     macro_access = summary(macro_access, lean = TRUE),
     macro_interruptions = summary(macro_interrruptions, lean = TRUE),
-
+    # Marcro models, y CI type
+    macro_duration_type = summary(macro_duration_type, lean = TRUE),
+    macro_access_type = summary(macro_access_type, lean = TRUE),
+    macro_interruptions_type = summary(macro_interrruptions_type, lean = TRUE),
+    
     # Micro Models
     micro_duration = summary(micro_duration, lean = TRUE),
     micro_circuity = summary(micro_circuity, lean = TRUE),
@@ -339,7 +375,7 @@ modelsummary(
         # "Avg Circuity (Log)" = macro_circuity,
         # "% Safe Route" = macro_safety,
         "Accessibility (Log)" = macro_access,
-        "Avg Interruptions (Level)" = macro_interruptions
+        "Avg Interruptions (Level)" = macro_interrruptions
     ),
     coef_rename = c(
         "log_total_ci_km" = "Total City CI (Log)",
@@ -407,8 +443,8 @@ modelsummary(
 
 
 ### fixed effects estimators
-fixef(macro_duration)
-fixef(macro_access)
+fixef(macro_duration)[2]
+fixef(macro_access)[2]
 fixef(micro_circuity)[2]
 fixef(micro_safety)[2]
 fixef(micro_safety_alternative)[2]
