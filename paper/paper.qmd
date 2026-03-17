@@ -1,35 +1,49 @@
 ---
-title: " Quantifying the evolution of cycling network performance: A 50-city panel data analysis using open data"
-subtitle: "notes"
-date: "`r format(Sys.Date(), '%B %d, %Y')`" # %B for locale full month name
-
-editor: visual
-format: pdf
-bibliography: references.bib
-biblio-style: apacite
-output: 
-  bookdown::pdf_document2:
-    keep_tex: true
-    toc: false
-    citation_package: natbib
-    # latex_engine: xelatex
-    pdf-engine:
-      latex: lualatex
-    extra_dependencies: "subfig"
-urlcolor: blue
-citecolor: blue
-linkcolor: blue
-number-sections: true
-indent: true
-header-includes:
-  - \usepackage[figurename=Fig.,labelfont=bf,labelsep=period]{caption}
-  - \usepackage{apacite}
-    
+title: "Quantifying the evolution of cycling network performance: A XX-city panel data analysis using open data"
+subtitle: "A XX-city panel data analysis using open data"
+format:
+  nature-pdf:
+    # journal.cite-style is included in the tex file but ignored by pandoc if 
+    # cite-method is not `natbib`.
+    journal:
+      cite-style: sn-nature
+    # `citeproc` is the pandoc default. Set `cite-method: natbib` if required
+    # to use the bst styles from the upstream template.
+    # cite-method: natbib
+    keep-tex: true
+    equal-margins: false
+author:
+  - name: Rosa Félix
+    affiliations:
+      - name: Instituto Superior Técnico - University of Lisbon
+        id: 1
+        department: CERIS
+        address: Av Rovisco Pais 1
+        city: Lisbon
+        country: Portugal
+        # postal-code: 0213
+    # attributes:
+      # equal-contributor: true
+  - name: David Levinson
+    affiliations:
+      - name: University of Sydney
+        id: 2
+        department: School of Civil Engineering
+        address: NSW 2006
+        city: Sydney
+        country: Australia
+        # postal-code: 2006
+    email: david.levinson@sydney.edu.au
+    attributes:
+      # equal-contributor: true
+      corresponding: true
 abstract: |
-    Despite significant investments in active transport, planning approaches often lack systematic methods to assess or simulate the potential impacts of new cycling infrastructure on trip performance, safety, and accessibility. Consequently, the holistic performance of the cycling network remains under-evaluated. This research addresses this gap by integrating geospatial and accessibility analysis into a replicable framework for evaluating cycling networks across various stages of development.
-    Using open data, including historical OpenStreetMap networks and the Global Building Atlas (LoD1), a systematic methodology was developed to assess longitudinal changes in safety, performance and accessibility across 50 cities over five distinct periods over the last decade (2016-2026). For each city, 20,000 OD pairs were generated based on buildings to simulate realistic travel patterns, creating a massive panel dataset.
+  Despite significant investments in cycling infrastructure, planning approaches often lack systematic methods to assess or simulate their potential impacts on trip performance, stress, and accessibility. Consequently, the holistic performance of the cycling network remains under-evaluated. This research addresses this gap by integrating geospatial and accessibility analysis into a replicable framework for evaluating cycling networks across various stages of development.
+    Using open data, including historical OpenStreetMap networks and the Global Building Atlas (LoD1), a systematic methodology was developed to assess longitudinal changes in stress, performance and accessibility across XX cities over five distinct periods over the last decade (2016-2026). For each city, 20,000 OD pairs were generated based on buildings to simulate realistic travel patterns, creating a massive panel dataset.
     A fixed-effects panel data model was employed to estimate the elasticities between specific types of cycling infrastructure investments and trip performance metrics at both the macro (city-wide) and micro (route) levels, to quantify how incremental network improvements translate into tangible cycling benefits.
-    This research will explore preliminary results from these models, highlighting potential behavioral trade-offs between route circuity, safety, and travel time. Furthermore, the methodological nuances of the framework will be critically examined - particularly the OD data generation and the deterrence assumptions embedded in the routing algorithms - and outline current limitations.
+    Results highlight potential behavioral trade-offs between route circuity, safety, and travel time. Furthermore, ...
+keywords: [template, demo]
+bibliography: references.bib  
 ---
 
 ```{r setup, include=FALSE}
@@ -39,9 +53,13 @@ knitr::opts_chunk$set(eval = FALSE,
                       out.width = "100%",
                       fig.align = "center",
                       dpi = 300)
+#load minimal required libraries for the paper
+library(tidyverse)
 ```
 
-# Background
+# Main
+
+[See examples of articles in Nature Cities - they follow a very different structure!]
 
 Sustainable and low-carbon cities are key for addressing climate change, air pollution, and urban congestion.
 
@@ -216,6 +234,73 @@ Summary from the literature so far:
 1.  How can “consistent” cycling networks be defined and operationalised?
 2.  How does increasing network consistency affect -\> Accessibility -\> cycling adoption/ridership?
 
+
+
+# Results
+
+## Macro level: city-wide
+
+## Micro level: routes
+
+# Discussion
+
+Impact estimation can be assessed with count data available for different years (modelling the effects)
+
+
+## The use of OpenStreetMap data
+
+OpenStreetMap (OSM) datasets provide a common dataset for road networks (including cycling infrastructure), available mostly worldwide. However, OSM is a community-based and volunteer open dataset, which means that the detail of information increases with time, but does not mean that the road network was not always there in the real world. This can be verified with the size of the extracted osm.pbf files from [geofabrik](https://www.geofabrik.de/) (the largest OSM repository), for the different years (Table X) showing an increase in amount of data available for each selected city region.
+
+```{r}
+# run this only in the server, where the pbf files live
+
+# library(dplyr)
+# library(stringr)
+# library(knitr)
+# 
+# file_list <- list.files(path = "../data/osm_pbf/", full.names = TRUE)
+# # file_list
+# # file_list = file_list
+# 
+# file_info <- file.info(file_list)
+# 
+# df <- data.frame(
+#   filename = basename(rownames(file_info)),
+#   size_mb = file_info$size / (1024 * 1024) # convert in MB,
+# )
+# 
+# summary_table <- df |> 
+#   mutate(year = paste0("20", str_extract(filename, "(?<=-)\\d{2}")))|> # 4 digits year 
+#   group_by(year) |> 
+#   summarise(
+#     mean_size_MB = mean(size_mb, na.rm = TRUE),
+#     median_size_MB = median(size_mb, na.rm = TRUE),
+#     total_files = n()
+#   )
+
+summary_table = read.csv("../data/osm_file_size_summary.csv")
+
+kable(summary_table |> filter(year != "20NA") |> select(-total_files), # there is one more irrelevant for now
+      digits = 0, 
+      col.names = c("Year", "mean file size (MB)", "median file size (MB)"),
+      caption = "Mean and Median OSM File Sizes by Year")
+```
+
+OSM tagging is not consistent over years, which may lead to inconsistency issues of the results, since we are using the same classification of cycling infrastructure for the three year periods. For instance, the classification for Munich (Germany) changes drastically with time, and it does not mean that the infrastructure itself changed - only the tags in OSM did.
+
+![Cycling infrastructre classification for Munich in 2016, 2021 and 2026. There is a massive change in segments' tagging between 2021 and 2026.](../data/pipeline/munich/results/ci_evolution_facet_map.png){fig-align="left"}
+
+Additionally tags can become deprecated and new tags can emerge. For instance, in June 2025, the OSM community submitted a [proposed an voted](https://wiki.openstreetmap.org/wiki/Proposal:Deprecate_cycleway%3Dopposite_family) in favour for a new way of tagging cycling contra-flows that do not have dedicated infrastructure - which are common in Paris or Munich. Our custom reclassification of cycling infrastructure in fewer types does not account for this. There are some attempts to directly classify the safety of a cycling infrastructure segment in OSM, with `class:bicycle=*` (values from -3 "Avoid at all costs", to 3 "This path is so beautiful, it's worth taking a detour"), but it is [still under dispute](https://wiki.openstreetmap.org/wiki/Key:class:bicycle).
+
+## The use of LTS
+
+LTS does not account for the quality of the cycling infrastructure.
+
+Routing engine also does not account for other variables, such as gradients.
+
+
+
+
 # Methods
 
 **State of the art and selection of network indicators**
@@ -276,11 +361,11 @@ The rationale to select the 50 cities was:
 -   A reasonable good OSM data quality and availability - this excludes most of China (remove?)
 -   Internationally renown cities
 
-Use a 10km projected buffer from city center, that defines the city areas for this research, for comparision purposes
+Use a 10km projected buffer from city center, that defines the city areas for this research, for comparison purposes
 
 The 50 cities are as follows:
 
-\[table with city, contry, population\]
+\[table with city, country\]
 
 ```{r}
 city_list = read.csv("../data/city_list.txt")
@@ -297,10 +382,10 @@ selected_cities = c(
 
 city_list_selected = city_list |>
   filter(city %in% selected_cities) |>
-  select(city, country, population)
+  select(city, country)
 
 kable(city_list_selected, 
-      col.names = c("City", "Country", "Population"))
+      col.names = c("City", "Country"))
 # add note that population we don't know the source
 
 
@@ -333,6 +418,12 @@ Use OD jittering [@lovelace2022], with subpoints as buildings, weighted by their
 ![Sydney buildings's estimated number of floors (mean: 3.21)](../images/Screenshot_20260217_173136.png){width="450"}
 
 ![Paris buildings's estimated number of floors (mean: 3.92)](../images/Screenshot_20260217_172645.png){width="450"}
+
+Our trip distance distribution does not sound like a typical urban bicycle trip distance distribution, with most bicycle trips raging from 2 to 5 km. Nevertheless, for the purpose of the study, to address cycling infrastructure improvements, this may represent a minor (although not irrelevant) issue.
+
+![Commulative distance distribution (Lisbon, LTS2). 75% of the trips are over 5km.](../data/pipeline/lisbon/results/cumulative_distance_lts2.png)
+
+Further developments of this research include the use a common trip-length distribution in urban environments, such as distributions described by @kou2019, when analysing bike sharing data from 7 cities in the US, with the set parameters for commuting trips (in miles).
 
 ## Routing
 
@@ -369,392 +460,21 @@ We use `stplanr` to overline the routes [@lovelace2018]. This provides a better 
 
 The example in Sydney shows that...
 
-![](data/pipeline/sydney/results/overline_matrix_test.png){fig-align="center"}
+![](../data/pipeline/sydney/results/overline_matrix_test.png){fig-align="center"}
 
 Each city took, on average, **22 minutes** to process data, in a i9 32 core computer with 128 GB RAM,
 
-# Results
 
-\begingroup
-\centering
-\begin{tabular}{lcccccccccccccccc}
-   \tabularnewline \midrule \midrule
-   Dependent Variables: & \multicolumn{4}{c}{log\_circuity} & \multicolumn{4}{c}{log\_distance} & \multicolumn{4}{c}{log\_lts1} & \multicolumn{4}{c}{log\_access}\\
-   lts                    & 1             & 2                     & 3             & 4              & 1              & 2              & 3        & 4             & 1              & 2              & 3             & 4             & 1              & 2              & 3              & 4 \\   
-   Model:                 & (1)           & (2)                   & (3)           & (4)            & (5)            & (6)            & (7)      & (8)           & (9)            & (10)           & (11)          & (12)          & (13)           & (14)           & (15)           & (16)\\  
-   \midrule
-   \emph{Variables}\\
-   log\_ci\_strong\_km    & 0.0132$^{**}$ & 0.0065                & -0.0031       & 0.0027         & 0.0647$^{***}$ & 0.0525$^{*}$   & 0.0106   & -0.0029       & 0.1723$^{***}$ & 0.1552$^{**}$  & 0.1758$^{**}$ & 0.1477$^{**}$ & 0.2620$^{***}$ & 0.3341$^{***}$ & 0.1746$^{***}$ & 0.0925$^{**}$\\   
-                          & (0.0057)      & (0.0073)              & (0.0067)      & (0.0095)       & (0.0216)       & (0.0269)       & (0.0101) & (0.0059)      & (0.0641)       & (0.0683)       & (0.0747)      & (0.0707)      & (0.0693)       & (0.0868)       & (0.0568)       & (0.0404)\\   
-   log\_ci\_medium\_km    & 0.0026        & $4.11\times 10^{-5}$  & -0.0064$^{*}$ & -0.0072$^{**}$ & 0.0241$^{**}$  & 0.0332$^{***}$ & 0.0037   & -0.0055$^{*}$ & 0.0245         & 0.0019         & 0.0103        & -0.0031       & -0.0033        & 0.0204         & 0.0489$^{**}$  & 0.0495$^{**}$\\   
-                          & (0.0034)      & (0.0040)              & (0.0035)      & (0.0030)       & (0.0094)       & (0.0100)       & (0.0048) & (0.0027)      & (0.0174)       & (0.0204)       & (0.0301)      & (0.0390)      & (0.0323)       & (0.0397)       & (0.0233)       & (0.0186)\\   
-   log\_ci\_weak\_km      & 0.0022        & 0.0031                & 0.0005        & 0.0022         & 0.0088         & 0.0098$^{*}$   & -0.0010  & 0.0005        & 0.0164         & 0.0092         & 0.0185        & 0.0248        & 0.0130         & 0.0150         & 0.0209         & -0.0038\\   
-                          & (0.0028)      & (0.0027)              & (0.0024)      & (0.0027)       & (0.0054)       & (0.0054)       & (0.0026) & (0.0019)      & (0.0127)       & (0.0153)       & (0.0257)      & (0.0285)      & (0.0236)       & (0.0255)       & (0.0156)       & (0.0161)\\   
-   log\_ci\_foot\_km      & 0.0033        & 0.0050                & -0.0015       & -0.0006        & 0.0131         & 0.0083         & 0.0088   & -0.0017       & 0.0270         & 0.0689$^{***}$ & 0.0158        & 0.0370        & 0.0270         & -0.0212        & 0.0443$^{*}$   & 0.0215\\   
-                          & (0.0038)      & (0.0048)              & (0.0038)      & (0.0026)       & (0.0108)       & (0.0135)       & (0.0081) & (0.0023)      & (0.0170)       & (0.0216)       & (0.0349)      & (0.0337)      & (0.0371)       & (0.0483)       & (0.0255)       & (0.0151)\\   
-   \midrule
-   \emph{Fixed-effects}\\
-   city                   & Yes           & Yes                   & Yes           & Yes            & Yes            & Yes            & Yes      & Yes           & Yes            & Yes            & Yes           & Yes           & Yes            & Yes            & Yes            & Yes\\  
-   year                   & Yes           & Yes                   & Yes           & Yes            & Yes            & Yes            & Yes      & Yes           & Yes            & Yes            & Yes           & Yes           & Yes            & Yes            & Yes            & Yes\\  
-   \midrule
-   \emph{Fit statistics}\\
-   Observations           & 156           & 156                   & 156           & 156            & 156            & 156            & 156      & 156           & 156            & 156            & 156           & 156           & 156            & 156            & 156            & 156\\  
-   R$^2$                  & 0.91065       & 0.90626               & 0.91336       & 0.92096        & 0.96328        & 0.95268        & 0.99216  & 0.99628       & 0.89564        & 0.87758        & 0.88969       & 0.92570       & 0.98852        & 0.98406        & 0.99306        & 0.99455\\  
-   Within R$^2$           & 0.07090       & 0.04571               & 0.04851       & 0.05871        & 0.34246        & 0.27444        & 0.05719  & 0.05370       & 0.34086        & 0.21339        & 0.10014       & 0.06204       & 0.13579        & 0.18321        & 0.18917        & 0.10923\\  
-   \midrule \midrule
-   \multicolumn{17}{l}{\emph{Clustered (city) standard-errors in parentheses}}\\
-   \multicolumn{17}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
-\end{tabular}
-\par\endgroup
 
-# Discussion
+## Code availability
 
-## The use of OpenStreetMap data
+Code used to generate results from this study are available at [temospena.github.com/Sydney](https://temospena.github.com/Sydney/code/pipeline). 
+<!-- change the repo name later! -->
 
-OpenStreetMap (OSM) datasets provide a common dataset for road networks (including cycling infrastructure), available mostly worldwide. However, OSM is a community-based and volunteer open dataset, which means that the detail of information increases with time, but does not mean that the road network was not always there in the real world. This can be verified with the size of the extracted osm.pbf files from [geofabrik](https://www.geofabrik.de/) (the largest OSM repository), for the different years (Table X) showing an increase in amount of data available for each selected city region.
-
-```{r}
-# run this only in the server, where the pbf files live
-
-# library(dplyr)
-# library(stringr)
-# library(knitr)
-# 
-# file_list <- list.files(path = "../data/osm_pbf/", full.names = TRUE)
-# # file_list
-# # file_list = file_list
-# 
-# file_info <- file.info(file_list)
-# 
-# df <- data.frame(
-#   filename = basename(rownames(file_info)),
-#   size_mb = file_info$size / (1024 * 1024) # convert in MB,
-# )
-# 
-# summary_table <- df |> 
-#   mutate(year = paste0("20", str_extract(filename, "(?<=-)\\d{2}")))|> # 4 digits year 
-#   group_by(year) |> 
-#   summarise(
-#     mean_size_MB = mean(size_mb, na.rm = TRUE),
-#     median_size_MB = median(size_mb, na.rm = TRUE),
-#     total_files = n()
-#   )
-
-summary_table = read.csv("../data/osm_file_size_summary.csv")
-
-kable(summary_table |> filter(year != "20NA") |> select(-total_files), # there is one more irrelevant for now
-      digits = 0, 
-      col.names = c("Year", "mean file size (MB)", "median file size (MB)"),
-      caption = "Mean and Median OSM File Sizes by Year")
-```
-
-OSM tagging is not consistent over years, which may lead to inconsistency issues of the results, since we are using the same classification of cycling infrastructure for the three year periods. For instance, the classification for Munich (Germany) changes drastically with time, and it does not mean that the infrastructure itself changed - only the tags in OSM did.
-
-![Cycling infrastructre classification for Munich in 2016, 2021 and 2026. There is a massive change in segments' tagging between 2021 and 2026.](data/pipeline/munich/results/ci_evolution_facet_map.png){fig-align="left"}
-
-Additionally tags can become deprecated and new tags can emerge. For instance, in June 2025, the OSM community submitted a [proposed an voted](https://wiki.openstreetmap.org/wiki/Proposal:Deprecate_cycleway%3Dopposite_family) in favour for a new way of tagging cycling contra-flows that do not have dedicated infrastructure - which are common in Paris or Munich. Our custom reclassification of cycling infrastructure in fewer types does not account for this. There are some attempts to directly classify the safety of a cycling infrastructure segment in OSM, with `class:bicycle=*` (values from -3 "Avoid at all costs", to 3 "This path is so beautiful, it's worth taking a detour"), but it is [still under dispute](https://wiki.openstreetmap.org/wiki/Key:class:bicycle).
-
-## The use of LTS
-
-LTS does not account for the quality of the cycling infrastructure.
-
-Routing engine also does not account for other variables, such as gradients.
-
-## The use of random OD pairs
-
-Our trip distance distribution does not sound like a typical urban bicycle trip distance distribution, with most bicycle trips raging from 2 to 5 km. Nevertheless, for the purpose of the study, to address cycling infrastructure improvements, this may represent a minor (although not irrelevant) issue.
-
-![Commulative distance distribution (Lisbon, LTS2). 75% of the trips are over 5km.](data/pipeline/lisbon/results/cumulative_distance_lts2.png)
-
-Further developments of this research include the use a common trip-length distribution in urban environments, such as distributions described by [@wang2025]
-
-![](../images/clipboard-384952838.png)
-
-Empirical one for Freiburg [@schneider2023]
-
-![](../images/clipboard-2639027703.png)
-
-There is also analysis from bike sharing data from 7 cities in the US [@kou2019], with the set parameters for commuting trips (in miles)
-
-+-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
-| City                          | Seattle          | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
-+===============================+==================+=============+==========+==============+========+================+=========+==========+
-| Percentage of round trips     | 8.40%            | 10.60%      | 2.60%    | 8.10%        | 3.10%  | 4.60%          | 4.20%   | 2.06%    |
-+-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
-| Percentage of commuting trips | 58.43%           | 63.61%      | 75.55%   | 68.59%       | 68.98% | 58.56%         | 60.78%  | 62.32%   |
-+-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
-| Commuting trips               | Distance (miles) | Maximum     | 7.85     | 3.14         | 3.37   | 7.30           | 8.77    | 27.21    |
-+-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
-| Median                        | 1.16             | 0.91        | 1.23     | 1.39         | 1.46   | 1.43           | 1.39    | 1.31     |
-+-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
-| Average                       | 1.27             | 1.02        | 1.24     | 1.56         | 1.70   | 1.72           | 1.71    | 1.68     |
-+-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
-| Standard deviation            | 0.74             | 0.50        | 0.53     | 0.79         | 1.02   | 1.14           | 1.14    | 1.21     |
-+-------------------------------+------------------+-------------+----------+--------------+--------+----------------+---------+----------+
-
-<table>
-<tbody>
-<tr class="odd">
-<td><p>Empty Cell</p></td>
-<td><p>Empty Cell</p></td>
-<td><p>Empty Cell</p></td>
-<td><p>Seattle</p></td>
-<td><p>Los Angeles</p></td>
-<td><p>Bay area</p></td>
-<td><p>Philadelphia</p></td>
-<td><p>Boston</p></td>
-<td><p>Washington, DC</p></td>
-<td><p>Chicago</p></td>
-<td><p>New York</p></td>
-</tr>
-<tr class="even">
-<td><p>Weibull</p></td>
-<td><p>Parameters</p></td>
-<td><p>Shape</p></td>
-<td><p>1.8512</p></td>
-<td><p>2.1665</p></td>
-<td><p>2.5134</p></td>
-<td><p>2.0996</p></td>
-<td><p>1.7896</p></td>
-<td><p>1.6420</p></td>
-<td><p>1.6144</p></td>
-<td><p>1.5232</p></td>
-</tr>
-<tr class="odd">
-<td><p>Empty Cell</p></td>
-<td></td>
-<td><p>Scale</p></td>
-<td><p>1.4361</p></td>
-<td><p>1.1499</p></td>
-<td><p>1.4011</p></td>
-<td><p>1.7712</p></td>
-<td><p>1.9261</p></td>
-<td><p>1.9317</p></td>
-<td><p>1.9218</p></td>
-<td><p>1.8760</p></td>
-</tr>
-<tr class="even">
-<td><p>Empty Cell</p></td>
-<td><p>Goodness-of- <br />
-fit statistics/ <br />
-criteria</p></td>
-<td><p>K–S statistic</p></td>
-<td><p><strong>0.0658</strong></p></td>
-<td><p><strong>0.0513</strong></p></td>
-<td><p><strong>0.0497</strong><sup>*</sup></p></td>
-<td><p>0.0555</p></td>
-<td><p>0.0548</p></td>
-<td><p>0.0519</p></td>
-<td><p>0.0547</p></td>
-<td><p>0.0674</p></td>
-</tr>
-<tr class="odd">
-<td><p>Empty Cell</p></td>
-<td><p>AIC</p></td>
-<td><p>107316.3</p></td>
-<td><p>137674.1</p></td>
-<td><p>215312.1</p></td>
-<td><p>693533.8</p></td>
-<td><p>2161993.0</p></td>
-<td><p>3880947.0</p></td>
-<td><p>5717157.5</p></td>
-<td><p>17356522.0</p></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><p>Empty Cell</p></td>
-<td><p>BIC</p></td>
-<td><p>107334.1</p></td>
-<td><p>137693.2</p></td>
-<td><p>215331.8</p></td>
-<td><p>693555.1</p></td>
-<td><p>2162016.3</p></td>
-<td><p>3880971.3</p></td>
-<td><p>5717182.6</p></td>
-<td><p>17356549.0</p></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><p>Gamma</p></td>
-<td><p>Parameters</p></td>
-<td><p>Shape</p></td>
-<td><p>3.5464</p></td>
-<td><p>4.0595</p></td>
-<td><p>4.9903</p></td>
-<td><p>4.1294</p></td>
-<td><p>3.0170</p></td>
-<td><p>2.7110</p></td>
-<td><p>2.5535</p></td>
-<td><p>2.3567</p></td>
-</tr>
-<tr class="even">
-<td><p>Empty Cell</p></td>
-<td></td>
-<td><p>Scale</p></td>
-<td><p>2.7932</p></td>
-<td><p>3.9995</p></td>
-<td><p>4.0206</p></td>
-<td><p>2.6417</p></td>
-<td><p>1.7713</p></td>
-<td><p>1.5799</p></td>
-<td><p>1.4937</p></td>
-<td><p>1.4054</p></td>
-</tr>
-<tr class="odd">
-<td><p>Empty Cell</p></td>
-<td><p>Goodness-of- <br />
-fit statistics/ <br />
-criteria</p></td>
-<td><p>K–S statistic</p></td>
-<td><p><strong>0.0382</strong><sup>*</sup></p></td>
-<td><p><strong>0.0304</strong><sup>*</sup></p></td>
-<td><p>0.0682</p></td>
-<td><p><strong>0.0284</strong><sup>*</sup></p></td>
-<td><p><strong>0.0472</strong><sup>*</sup></p></td>
-<td><p><strong>0.0354</strong><sup>*</sup></p></td>
-<td><p><strong>0.0462</strong><sup>*</sup></p></td>
-<td><p>0.0570</p></td>
-</tr>
-<tr class="even">
-<td><p>Empty Cell</p></td>
-<td><p>AIC</p></td>
-<td><p>101513.2</p></td>
-<td><p>134402.0</p></td>
-<td><p>216873.8</p></td>
-<td><p>671542.5</p></td>
-<td><p>2113945.2</p></td>
-<td><p>3771463.5</p></td>
-<td><p>5585434.3</p></td>
-<td><p>16907864.0</p></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><p>Empty Cell</p></td>
-<td><p>BIC</p></td>
-<td><p>101531.1</p></td>
-<td><p>134421.1</p></td>
-<td><p>216893.5</p></td>
-<td><p>671563.9</p></td>
-<td><p>2113968.4</p></td>
-<td><p>3771487.9</p></td>
-<td><p>5585459.4</p></td>
-<td><p>16907892.0</p></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><p>Lognormal</p></td>
-<td><p>Parameters</p></td>
-<td><p>meanlog</p></td>
-<td><p>0.0912</p></td>
-<td><p>−0.1133</p></td>
-<td><p>0.1126</p></td>
-<td><p>0.3208</p></td>
-<td><p>0.3578</p></td>
-<td><p>0.3444</p></td>
-<td><p>0.3278</p></td>
-<td><p>0.2899</p></td>
-</tr>
-<tr class="odd">
-<td><p>Empty Cell</p></td>
-<td></td>
-<td><p>sdlog</p></td>
-<td><p>0.5500</p></td>
-<td><p>0.5264</p></td>
-<td><p>0.4791</p></td>
-<td><p>0.5136</p></td>
-<td><p>0.6046</p></td>
-<td><p>0.6345</p></td>
-<td><p>0.6563</p></td>
-<td><p>0.6783</p></td>
-</tr>
-<tr class="even">
-<td><p>Empty Cell</p></td>
-<td><p>Goodness-of- <br />
-fit statistics/ <br />
-criteria</p></td>
-<td><p>K–S statistic</p></td>
-<td><p>0.0504</p></td>
-<td><p><strong>0.0384</strong><sup>*</sup></p></td>
-<td><p>0.0816</p></td>
-<td><p><strong>0.0205</strong><sup>*</sup></p></td>
-<td><p><strong>0.0237</strong><sup>*</sup></p></td>
-<td><p><strong>0.0152</strong><sup>*</sup></p></td>
-<td><p><strong>0.0176</strong><sup>*</sup></p></td>
-<td><p><strong>0.0131</strong><sup>*</sup></p></td>
-</tr>
-<tr class="odd">
-<td><p>Empty Cell</p></td>
-<td><p>AIC</p></td>
-<td><p>100235.9</p></td>
-<td><p>138111.9</p></td>
-<td><p>226762.0</p></td>
-<td><p>673148.5</p></td>
-<td><p>2104083.5</p></td>
-<td><p>3722622.1</p></td>
-<td><p>5514671.9</p></td>
-<td><p>16539126.0</p></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><p>Empty Cell</p></td>
-<td><p>BIC</p></td>
-<td><p>100253.8</p></td>
-<td><p>138131.0</p></td>
-<td><p>226781.7</p></td>
-<td><p>673169.8</p></td>
-<td><p>2104106.7</p></td>
-<td><p>3722646.5</p></td>
-<td><p>5514697.0</p></td>
-<td><p>16539154.0</p></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><p>Best fit distribution</p></td>
-<td><p>Gamma</p></td>
-<td><p>Gamma</p></td>
-<td><p>Weibull</p></td>
-<td><p>Gamma</p></td>
-<td><p>Lognormal</p></td>
-<td><p>Lognormal</p></td>
-<td><p>Lognormal</p></td>
-<td><p>Lognormal</p></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><p>Parameters</p></td>
-<td><p>alfa =3.55</p>
-<p>beta =2.79</p></td>
-<td><p>alfa =4.06</p>
-<p>beta =4.0</p></td>
-<td><p>k =2.51</p>
-<p>lamb =1.40</p></td>
-<td><p>alfa =4.13 beta =2.64</p></td>
-<td><p>mu =0.36</p>
-<p>sigma=0.60</p></td>
-<td><p>mu =0.34</p>
-<p>sigma=0.63</p></td>
-<td><p>mu =0.33</p>
-<p>sigma=0.66</p></td>
-<td><p>mu =0.29</p>
-<p>sigma=0.68</p></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-|  |  |  |  |  |  |  |  |  |  |
-|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
-| Empty Cell | Empty Cell | Seattle | Los Angeles | Bay area | Philadelphia | Boston | Washington, DC | Chicago | New York |
-| Commuting trip distance (mile) | Right side cut-off^1^ | 1.14 | 0.67 | 1.26 | 0.99 | 1.05 | 0.86 | 0.77 | 0.86 |
-| K–S statistic | 0.0518 | 0.0711 | 0.1330 | **0.0243**^\*^ | **0.0347**^\*^ | **0.0287**^\*^ | **0.0176**^\*^ | **0.0347**^\*^ |  |
-| Power law cut-off^2^ | 2.15 | 2.12 | 2.10 | 3.35 | 5.47 | 4.07 | 4.49 | 6.29 |  |
-| Exponent k | 4.28 | 12.07 | 11.70 | 8.27 | 12.60 | 5.51 | 7.25 | 11.44 |  |
-| Percentage of trips in power law fit | 4.74% | 1.94% | 5.81% | 2.22% | 0.24% | 2.41% | 1.67% | 0.39% |  |
-
-# Conclusions
-
-Impact estimation can be assessed with count data available for different years (modelling the effects)
 
 # References
+
+:::{#refs}
+:::
+
+# Acknowledgements
