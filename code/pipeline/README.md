@@ -4,6 +4,8 @@ This directory contains the R scripts used to run the Cycling Infrastructure (CI
 
 ## Pipeline Workflow
 
+![Pipeline Flowchart](../../documents/pipeline_full.png)
+
 The pipeline is designed to be run end-to-end for a list of cities defined in `config.R`. The process follows these stages:
 1. **Extraction:** Clipping OSM data and extracting CI networks.
 2. **Routing:** Calculating O/D matrices using `r5r`.
