@@ -25,7 +25,7 @@ colnames(city_list) <- c("city", "lat", "lon", "population", "country", "iso2", 
 
 # Filter out already targeted cities and NAs in latency
 city_list <- city_list |>
-  filter(!city %in% target_cities) |>
+  # filter(!city %in% target_cities) |>
   filter(!is.na(lat) & !is.na(lon))
 
 # Add continent
@@ -78,8 +78,8 @@ set.seed(42)
 city_list <- city_list[sample(nrow(city_list)), ]
 
 # Keep continents balanced, max 12 per continent (50 total / 5 continets ≈ 10)
-max_cities <- 50
-max_per_continent <- 12
+# max_cities <- 50
+# max_per_continent <- 12
 
 selected_cities <- data.frame()
 continent_counts <- table(city_list$continent)
@@ -94,7 +94,7 @@ if (file.exists(progress_file)) {
   # FAILED ones remain so we can retry them
   done_cities <- progress$city[progress$status != "FAILED"]
   city_list <- city_list |> filter(!city %in% done_cities)
-  
+
   # Load the accepted cities into selected_cities and reconstruct continent counts
   accepted <- progress[progress$status == "ACCEPTED", ]
   if (nrow(accepted) > 0) {
@@ -112,46 +112,46 @@ if (file.exists(progress_file)) {
 }
 
 for (i in 1:nrow(city_list)) {
-  if (nrow(selected_cities) >= max_cities) break
-  
+  # if (nrow(selected_cities) >= max_cities) break
+
   row <- city_list[i, ]
   cont <- row$continent
-  
+
   # If continent unknown, assign 'Unknown'
   if (is.na(cont)) {
     cont <- "Unknown"
     if (!"Unknown" %in% names(continent_counts)) continent_counts["Unknown"] <- 0
   }
-  
+
   # Check if we reached cap for this continent
-  if (continent_counts[cont] >= max_per_continent) {
-    next
-  }
-  
+  # if (continent_counts[cont] >= max_per_continent) {
+  #   next
+  # }
+
   cat(paste0("Checking ", row$city, " (", cont, ")... 2026: "))
-  
+
   l2026 <- get_ci_len(row$lon, row$lat, "2026-01-01")
-  
+
   if (is.na(l2026)) {
     cat("API failed. Skipping for now.\n")
     row$status <- "FAILED"
     row$len_2016_km <- NA
     row$len_2026_km <- NA
-    
+
     # Remove previous failed records for this city if any, to avoid duplicates
     progress <- progress[progress$city != row$city, ]
     progress <- rbind(progress, row)
     write.csv(progress, progress_file, row.names = FALSE)
-    
+
     Sys.sleep(5) # wait longer to avoid rate limits
     next
   }
-  
+
   cat(paste0(round(l2026, 0), "m. "))
-  
+
   # Remove previous failed records for this city if any
   progress <- progress[progress$city != row$city, ]
-  
+
   # Condition: >= 100km in 2026
   if (l2026 < 100000) {
     cat("Rejected (< 100km CI).\n")
@@ -163,7 +163,7 @@ for (i in 1:nrow(city_list)) {
     # If 2026 is good, check 2016
     cat(">=100km! Checking 2016... ")
     Sys.sleep(2.5) # limit api calls
-    
+
     l2016 <- get_ci_len(row$lon, row$lat, "2016-01-01")
     if (is.na(l2016)) {
       cat("API failed on 2016. Skipping for now.\n")
@@ -175,16 +175,16 @@ for (i in 1:nrow(city_list)) {
       Sys.sleep(5)
       next
     }
-    
+
     cat(paste0(round(l2016, 0), "m. "))
     row$len_2016_km <- l2016 / 1000
     row$len_2026_km <- l2026 / 1000
-    
+
     if (l2026 >= (l2016 * 1.1)) {
       cat("ACCEPTED!\n")
       row$status <- "ACCEPTED"
       progress <- rbind(progress, row)
-      
+
       # Store it (without status column for final output)
       clean_row <- row |> select(-status)
       if (nrow(selected_cities) == 0) {
@@ -192,7 +192,7 @@ for (i in 1:nrow(city_list)) {
       } else {
         selected_cities <- rbind(selected_cities, clean_row)
       }
-      
+
       continent_counts[cont] <- continent_counts[cont] + 1
     } else {
       cat("Rejected (< 10% expansion).\n")
@@ -200,9 +200,9 @@ for (i in 1:nrow(city_list)) {
       progress <- rbind(progress, row)
     }
   }
-  
+
   write.csv(progress, progress_file, row.names = FALSE)
-  
+
   Sys.sleep(3) # Safe delay between requests
 }
 
