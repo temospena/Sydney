@@ -24,9 +24,9 @@ target_cities <- c(
 
 # Years (2-digit) and full version strings — keep these in sync
 # years <- c("16", "19", "21", "24", "26")
-years <- c("18", "20")
+years <- c("18", "20", "22")
 # versions <- c("160101", "190101", "210101", "240101", "260101")
-versions <- c("180101", "200101")
+versions <- c("180101", "200101", "220101")
 
 # Set TRUE to re-run the routing step (and delete existing trips_*.rds) without rebuilding networks
 REROUTE_ONLY <- FALSE
