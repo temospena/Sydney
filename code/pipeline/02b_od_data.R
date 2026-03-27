@@ -22,6 +22,7 @@ miles_to_meters <- 1609.34
 
 # HuggingFace base URLs
 HF_GEOJSON_BASE <- "https://huggingface.co/datasets/zhu-xlab/GBA.ODbLPolygon/resolve/main"
+HF_POLYGON_BASE <- "https://huggingface.co/datasets/zhu-xlab/GBA.LoD1/resolve/main/Polygon"
 HF_JSON_BASE    <- "https://huggingface.co/datasets/zhu-xlab/GBA.LoD1/resolve/main/LoD1"
 
 # All known continent subfolders
@@ -129,18 +130,19 @@ get_continent_candidates <- function(tile_name) {
 # Download a tile (geojson + json) from HuggingFace
 # ===========================================================================
 download_tile_hf <- function(tile_name) {
-  geojson_file <- file.path(TILE_CACHE_DIR, paste0(tile_name, ".geojson"))
-  json_file    <- file.path(TILE_CACHE_DIR, paste0(tile_name, ".json"))
-  csv_file     <- file.path(TILE_CACHE_DIR, paste0(tile_name, ".csv"))
+  geojson_file  <- file.path(TILE_CACHE_DIR, paste0(tile_name, ".geojson"))
+  geojson2_file <- file.path(TILE_CACHE_DIR, paste0(tile_name, "_part2.geojson"))
+  json_file     <- file.path(TILE_CACHE_DIR, paste0(tile_name, ".json"))
+  csv_file      <- file.path(TILE_CACHE_DIR, paste0(tile_name, ".csv"))
 
   candidates <- get_continent_candidates(tile_name)
   found_continent <- NULL
   
-  # 1. Fetch GeoJSON
+  # 1. Fetch GeoJSON (Part 1 - ODbL)
   if (!file.exists(geojson_file) || file.size(geojson_file) < 10000) {
     for (continent in candidates) {
       url <- paste0(HF_GEOJSON_BASE, "/", continent, "/", tile_name, ".geojson")
-      message(paste("    Trying GeoJSON", continent, "->", tile_name, "..."))
+      message(paste("    Trying GeoJSON (Part 1)", continent, "->", tile_name, "..."))
       tmp <- paste0(geojson_file, ".tmp")
       ok <- tryCatch({
         download.file(url, tmp, mode = "wb", quiet = TRUE, method = "libcurl")
@@ -150,18 +152,41 @@ download_tile_hf <- function(tile_name) {
       if (ok && file.exists(tmp) && file.size(tmp) > 10000) {
         file.rename(tmp, geojson_file)
         found_continent <- continent
-        message(paste("    Downloaded GeoJSON from:", continent))
+        message(paste("    Downloaded GeoJSON (Part 1) from:", continent))
         break
       }
       if (file.exists(tmp)) file.remove(tmp)
     }
   } else {
-    message(paste("    [CACHE HIT] GeoJSON for", tile_name))
-    # We don't know the exact continent if it was cached, so checking json will iterate candidates
+    message(paste("    [CACHE HIT] GeoJSON (Part 1) for", tile_name))
   }
 
-  if (!file.exists(geojson_file)) {
-    message(paste("    [NOT FOUND] Tile GeoJSON not available:", tile_name))
+  # 1.5 Fetch GeoJSON (Part 2 - Google/CLSM)
+  if (!file.exists(geojson2_file) || file.size(geojson2_file) < 10000) {
+    check_conts <- if (!is.null(found_continent)) c(found_continent, candidates) else candidates
+    check_conts <- unique(check_conts)
+    for (continent in check_conts) {
+      url <- paste0(HF_POLYGON_BASE, "/", continent, "/", tile_name, ".geojson")
+      message(paste("    Trying GeoJSON (Part 2)", continent, "->", tile_name, "..."))
+      tmp <- paste0(geojson2_file, ".tmp")
+      ok <- tryCatch({
+        download.file(url, tmp, mode = "wb", quiet = TRUE, method = "libcurl")
+        TRUE
+      }, error = function(e) FALSE)
+      
+      if (ok && file.exists(tmp) && file.size(tmp) > 10000) {
+        file.rename(tmp, geojson2_file)
+        message(paste("    Downloaded GeoJSON (Part 2) from:", continent))
+        break
+      }
+      if (file.exists(tmp)) file.remove(tmp)
+    }
+  } else {
+    message(paste("    [CACHE HIT] GeoJSON (Part 2) for", tile_name))
+  }
+
+  if (!file.exists(geojson_file) && !file.exists(geojson2_file)) {
+    message(paste("    [NOT FOUND] Tile completely unavailable:", tile_name))
     return(NULL)
   }
 
@@ -197,7 +222,7 @@ download_tile_hf <- function(tile_name) {
     system2("python3", args = c(py_script_path, json_file, csv_file))
   }
 
-  return(list(geojson = geojson_file, csv = csv_file))
+  return(list(geojson = geojson_file, geojson2 = geojson2_file, csv = csv_file))
 }
 
 # ===========================================================================
@@ -210,12 +235,22 @@ fetch_building_points_hf <- function(city_name, city_poly, tile_names) {
     files <- download_tile_hf(tile_name)
     if (is.null(files)) next
 
-    message(paste("    Reading tile", tile_name, "..."))
-    buildings_raw <- tryCatch(
-      st_read(files$geojson, quiet = TRUE),
+    message(paste("    Reading tile files for", tile_name, "..."))
+    buildings_raw1 <- tryCatch(
+      if (file.exists(files$geojson)) st_read(files$geojson, quiet = TRUE) else NULL,
       error = function(e) NULL
     )
-    if (is.null(buildings_raw) || nrow(buildings_raw) == 0) next
+    buildings_raw2 <- tryCatch(
+      if (file.exists(files$geojson2)) st_read(files$geojson2, quiet = TRUE) else NULL,
+      error = function(e) NULL
+    )
+    
+    parts <- list()
+    if (!is.null(buildings_raw1) && nrow(buildings_raw1) > 0) parts[[1]] <- buildings_raw1
+    if (!is.null(buildings_raw2) && nrow(buildings_raw2) > 0) parts[[2]] <- buildings_raw2
+    
+    if (length(parts) == 0) next
+    buildings_raw <- dplyr::bind_rows(parts) |> st_as_sf()
 
     # Fix EPSG:3857 (declared as CRS84)
     buildings_3857 <- st_set_crs(buildings_raw, 3857)
