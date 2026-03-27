@@ -246,8 +246,8 @@ fetch_building_points_hf <- function(city_name, city_poly, tile_names) {
     )
     
     parts <- list()
-    if (!is.null(buildings_raw1) && nrow(buildings_raw1) > 0) parts[[1]] <- buildings_raw1
-    if (!is.null(buildings_raw2) && nrow(buildings_raw2) > 0) parts[[2]] <- buildings_raw2
+    if (!is.null(buildings_raw1) && nrow(buildings_raw1) > 0) parts[[1]] <- st_set_crs(buildings_raw1, NA)
+    if (!is.null(buildings_raw2) && nrow(buildings_raw2) > 0) parts[[2]] <- st_set_crs(buildings_raw2, NA)
     
     if (length(parts) == 0) next
     buildings_raw <- dplyr::bind_rows(parts) |> st_as_sf()

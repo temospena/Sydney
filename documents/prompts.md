@@ -2398,3 +2398,22 @@ Here is the updated logic executing right now in [00a_city_selection.R](cci:7://
 3. If `length_2026 >= 100,000` meters, execute the second query for `2016-01-01` and verify the >=10% expansion.
 
 This cuts the number of required API calls essentially in half for the majority of the list. The script is querying safely and twice as fast on the remaining cities!
+
+## Prompt 58
+
+can you please add in the end of documents/prompts.md a summary of what I asked to do (the problem of the new GBA method) and a summary of what you did and concerns we had?
+
+### Response
+
+The user noticed that the S3 parquet source for the `GlobalBuildingAtlas` was dead, causing the OD matrix generation (`02_od_data.R`) to fail for 51 new cities. They asked to transition to the new method hosted on HuggingFace, but without having to download massive 50GB-90GB zip files per region via FTP just to get building heights. They explicitly required that building volumes (`area * height`) remained the weighting metric, meaning both footprints and heights were strictly required.
+
+**What was done:**
+1. Created `02b_od_data.R` to download GeoJSON footprints directly from the `GBA.ODbLPolygon` HuggingFace repository utilizing 5x5 degree grid tiles based on the city bounding box.
+2. Discovered that the building heights were published separately as a JSON dictionary mapping in the `GBA.LoD1` repository.
+3. Implemented a workflow to download both the footprint tiles and their corresponding 500MB JSON height dictionaries safely to `data/gba_tiles_cache/`. Embedded a lightweight Python script into the R workflow to seamlessly flatten the JSON into a readable CSV, bypassing R's memory limitations with large JSON objects.
+4. Joined the heights to the footprints natively in R using standard string matching (`source + id + region`), reconstructing the physical building volume accurately without the 50GB zip downloads.
+
+**Concerns and major fixes during the process:**
+- **Missing Buildings Bug**: The user noticed cities like Salvador were only fetching ~1,400 buildings instead of hundreds of thousands. Intensive investigation revealed that the GlobalBuildingAtlas footprint polygons had been split into *two* separate repositories due to licensing conflicts (Part I: OSM/Microsoft under `GBA.ODbLPolygon`, and Part II: Google/CLSM under `GBA.LoD1/Polygon`). `02b_od_data.R` was updated to rigorously download and bind BOTH parts, correctly jumping Salvador's building count to 738,617.
+- **CRS Mismatch Error**: The publishers accidentally mislabeled the GeoJSON header of Part I as `WGS 84` (degrees) while correctly labeling Part II as `Pseudo-Mercator` (meters), even though both internally used Web Mercator coordinates heavily. When R tried to `bind_rows` them, it crashed due to the metadata conflict. This was elegantly fixed by intentionally applying `st_set_crs(NA)` to strip the CRS metadata from both parts, binding the coordinate geometries purely, and applying the correct EPSG:3857 CRS over the single combined object before safely transforming back to 4326.
+- **Data Contamination Cleanup**: To ensure robust accuracy, previously cached corrupted outputs for Lima, Brasilia, Fortaleza, and Salvador (which were generated using only the 10% Part I dataset during early testing) were completely deleted so the pipeline could cleanly reconstruct the true matrices.
