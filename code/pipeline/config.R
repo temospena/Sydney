@@ -22,15 +22,16 @@ target_cities <-
   # "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
   # ) # cairo, cape town,  hong kong (> 100km in 2026)
   c(
-    "Lima", "Brasilia", "Fortaleza", "Salvador", "Cordoba", "Mendoza",
-    "Concepcion", "Merida", "Callao", "Vitoria", "Ottawa", "Los Angeles",
-    "Dallas", "Toronto", "Guadalajara", "Atlanta", "Boston", "Phoenix",
-    "Detroit", "Denver", "Moscow", "Rome", "Minsk", "Budapest", "Prague",
-    "Belgrade", "Tallinn", "Riga", "Bratislava", "Birmingham", "Valencia",
-    "Yekaterinburg", "Bordeaux", "Bilbao", "Bristol", "Zaragoza",
-    "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
-    "Jinan", "Taiyuan", "Nanchang", "Incheon", "Ouagadougou", "Canberra",
-    "Wellington", "Dar es Salaam", "Brisbane"
+    # "Lima", "Brasilia", "Fortaleza", "Salvador", "Cordoba", "Mendoza",
+    # "Merida", "Callao", "Vitoria", "Ottawa", "Los Angeles", # "Concepcion",
+    # "Dallas", "Toronto", "Guadalajara", "Atlanta", "Boston", "Phoenix",
+    # "Detroit", "Denver", "Moscow", "Rome", "Budapest", "Prague", # "Minsk",
+    # "Belgrade", "Tallinn", "Riga", "Bratislava", "Birmingham", "Valencia",
+    # "Yekaterinburg", "Bordeaux", "Bilbao", "Bristol", "Zaragoza",
+    # "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
+    # "Jinan", "Nanchang", "Ouagadougou", "Canberra", # "Incheon", "Taiyuan",
+    # "Wellington", "Dar es Salaam", "Brisbane",
+    "Manchester", "Porto", "Katowice", "Sapporo", "New Taipei", "Puebla"
   ) # batch2 51 new cities
 # target_cities <- "Lisbon"
 
