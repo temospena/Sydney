@@ -6,34 +6,34 @@
 
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
-target_cities <-
-  # c(
-  # "Sydney", "Paris", "New York", "Barcelona", "Lisbon", ## Here they are
-  # "Amsterdam", "Austin", # "Barcelona"
-  # "Beijing", "Berlin", "Bogota",
-  # "Bologna", "Brussels", "Buenos Aires",
-  # "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
-  # "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds", "Ljubljana",
-  # "London", "Lyon", "Madrid", "Melbourne", # "Lisbon",
-  # "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
-  # "Munich", "Nantes", "Oslo", "Portland", # "Paris", "New York",
-  # "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
-  # "Seville", "Shanghai", "Stockholm", "Strasbourg", "Taipei", # "Sydney",
-  # "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
-  # ) # cairo, cape town,  hong kong (> 100km in 2026)
-  c(
-    # "Lima", "Brasilia", "Fortaleza", "Salvador", "Cordoba", "Mendoza",
-    # "Merida", "Callao", "Vitoria", "Ottawa", "Los Angeles", # "Concepcion",
-    # "Dallas", "Toronto", "Guadalajara", "Atlanta", "Boston", "Phoenix",
-    # "Detroit", "Denver", "Moscow", "Rome", "Budapest", "Prague", # "Minsk",
-    # "Belgrade", "Tallinn", "Riga", "Bratislava", "Birmingham", "Valencia",
-    # "Yekaterinburg", "Bordeaux", "Bilbao", "Bristol", "Zaragoza",
-    # "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
-    # "Jinan", "Nanchang", "Ouagadougou", "Canberra", # "Incheon", "Taiyuan",
-    # "Wellington", "Dar es Salaam", "Brisbane",
-    "Manchester", "Porto", "Katowice", "Sapporo", "New Taipei", "Puebla"
-  ) # batch2 51 new cities
-# target_cities <- "Lisbon"
+# target_cities <-
+# c(
+# "Sydney", "Paris", "New York", "Barcelona", "Lisbon", ## Here they are
+# "Amsterdam", "Austin", # "Barcelona"
+# "Beijing", "Berlin", "Bogota",
+# "Bologna", "Brussels", "Buenos Aires",
+# "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
+# "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds", "Ljubljana",
+# "London", "Lyon", "Madrid", "Melbourne", # "Lisbon",
+# "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
+# "Munich", "Nantes", "Oslo", "Portland", # "Paris", "New York",
+# "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
+# "Seville", "Shanghai", "Stockholm", "Strasbourg", "Taipei", # "Sydney",
+# "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
+# ) # cairo, cape town,  hong kong (> 100km in 2026)
+# c(
+# "Lima", "Brasilia", "Fortaleza", "Salvador", "Cordoba", "Mendoza",
+# "Merida", "Callao", "Vitoria", "Ottawa", "Los Angeles", # "Concepcion",
+# "Dallas", "Toronto", "Guadalajara", "Atlanta", "Boston", "Phoenix",
+# "Detroit", "Denver", "Moscow", "Rome", "Budapest", "Prague", # "Minsk",
+# "Belgrade", "Tallinn", "Riga", "Bratislava", "Birmingham", "Valencia",
+# "Yekaterinburg", "Bordeaux", "Bilbao", "Bristol", "Zaragoza",
+# "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
+# "Jinan", "Nanchang", "Ouagadougou", "Canberra", # "Incheon", "Taiyuan",
+# "Wellington", "Dar es Salaam", "Brisbane",
+# "Manchester", "Porto", "Katowice", "Sapporo", "New Taipei", "Puebla"
+# ) # batch2 51 new cities
+target_cities <- "Puebla"
 
 # Years (2-digit) and full version strings — keep these in sync
 # years <- c("16", "19", "21", "24", "26")
