@@ -66,9 +66,41 @@ if (!file.exists(py_script_path)) {
 }
 
 # ===========================================================================
-# Helper: Generate 5×5° tile names from a city bbox
+# Helper: Extract tile polygons and continent mappings from lod1.geojson 
+# ===========================================================================
+global_lod1_sf <- NULL
+
+load_lod1_sf <- function() {
+  if (!is.null(global_lod1_sf)) return()
+  lod1_path <- file.path(proj_root, "data", "lod1.geojson")
+  if (file.exists(lod1_path)) {
+    lod1_sf <- tryCatch(sf::st_read(lod1_path, quiet = TRUE), error = function(e) NULL)
+    if (!is.null(lod1_sf) && "tile" %in% names(lod1_sf)) {
+      global_lod1_sf <<- lod1_sf
+    }
+  }
+}
+
+# ===========================================================================
+# Helper: Generate tile names overlapping the bounding box directly from lod1 geometry
 # ===========================================================================
 get_tile_names_for_bbox <- function(bbox) {
+  load_lod1_sf()
+  
+  if (!is.null(global_lod1_sf)) {
+    bbox_poly <- sf::st_as_sfc(bbox)
+    bbox_poly <- sf::st_set_crs(bbox_poly, 4326) # lod1 is wgs84
+    
+    # Extract matching tiles via spatial intersection
+    intersects <- sf::st_intersects(global_lod1_sf, bbox_poly, sparse = FALSE)[, 1]
+    
+    if (any(intersects)) {
+      tile_strings <- as.character(global_lod1_sf$tile[intersects])
+      return(unique(basename(tile_strings)))
+    }
+  }
+  
+  # Fallback to pure math representation if lod1 missing
   lon_min_tile <- floor(bbox["xmin"] / 5) * 5
   lon_max_tile <- floor(bbox["xmax"] / 5) * 5
   lat_min_tile <- floor(bbox["ymin"] / 5) * 5
@@ -86,43 +118,25 @@ get_tile_names_for_bbox <- function(bbox) {
       tiles <- c(tiles, tile)
     }
   }
-  unique(tiles)
+  return(unique(tiles))
 }
 
 # ===========================================================================
-# Helper: Determine likely continent folder(s) for a tile from its coordinates
+# Helper: Determine likely continent folder(s) for a tile directly from lod1.geojson
 # ===========================================================================
 get_continent_candidates <- function(tile_name) {
-  parts <- strsplit(tile_name, "_")[[1]]
-  if (length(parts) != 4) return(CONTINENT_FOLDERS)
-
-  parse_coord <- function(s) {
-    dir <- tolower(substr(s, 1, 1))
-    val <- as.numeric(substr(s, 2, nchar(s)))
-    if (dir %in% c("w", "s")) -val else val
+  load_lod1_sf()
+  
+  if (!is.null(global_lod1_sf)) {
+    # Match the tile basename
+    idx <- which(basename(as.character(global_lod1_sf$tile)) == tile_name)
+    if (length(idx) > 0) {
+      continent <- dirname(as.character(global_lod1_sf$tile[idx[1]]))
+      return(unique(c(continent, CONTINENT_FOLDERS)))
+    }
   }
-  lon1 <- parse_coord(parts[1])
-  lat1 <- parse_coord(parts[2])  
-  lon2 <- parse_coord(parts[3])
-  lat2 <- parse_coord(parts[4])  
-  clon <- (lon1 + lon2) / 2
-  clat <- (lat1 + lat2) / 2
-
-  if (clon >= -82 && clon <= -34 && clat >= -56 && clat <= 13)
-    return("southamerica")
-  if (clon >= -170 && clon <= -55 && clat > 5)
-    return("northamerica")
-  if (clon >= -30 && clon <= 50 && clat >= 33 && clat <= 75)
-    return("europe")
-  if (clon >= -20 && clon <= 55 && clat >= -38 && clat <= 40)
-    return("africa")
-  if (clon > 40 && clon <= 80 && clat >= 5)
-    return(c("asiawest", "europe"))
-  if (clon > 70 && clon <= 150 && clat >= -15 && clat <= 55)
-    return(c("asiaeast", "asiawest"))
-  if (clon > 100 || clon < -140)
-    return(c("oceania", "asiaeast"))
-
+  
+  # Absolute fallback if lod1.geojson is completely missing
   return(CONTINENT_FOLDERS)
 }
 
