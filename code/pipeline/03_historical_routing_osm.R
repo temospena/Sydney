@@ -69,11 +69,15 @@ for (city in target_cities) {
 
             download_success <- tryCatch(
                 {
-                    download.file(url = archive_url, destfile = raw_file, method = "auto", quiet = FALSE, mode = "wb")
-                    TRUE
+                    status <- download.file(url = archive_url, destfile = raw_file, method = "curl", extra = "-L -A 'Mozilla/5.0'", quiet = FALSE, mode = "wb")
+                    if (status == 0 && file.info(raw_file)$size > 50000) {
+                        TRUE
+                    } else {
+                        FALSE
+                    }
                 },
                 error = function(e) {
-                    cat("  [FAIL] Historical file not found or download failed.\n")
+                    cat("  [FAIL] Historical file not found, download failed, or file too small.\n")
                     FALSE
                 }
             )

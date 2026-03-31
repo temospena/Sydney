@@ -6,34 +6,34 @@
 
 # Cities to process. Comment out the full list and uncomment a single name
 # to test / re-run just one city.
-# target_cities <-
-# c(
-# "Sydney", "Paris", "New York", "Barcelona", "Lisbon", ## Here they are
-# "Amsterdam", "Austin", # "Barcelona"
-# "Beijing", "Berlin", "Bogota",
-# "Bologna", "Brussels", "Buenos Aires",
-# "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
-# "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds", "Ljubljana",
-# "London", "Lyon", "Madrid", "Melbourne", # "Lisbon",
-# "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
-# "Munich", "Nantes", "Oslo", "Portland", # "Paris", "New York",
-# "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
-# "Seville", "Shanghai", "Stockholm", "Strasbourg", "Taipei", # "Sydney",
-# "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
-# ) # cairo, cape town,  hong kong (> 100km in 2026)
-# c(
-# "Lima", "Brasilia", "Fortaleza", "Salvador", "Cordoba", "Mendoza",
-# "Merida", "Callao", "Vitoria", "Ottawa", "Los Angeles", # "Concepcion",
-# "Dallas", "Toronto", "Guadalajara", "Atlanta", "Boston", "Phoenix",
-# "Detroit", "Denver", "Moscow", "Rome", "Budapest", "Prague", # "Minsk",
-# "Belgrade", "Tallinn", "Riga", "Bratislava", "Birmingham", "Valencia",
-# "Yekaterinburg", "Bordeaux", "Bilbao", "Bristol", "Zaragoza",
-# "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
-# "Jinan", "Nanchang", "Ouagadougou", "Canberra", # "Incheon", "Taiyuan",
-# "Wellington", "Dar es Salaam", "Brisbane",
-# "Manchester", "Porto", "Katowice", "Sapporo", "New Taipei", "Puebla"
-# ) # batch2 51 new cities
-target_cities <- "Puebla"
+target_cities <-
+  # c(
+  # "Sydney", "Paris", "New York", "Barcelona", "Lisbon", ## Here they are
+  # "Amsterdam", "Austin", # "Barcelona"
+  # "Beijing", "Berlin", "Bogota",
+  # "Bologna", "Brussels", "Buenos Aires",
+  # "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
+  # "Graz", "Hamburg", "Helsinki", "Kyoto", "Leeds", "Ljubljana",
+  # "London", "Lyon", "Madrid", "Melbourne", # "Lisbon",
+  # "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
+  # "Munich", "Nantes", "Oslo", "Portland", # "Paris", "New York",
+  # "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
+  # "Seville", "Shanghai", "Stockholm", "Strasbourg", "Taipei", # "Sydney",
+  # "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
+  # ) # cairo, cape town,  hong kong (> 100km in 2026)
+  # c(
+  #   "Lima", "Brasilia", "Fortaleza", "Salvador", "Cordoba", "Mendoza",
+  #   "Merida", "Vitoria", "Ottawa", "Los Angeles", # "Concepcion", "Callao",
+  #   "Dallas", "Toronto", "Guadalajara", "Atlanta", "Boston", "Phoenix",
+  #   "Detroit", "Denver", "Moscow", "Rome", "Budapest", "Prague", # "Minsk",
+  #   "Belgrade", "Tallinn", "Riga", "Bratislava", "Birmingham", "Valencia",
+  #   "Yekaterinburg", "Bordeaux", "Bilbao", "Bristol", "Zaragoza",
+  #   "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
+  #   "Jinan", "Nanchang", "Canberra", # "Incheon", "Taiyuan", #"Ouagadougou",
+  #   "Wellington", "Brisbane", # "Dar es Salaam",
+  #   "Manchester", "Porto", "Katowice", "Sapporo", "New Taipei", "Puebla"
+  # ) # batch2 51 new cities
+  target_cities <- "Sapporo"
 
 # Years (2-digit) and full version strings — keep these in sync
 # years <- c("16", "19", "21", "24", "26")
@@ -42,7 +42,7 @@ years <- c("16", "18", "20", "22", "24", "26")
 versions <- c("160101", "180101", "200101", "220101", "240101", "260101")
 
 # Set TRUE to re-run the routing step (and delete existing trips_*.rds) without rebuilding networks
-REROUTE_ONLY <- FALSE
+REROUTE_ONLY <- FALSE # default is FALSE
 
 # Set TRUE to re-run all steps even if output files already exist, including donwload osm files
 FORCE_RERUN <- FALSE # default is FALSE
@@ -144,7 +144,7 @@ get_geofabrik_region <- function(city, year_short) {
 # Build the full Geofabrik download URL for a city/year
 get_geofabrik_url <- function(city, year_short) {
   region <- get_geofabrik_region(city, year_short)
-  paste0("http://download.geofabrik.de/", region, "-", year_short, "0101.osm.pbf")
+  paste0("https://download.geofabrik.de/", region, "-", year_short, "0101.osm.pbf")
 }
 
 # Derive the filename stem from the region (last path component after "/")
