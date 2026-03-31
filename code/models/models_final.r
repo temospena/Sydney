@@ -11,37 +11,55 @@ final_estimations <- read_csv("data/pipeline/final_city_estimations.csv")
 # dput(unique(final_estimations$city))
 
 target_cities <- c(
-    "Amsterdam", "Austin", "Barcelona", "Beijing", "Berlin", "Bogota",
-    "Bologna", "Brussels", "Buenos Aires", "Cairo", "Cape Town",
-    "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
-    "Graz", "Hamburg", "Helsinki", "Hong Kong", "Kyoto", "Leeds",
-    "Lisbon", "Ljubljana", "London", "Lyon", "Madrid", "Melbourne",
-    "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
-    "Munich", "Nantes", "New York", "Oslo", "Paris", "Portland",
-    "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
-    "Seville", "Shanghai", "Stockholm", "Strasbourg", "Sydney", "Taipei",
-    "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich"
+    # "Amsterdam", "Austin", "Barcelona", "Beijing", "Berlin", "Bogota",
+    # "Bologna", "Brussels", "Buenos Aires", "Cairo", "Cape Town",
+    # "Chicago", "Christchurch", "Curitiba", "Dublin", "Gent", "Glasgow",
+    # "Graz", "Hamburg", "Helsinki", "Hong Kong", "Kyoto", "Leeds",
+    # "Lisbon", "Ljubljana", "London", "Lyon", "Madrid", "Melbourne",
+    # "Mexico City", "Milan", "Minneapolis", "Montpellier", "Montréal",
+    # "Munich", "Nantes", "New York", "Oslo", "Paris", "Portland",
+    # "San Francisco", "Santiago", "Sao Paulo", "Seattle", "Seoul",
+    # "Seville", "Shanghai", "Stockholm", "Strasbourg", "Sydney", "Taipei",
+    # "Tokyo", "Turin", "Vancouver", "Vienna", "Warsaw", "Zurich",
+    "Lima", "Brasilia", "Fortaleza", "Salvador", "Cordoba", "Mendoza",
+    "Merida", "Vitoria", "Ottawa", "Los Angeles", "Concepcion", "Callao",
+    "Dallas", "Toronto", "Guadalajara", "Atlanta", "Boston", "Phoenix",
+    "Detroit", "Denver", "Moscow", "Rome", "Budapest", "Prague", "Minsk",
+    "Belgrade", "Tallinn", "Riga", "Bratislava", "Birmingham", "Valencia",
+    "Bordeaux", "Bilbao", "Bristol", "Zaragoza", "Yekaterinburg", 
+    "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
+    "Jinan", "Nanchang", "Canberra", "Incheon", "Taiyuan", "Ouagadougou",
+    "Wellington", "Brisbane", "Manila", "Dar es Salaam", "Sapporo",
+    "Manchester", "Porto", "Katowice", "New Taipei", "Puebla", "Houston"
 )
-cities_less_100k <- c("Cairo", "Cape Town", "Hong Kong")
-cities_weired_tagging <- c("Lisbon", "Munich", "Ljubljana") # Strasbourg, Vancouver
-cities_no_data <- c()
+cities_less_100k <- c("Cairo", "Cape Town", "Hong Kong", "Sapporo", "Incheon", "Concepcion", "Taiyuan", "Moscow") # Riga, Bilbao borderline
+cities_weired_tagging <- c("Lisbon", "Munich", "Ljubljana", "Minsk") # Strasbourg, Vancouver
+cities_wrong_classification <- c("Dar es Salaam", "Ouagadougou") 
+cities_no_data <- c("Yekaterinburg")
+cities_too_close <- c("Callao") # intersects with Lima
 cities_no_10pct_growth <- c("Amsterdam", "Stockhoml")
 target_cities_clean <- setdiff(
     target_cities,
     c(
         cities_less_100k,
         cities_weired_tagging,
+        cities_wrong_classification,
         cities_no_data,
+        cities_too_close,
         cities_no_10pct_growth
     )
 )
-length(target_cities_clean) # 50
+length(target_cities_clean) # 102
+
+# If using only form 2018, I can retrieve Lisbon.
+years = c(2016, 2018, 2020, 2022, 2024, 2026)
 
 ## at city level
 city_data_model <- final_estimations |>
     filter(city %in% target_cities_clean) |>
     mutate(city = tolower(city)) |>
     filter(lts %in% c(1, 2)) |>
+    filter(year %in% years) |>
     mutate(
         log_circuity = log(avg_circuity),
         log_distance = log(avg_distance_m),
@@ -91,6 +109,7 @@ rm(routing_stats_city) # clean up
 
 routing_stats_model <- routing_stats_all |>
     filter(lts %in% c(1, 2)) |> # only lts 1 and 2
+    filter(year %in% years) |>
     mutate(
         route_id = paste(city, from_id, to_id, sep = "_"),
         circuity = total_distance / euclidean_distance,
