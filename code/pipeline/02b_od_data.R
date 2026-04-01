@@ -35,8 +35,8 @@ CONTINENT_FOLDERS <- c(
 TILE_CACHE_DIR <- file.path(proj_root, "data", "gba_tiles_cache")
 dir.create(TILE_CACHE_DIR, showWarnings = FALSE, recursive = TRUE)
 
-# Allow up to 20 minutes per tile download (files can be up to 500 MB)
-options(timeout = 1200)
+# Allow up to 2 hours per tile download (central-Europe ODbL tile is ~13 GB)
+options(timeout = 7200)
 
 # ===========================================================================
 # Helper: Python script to convert big JSON to CSV (memory efficient via Python)
@@ -141,6 +141,57 @@ get_continent_candidates <- function(tile_name) {
 }
 
 # ===========================================================================
+# Robust large-file downloader: wget > curl > download.file
+# ===========================================================================
+download_large_file <- function(url, dest) {
+  tmp <- paste0(dest, ".tmp")
+
+  # 1. Try wget (handles huge files + redirects + resume)
+  if (Sys.which("wget") != "") {
+    ok <- tryCatch({
+      rc <- system2("wget",
+        args = c("--quiet", "--continue", "--timeout=7200",
+                 "-O", shQuote(tmp), shQuote(url)),
+        stdout = FALSE, stderr = FALSE)
+      rc == 0
+    }, error = function(e) FALSE)
+    if (ok && file.exists(tmp) && file.size(tmp) > 10000) {
+      file.rename(tmp, dest)
+      return(TRUE)
+    }
+    if (file.exists(tmp)) file.remove(tmp)
+  }
+
+  # 2. Try curl CLI
+  if (Sys.which("curl") != "") {
+    ok <- tryCatch({
+      rc <- system2("curl",
+        args = c("-sL", "--max-time", "7200",
+                 "-o", shQuote(tmp), shQuote(url)),
+        stdout = FALSE, stderr = FALSE)
+      rc == 0
+    }, error = function(e) FALSE)
+    if (ok && file.exists(tmp) && file.size(tmp) > 10000) {
+      file.rename(tmp, dest)
+      return(TRUE)
+    }
+    if (file.exists(tmp)) file.remove(tmp)
+  }
+
+  # 3. Last resort: R download.file
+  ok <- tryCatch({
+    download.file(url, tmp, mode = "wb", quiet = TRUE, method = "libcurl")
+    TRUE
+  }, error = function(e) FALSE)
+  if (ok && file.exists(tmp) && file.size(tmp) > 10000) {
+    file.rename(tmp, dest)
+    return(TRUE)
+  }
+  if (file.exists(tmp)) file.remove(tmp)
+  return(FALSE)
+}
+
+# ===========================================================================
 # Download a tile (geojson + json) from HuggingFace
 # ===========================================================================
 download_tile_hf <- function(tile_name) {
@@ -157,19 +208,12 @@ download_tile_hf <- function(tile_name) {
     for (continent in candidates) {
       url <- paste0(HF_GEOJSON_BASE, "/", continent, "/", tile_name, ".geojson")
       message(paste("    Trying GeoJSON (Part 1)", continent, "->", tile_name, "..."))
-      tmp <- paste0(geojson_file, ".tmp")
-      ok <- tryCatch({
-        download.file(url, tmp, mode = "wb", quiet = TRUE, method = "libcurl")
-        TRUE
-      }, error = function(e) FALSE)
-      
-      if (ok && file.exists(tmp) && file.size(tmp) > 10000) {
-        file.rename(tmp, geojson_file)
+      ok <- download_large_file(url, geojson_file)
+      if (ok) {
         found_continent <- continent
         message(paste("    Downloaded GeoJSON (Part 1) from:", continent))
         break
       }
-      if (file.exists(tmp)) file.remove(tmp)
     }
   } else {
     message(paste("    [CACHE HIT] GeoJSON (Part 1) for", tile_name))
@@ -182,18 +226,11 @@ download_tile_hf <- function(tile_name) {
     for (continent in check_conts) {
       url <- paste0(HF_POLYGON_BASE, "/", continent, "/", tile_name, ".geojson")
       message(paste("    Trying GeoJSON (Part 2)", continent, "->", tile_name, "..."))
-      tmp <- paste0(geojson2_file, ".tmp")
-      ok <- tryCatch({
-        download.file(url, tmp, mode = "wb", quiet = TRUE, method = "libcurl")
-        TRUE
-      }, error = function(e) FALSE)
-      
-      if (ok && file.exists(tmp) && file.size(tmp) > 10000) {
-        file.rename(tmp, geojson2_file)
+      ok <- download_large_file(url, geojson2_file)
+      if (ok) {
         message(paste("    Downloaded GeoJSON (Part 2) from:", continent))
         break
       }
-      if (file.exists(tmp)) file.remove(tmp)
     }
   } else {
     message(paste("    [CACHE HIT] GeoJSON (Part 2) for", tile_name))
@@ -213,18 +250,11 @@ download_tile_hf <- function(tile_name) {
     for (continent in check_conts) {
       url <- paste0(HF_JSON_BASE, "/", continent, "/", tile_name, ".json")
       message(paste("    Trying JSON", continent, "->", tile_name, "..."))
-      tmp <- paste0(json_file, ".tmp")
-      ok <- tryCatch({
-        download.file(url, tmp, mode = "wb", quiet = TRUE, method = "libcurl")
-        TRUE
-      }, error = function(e) FALSE)
-      
-      if (ok && file.exists(tmp) && file.size(tmp) > 1000) {
-        file.rename(tmp, json_file)
+      ok <- download_large_file(url, json_file)
+      if (ok) {
         message(paste("    Downloaded JSON from:", continent))
         break
       }
-      if (file.exists(tmp)) file.remove(tmp)
     }
   } else {
     message(paste("    [CACHE HIT] JSON for", tile_name))
