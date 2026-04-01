@@ -30,7 +30,8 @@ target_cities <- c(
     "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
     "Jinan", "Nanchang", "Canberra", "Incheon", "Taiyuan", "Ouagadougou",
     "Wellington", "Brisbane", "Manila", "Dar es Salaam", "Sapporo",
-    "Manchester", "Porto", "Katowice", "New Taipei", "Puebla", "Houston"
+    "Manchester", "Porto", "Katowice", "New Taipei", "Puebla", "Houston",
+    "Hannouver", "Toulouse"
 )
 cities_less_100k <- c("Cairo", "Cape Town", "Hong Kong", "Sapporo", "Incheon", "Concepcion", "Taiyuan", "Moscow") # Riga, Bilbao borderline
 cities_weired_tagging <- c("Lisbon", "Munich", "Ljubljana", "Minsk") # Strasbourg, Vancouver

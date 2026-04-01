@@ -4,7 +4,7 @@ library(ggplot2)
 
 final_city_estimations <- read.csv("data/pipeline/final_city_estimations.csv")
 
-unique(final_city_estimations$city) # 113
+unique(final_city_estimations$city) # 118
 
 summary(final_city_estimations$processing_time_minutes[final_city_estimations$processing_time_minutes > 10], na.rm = TRUE)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
