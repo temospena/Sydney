@@ -30,10 +30,11 @@ target_cities <-
   #   "Yekaterinburg", "Bordeaux", "Bilbao", "Bristol", "Zaragoza",
   #   "Singapore", "Doha", "Shenzhen", "Osaka", "Chengdu", "Hangzhou",
   #   "Jinan", "Nanchang", "Canberra", # "Incheon", "Taiyuan", #"Ouagadougou",
-  #   "Wellington", "Brisbane", "Manila", "Houston" # "Dar es Salaam",
-  #   "Manchester", "Porto", "Katowice", "Sapporo", "New Taipei", "Puebla"
+  #   "Wellington", "Brisbane", "Manila", "Houston" # "Dar es Salaam", "Athens"
+  #   "Manchester", "Porto", "Katowice", "Sapporo", "New Taipei", "Puebla",
+  #   "Toulouse", "Hannover"
   # ) # batch2 51 new cities
-  target_cities <- "Athens"
+  target_cities <- "Hannover"
 
 # Years (2-digit) and full version strings — keep these in sync
 # years <- c("16", "19", "21", "24", "26")
